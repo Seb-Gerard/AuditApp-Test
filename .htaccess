@@ -1,0 +1,6 @@
+AddType application/javascript .js
+AddType application/json .json
+
+<Files "sw.js">
+    Header set Service-Worker-allowed "/"
+</Files> 

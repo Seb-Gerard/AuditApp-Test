@@ -1,0 +1,31 @@
+{
+    "name": "AuditApp",
+    "icons": [
+        {
+            "src": "public/assets/img/Logo_CNPP_192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "public/assets/img/Logo_CNPP_512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "/?source=pwa",
+    "display": "standalone",
+    "screenshots": [
+        {
+            "src": "public/assets/img/screenshot-wide.png",
+            "sizes": "1920x1080",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "public/assets/img/screenshot-narrow.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ]
+}
