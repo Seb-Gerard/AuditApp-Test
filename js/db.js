@@ -2,75 +2,189 @@ const DB_NAME = 'AuditDB';
 const DB_VERSION = 1;
 const STORE_NAME = 'articles';
 
+// Variable pour stocker l'instance de DB
+let dbInstance = null;
+
 class ArticleDB {
     static async initDB() {
+        // Si une instance existe déjà, la retourner
+        if (dbInstance) {
+            return dbInstance;
+        }
+
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open(DB_NAME, DB_VERSION);
+            try {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-            request.onerror = () => reject(request.error);
-            request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => {
+                    console.error('Erreur lors de l\'ouverture de la base de données:', event.target.error);
+                    reject(event.target.error);
+                };
 
-            request.onupgradeneeded = (event) => {
-                // @ts-ignore
-                const db = event.target?.result;
-                if (db && !db.objectStoreNames.contains(STORE_NAME)) {
-                    const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                    store.createIndex('created_at', 'created_at', { unique: false });
-                    store.createIndex('server_id', 'server_id', { unique: false });
-                }
-            };
+                request.onsuccess = (event) => {
+                    dbInstance = event.target.result;
+                    
+                    // Gérer les cas où la connexion est fermée
+                    dbInstance.onclose = () => {
+                        console.log('Connexion à la base de données fermée');
+                        dbInstance = null;
+                    };
+                    
+                    // Gérer les erreurs sur la base de données
+                    dbInstance.onerror = (event) => {
+                        console.error('Erreur de base de données:', event.target.error);
+                    };
+                    
+                    console.log('Base de données ouverte avec succès');
+                    resolve(dbInstance);
+                };
+
+                request.onupgradeneeded = (event) => {
+                    // @ts-ignore
+                    const db = event.target?.result;
+                    if (db && !db.objectStoreNames.contains(STORE_NAME)) {
+                        console.log('Création du store pour les articles');
+                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+                        store.createIndex('created_at', 'created_at', { unique: false });
+                        store.createIndex('server_id', 'server_id', { unique: false });
+                    }
+                };
+                
+                request.onblocked = (event) => {
+                    console.warn('La base de données est bloquée. Fermez les autres onglets utilisant l\'application.');
+                    alert('La base de données est bloquée. Veuillez fermer les autres onglets ou fenêtres utilisant l\'application, puis réessayez.');
+                };
+            } catch (error) {
+                console.error('Erreur lors de l\'initialisation de la base de données:', error);
+                reject(error);
+            }
         });
     }
 
     static async saveArticle(article) {
-        const db = await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            
-            let request;
-            
-            if (article.id) {
-                // Si l'article a déjà un ID, on le met à jour
-                request = store.put(article);
-            } else {
-                // Sinon, on crée un nouvel article
-                const newArticle = {
-                    ...article,
-                    server_id: null, // S'assurer que server_id est null pour les nouveaux articles
-                    created_at: article.created_at || new Date().toISOString()
-                };
-                request = store.add(newArticle);
-            }
+        try {
+            const db = await this.initDB();
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = db.transaction([STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(STORE_NAME);
+                    
+                    let request;
+                    
+                    if (article.id) {
+                        // Si l'article a déjà un ID, on le met à jour
+                        request = store.put(article);
+                        console.log('Mise à jour d\'un article existant, ID:', article.id);
+                    } else {
+                        // Sinon, on crée un nouvel article
+                        const newArticle = {
+                            ...article,
+                            server_id: null, // S'assurer que server_id est null pour les nouveaux articles
+                            created_at: article.created_at || new Date().toISOString()
+                        };
+                        request = store.add(newArticle);
+                        console.log('Ajout d\'un nouvel article');
+                    }
 
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
+                    request.onsuccess = () => {
+                        console.log('Article sauvegardé avec succès, ID local:', request.result);
+                        resolve(request.result);
+                    };
+                    
+                    request.onerror = () => {
+                        console.error('Erreur lors de la sauvegarde de l\'article:', request.error);
+                        reject(request.error);
+                    };
+                    
+                    transaction.oncomplete = () => {
+                        console.log('Transaction d\'écriture terminée');
+                    };
+                    
+                    transaction.onerror = (event) => {
+                        console.error('Erreur de transaction lors de la sauvegarde:', event.target.error);
+                        reject(event.target.error);
+                    };
+                } catch (error) {
+                    console.error('Erreur lors de la création de la transaction:', error);
+                    reject(error);
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de la base de données pour saveArticle:', error);
+            throw error;
+        }
     }
 
     static async getArticles() {
-        const db = await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.getAll();
-
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = () => reject(request.error);
-        });
+        try {
+            // Initialise et obtient la référence à la base de données
+            const db = await this.initDB();
+            console.log('Base de données obtenue pour getArticles:', db);
+            
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = db.transaction([STORE_NAME], 'readonly');
+                    const store = transaction.objectStore(STORE_NAME);
+                    
+                    const request = store.getAll();
+                    
+                    request.onsuccess = function() {
+                        console.log(`${request.result.length} articles récupérés avec succès`);
+                        resolve(request.result);
+                    };
+                    
+                    request.onerror = function() {
+                        console.error('Erreur lors de la récupération des articles:', request.error);
+                        reject(request.error);
+                    };
+                } catch (error) {
+                    console.error('Erreur de transaction:', error);
+                    reject(error);
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de la base de données pour getArticles:', error);
+            throw error;
+        }
     }
 
     static async deleteArticle(id) {
-        const db = await this.initDB();
-        return new Promise((resolve, reject) => {
-            const transaction = db.transaction([STORE_NAME], 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.delete(id);
+        try {
+            const db = await this.initDB();
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = db.transaction([STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(STORE_NAME);
+                    const request = store.delete(id);
 
-            // @ts-ignore
-            request.onsuccess = () => resolve();
-            request.onerror = () => reject(request.error);
-        });
+                    // @ts-ignore
+                    request.onsuccess = () => {
+                        console.log('Article supprimé avec succès, ID local:', id);
+                        resolve();
+                    };
+                    
+                    request.onerror = () => {
+                        console.error('Erreur lors de la suppression de l\'article:', request.error);
+                        reject(request.error);
+                    };
+                    
+                    transaction.oncomplete = () => {
+                        console.log('Transaction de suppression terminée');
+                    };
+                    
+                    transaction.onerror = (event) => {
+                        console.error('Erreur de transaction lors de la suppression:', event.target.error);
+                        reject(event.target.error);
+                    };
+                } catch (error) {
+                    console.error('Erreur lors de la création de la transaction:', error);
+                    reject(error);
+                }
+            });
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de la base de données pour deleteArticle:', error);
+            throw error;
+        }
     }
 
     static async getPendingArticles() {
@@ -263,4 +377,56 @@ class ArticleDB {
             return false;
         }
     }
-} 
+}
+
+// Fonction pour s'assurer que la DB est initialisée
+async function ensureDBInitialized() {
+    if (!dbInstance) {
+        console.log('Base de données non initialisée, tentative d\'initialisation...');
+        try {
+            await ArticleDB.initDB();
+            return true;
+        } catch (error) {
+            console.error('Erreur lors de l\'initialisation de la DB:', error);
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Récupération des articles
+ * @returns {Promise<Array>} Liste des articles
+ */
+ArticleDB.getArticles = async function() {
+    try {
+        // Initialise et obtient la référence à la base de données
+        const db = await this.initDB();
+        console.log('Base de données obtenue pour getArticles:', db);
+        
+        return new Promise((resolve, reject) => {
+            try {
+                const transaction = db.transaction([STORE_NAME], 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                
+                const request = store.getAll();
+                
+                request.onsuccess = function() {
+                    console.log(`${request.result.length} articles récupérés avec succès`);
+                    resolve(request.result);
+                };
+                
+                request.onerror = function() {
+                    console.error('Erreur lors de la récupération des articles:', request.error);
+                    reject(request.error);
+                };
+            } catch (error) {
+                console.error('Erreur de transaction:', error);
+                reject(error);
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de la base de données pour getArticles:', error);
+        throw error;
+    }
+}; 

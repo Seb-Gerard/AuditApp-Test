@@ -1,6 +1,8 @@
 /// <reference lib="webworker" />
 
-const PREFIX = 'V1';
+/* global self */
+
+const PREFIX = 'V2';
 const urlsToCache = [ 
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
@@ -127,6 +129,9 @@ self.addEventListener('message', async (event) => {
                 timestamp: new Date().toISOString()
             });
         }
+    } else if (event.data.type === 'SKIP_WAITING') {
+        console.log('[Service Worker] Reçu skip_waiting, activation forcée');
+        self.skipWaiting();
     }
 });
 
