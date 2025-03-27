@@ -14,6 +14,7 @@ class ArticleManager {
       // Sur la page d'index, charger les articles
       if (this.articlesContainer) {
         try {
+          // Charger les articles depuis IndexedDB
           await this.loadArticles();
         } catch (error) {
           this.articlesContainer.innerHTML =
@@ -31,39 +32,70 @@ class ArticleManager {
   }
 
   setupEventListeners() {
-    // Configuration du formulaire d'articles (page create.php)
+    // Gestion du formulaire de création d'article (si présent)
     if (this.form) {
-      this.form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
+      // Ne pas intercepter les formulaires marqués pour soumission directe à la base de données
+      if (this.form.classList.contains("direct-submit")) {
+        return;
+      }
 
-        if (!title || !content) {
+      this.form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        // Récupérer les valeurs des champs
+        const titleInput = document.getElementById("title");
+        const contentInput = document.getElementById("content");
+
+        if (!titleInput || !contentInput) {
+          console.error("Champs de formulaire introuvables");
           return;
         }
 
-        const article = {
-          title: title,
-          content: content,
-          created_at: new Date().toISOString(),
-        };
+        const title = titleInput.value;
+        const content = contentInput.value;
+
+        if (!title || !content) {
+          alert("Veuillez remplir tous les champs obligatoires");
+          return;
+        }
+
+        // Désactiver le bouton d'envoi pour éviter les soumissions multiples
+        const submitButton = this.form.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.disabled = true;
+        }
 
         try {
-          // Sauvegarder l'article dans IndexedDB via ArticleDB
-          await ArticleDB.saveArticle(article);
+          // Sauvegarder l'article en local
+          const article = await ArticleDB.saveArticle({
+            title: title,
+            content: content,
+            created_at: new Date().toISOString(),
+          });
 
-          // Si en ligne, essayer de synchroniser immédiatement
+          console.log("Article enregistré localement avec ID:", article);
+
+          // Si l'appareil est en ligne, tenter de synchroniser immédiatement
           if (navigator.onLine) {
-            await ArticleDB.syncWithServer();
+            await ArticleDB.syncArticleWithServer({
+              id: article,
+              title: title,
+              content: content,
+              created_at: new Date().toISOString(),
+            });
           }
 
-          // Rediriger vers la liste des articles après l'enregistrement
+          // Rediriger vers la liste des articles
           window.location.href = "index.php?action=articles";
         } catch (error) {
+          console.error("Erreur lors de l'enregistrement de l'article:", error);
           alert(
-            "Erreur lors de la sauvegarde de l'article: " +
-              (error.message || "Erreur inconnue")
+            "Une erreur est survenue lors de l'enregistrement de l'article. Veuillez réessayer."
           );
+          // Réactiver le bouton d'envoi
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
         }
       });
     }

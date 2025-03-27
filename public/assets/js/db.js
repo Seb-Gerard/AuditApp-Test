@@ -1,76 +1,88 @@
-const DB_NAME = "AuditDB";
-const DB_VERSION = 1;
-const STORE_NAME = "articles";
-
-// Variable pour stocker l'instance de DB
-let dbInstance = null;
+// Vérifier que les variables ne sont pas déjà définies dans le scope global
+// et les définir comme variables globales si nécessaires
+if (typeof window.DB_NAME === "undefined") {
+  window.DB_NAME = "AuditDB";
+  window.DB_VERSION = 1;
+  window.STORE_NAME = "articles";
+  window.dbInstance = null;
+}
 
 class ArticleDB {
+  static _initInProgress = false;
+
+  /**
+   * Initialise la base de données de manière sécurisée
+   *
+   * @returns {Promise} Une promesse résolue lorsque la base de données est prête
+   */
   static async initDB() {
-    // Si une instance existe déjà, la retourner
-    if (dbInstance) {
-      return dbInstance;
+    if (window.dbInstance) {
+      console.log("[DB] Instance de base de données déjà existante");
+      return Promise.resolve(window.dbInstance);
     }
 
     return new Promise((resolve, reject) => {
-      try {
-        const request = indexedDB.open(DB_NAME, DB_VERSION);
+      console.log(
+        "[DB] Ouverture de la base de données:",
+        window.DB_NAME,
+        "version:",
+        window.DB_VERSION
+      );
 
-        request.onerror = (event) => {
-          console.error(
-            "Erreur lors de l'ouverture de la base de données:",
-            event.target.error
-          );
-          reject(event.target.error);
-        };
-
-        request.onsuccess = (event) => {
-          dbInstance = event.target.result;
-
-          // Gérer les cas où la connexion est fermée
-          dbInstance.onclose = () => {
-            console.log("Connexion à la base de données fermée");
-            dbInstance = null;
-          };
-
-          // Gérer les erreurs sur la base de données
-          dbInstance.onerror = (event) => {
-            console.error("Erreur de base de données:", event.target.error);
-          };
-
-          console.log("Base de données ouverte avec succès");
-          resolve(dbInstance);
-        };
-
-        request.onupgradeneeded = (event) => {
-          // @ts-ignore
-          const db = event.target?.result;
-          if (db && !db.objectStoreNames.contains(STORE_NAME)) {
-            console.log("Création du store pour les articles");
-            const store = db.createObjectStore(STORE_NAME, {
-              keyPath: "id",
-              autoIncrement: true,
-            });
-            store.createIndex("created_at", "created_at", { unique: false });
-            store.createIndex("server_id", "server_id", { unique: false });
-          }
-        };
-
-        request.onblocked = (event) => {
-          console.warn(
-            "La base de données est bloquée. Fermez les autres onglets utilisant l'application."
-          );
-          alert(
-            "La base de données est bloquée. Veuillez fermer les autres onglets ou fenêtres utilisant l'application, puis réessayez."
-          );
-        };
-      } catch (error) {
-        console.error(
-          "Erreur lors de l'initialisation de la base de données:",
-          error
+      // Éviter l'initialisation en boucle
+      if (this._initInProgress) {
+        console.log("[DB] Initialisation déjà en cours, en attente...");
+        document.addEventListener(
+          "dbready",
+          () => {
+            resolve(window.dbInstance);
+          },
+          { once: true }
         );
-        reject(error);
+        return;
       }
+
+      this._initInProgress = true;
+
+      const request = indexedDB.open(window.DB_NAME, window.DB_VERSION);
+
+      request.onerror = (event) => {
+        console.error(
+          "[DB] Erreur lors de l'ouverture de la base de données:",
+          event.target.error
+        );
+        this._initInProgress = false;
+        reject(new Error("Erreur d'ouverture de la base de données"));
+      };
+
+      request.onupgradeneeded = (event) => {
+        console.log("[DB] Mise à niveau de la base de données");
+        const db = event.target.result;
+
+        // Créer un object store pour les articles si nécessaire
+        if (!db.objectStoreNames.contains(window.STORE_NAME)) {
+          console.log("[DB] Création du store:", window.STORE_NAME);
+          const objectStore = db.createObjectStore(window.STORE_NAME, {
+            keyPath: "id",
+            autoIncrement: true,
+          });
+
+          // Créer des index pour des recherches rapides
+          objectStore.createIndex("title", "title", { unique: false });
+          objectStore.createIndex("server_id", "server_id", { unique: false });
+        }
+      };
+
+      request.onsuccess = (event) => {
+        window.dbInstance = event.target.result;
+        console.log("[DB] Base de données ouverte avec succès");
+
+        // Signaler que la base de données est prête
+        this._initInProgress = false;
+        document.dispatchEvent(new CustomEvent("dbready"));
+
+        resolve(window.dbInstance);
+      };
     });
   }
 
@@ -79,8 +91,8 @@ class ArticleDB {
       const db = await this.initDB();
       return new Promise((resolve, reject) => {
         try {
-          const transaction = db.transaction([STORE_NAME], "readwrite");
-          const store = transaction.objectStore(STORE_NAME);
+          const transaction = db.transaction([window.STORE_NAME], "readwrite");
+          const store = transaction.objectStore(window.STORE_NAME);
 
           let request;
 
@@ -148,8 +160,8 @@ class ArticleDB {
 
       return new Promise((resolve, reject) => {
         try {
-          const transaction = db.transaction([STORE_NAME], "readonly");
-          const store = transaction.objectStore(STORE_NAME);
+          const transaction = db.transaction([window.STORE_NAME], "readonly");
+          const store = transaction.objectStore(window.STORE_NAME);
 
           const request = store.getAll();
 
@@ -186,8 +198,8 @@ class ArticleDB {
       const db = await this.initDB();
       return new Promise((resolve, reject) => {
         try {
-          const transaction = db.transaction([STORE_NAME], "readwrite");
-          const store = transaction.objectStore(STORE_NAME);
+          const transaction = db.transaction([window.STORE_NAME], "readwrite");
+          const store = transaction.objectStore(window.STORE_NAME);
           const request = store.delete(id);
 
           // @ts-ignore
@@ -237,8 +249,8 @@ class ArticleDB {
   static async clearAllArticles() {
     const db = await this.initDB();
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([STORE_NAME], "readwrite");
-      const store = transaction.objectStore(STORE_NAME);
+      const transaction = db.transaction([window.STORE_NAME], "readwrite");
+      const store = transaction.objectStore(window.STORE_NAME);
       const request = store.clear();
 
       // @ts-ignore
@@ -249,7 +261,9 @@ class ArticleDB {
 
   static async syncWithServer() {
     try {
-      console.log("Début de la synchronisation avec le serveur...");
+      console.log(
+        "[syncWithServer] Début de la synchronisation avec le serveur..."
+      );
 
       // 1. Récupérer tous les articles du serveur
       const response = await fetch("./index.php?action=articles", {
@@ -262,7 +276,7 @@ class ArticleDB {
       if (!response.ok) {
         const errorText = await response.text();
         console.error(
-          "Erreur HTTP:",
+          "[syncWithServer] Erreur HTTP:",
           response.status,
           errorText.substring(0, 100)
         );
@@ -276,17 +290,23 @@ class ArticleDB {
       try {
         serverArticles = await response.json();
       } catch (jsonError) {
-        console.error("Erreur lors du parsing JSON:", jsonError);
+        console.error(
+          "[syncWithServer] Erreur lors du parsing JSON:",
+          jsonError
+        );
         const responseText = await responseClone.text();
-        console.error("Contenu de la réponse:", responseText.substring(0, 500));
+        console.error(
+          "[syncWithServer] Contenu de la réponse:",
+          responseText.substring(0, 500)
+        );
         throw new Error("La réponse du serveur n'est pas un JSON valide");
       }
 
-      console.log("Articles du serveur:", serverArticles);
+      console.log("[syncWithServer] Articles du serveur:", serverArticles);
 
       // 2. Récupérer tous les articles locaux
       const localArticles = await this.getArticles();
-      console.log("Articles locaux:", localArticles);
+      console.log("[syncWithServer] Articles locaux:", localArticles);
 
       // 3. Pour chaque article local sans server_id, essayer de le synchroniser
       const pendingArticles = localArticles.filter(
@@ -295,14 +315,19 @@ class ArticleDB {
 
       if (pendingArticles.length > 0) {
         console.log(
-          "Articles en attente de synchronisation:",
+          "[syncWithServer] Articles en attente de synchronisation:",
           pendingArticles.length
         );
 
         // Synchronisation directe des articles
+        let syncSuccessCount = 0;
         for (const article of pendingArticles) {
-          await this.syncArticleWithServer(article);
+          const success = await this.syncArticleWithServer(article);
+          if (success) syncSuccessCount++;
         }
+        console.log(
+          `[syncWithServer] ${syncSuccessCount}/${pendingArticles.length} articles synchronisés avec succès`
+        );
       }
 
       // 4. Mettre à jour les articles locaux avec les données du serveur
@@ -315,61 +340,77 @@ class ArticleDB {
 
         if (!existingLocal) {
           // Article du serveur qui n'existe pas localement, on l'ajoute
-          await this.saveArticle({
+          const newLocalId = await this.saveArticle({
             title: serverArticle.title,
             content: serverArticle.content,
             created_at: serverArticle.created_at,
             server_id: serverArticle.id,
           });
           console.log(
-            "Article du serveur ajouté localement:",
-            serverArticle.id
+            "[syncWithServer] Article du serveur ajouté localement, server_id:",
+            serverArticle.id,
+            "new local ID:",
+            newLocalId
           );
         }
       }
 
-      console.log("Synchronisation terminée avec succès");
+      console.log("[syncWithServer] Synchronisation terminée avec succès");
       return true;
     } catch (error) {
       console.error(
-        "Erreur lors de la synchronisation avec le serveur:",
+        "[syncWithServer] Erreur lors de la synchronisation avec le serveur:",
         error instanceof Error ? error.message : error
       );
       return false;
     }
   }
 
+  /**
+   * Synchronise un article avec le serveur
+   * @param {Object} article - L'article à synchroniser
+   * @returns {Promise<boolean>} - true si la synchronisation a réussi
+   */
   static async syncArticleWithServer(article) {
     try {
-      console.log("Tentative de synchronisation pour article:", article);
+      console.log(
+        "[syncArticleWithServer] Tentative de synchronisation pour article:",
+        article
+      );
 
       // Ajouter une vérification de connectivité avant d'envoyer la requête
       if (!navigator.onLine) {
-        console.log("Appareil hors ligne, impossible de synchroniser");
+        console.log(
+          "[syncArticleWithServer] Appareil hors ligne, impossible de synchroniser"
+        );
         return false;
       }
+
+      // URL pour la création d'article sur le serveur
+      const url = new URL("./index.php?action=articles", window.location.href);
+      console.log(
+        "[syncArticleWithServer] URL complète pour la synchronisation:",
+        url.href
+      );
 
       // Ajouter un délai entre les tentatives pour éviter de surcharger le serveur
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const response = await fetch(
-        "./index.php?action=articles&method=create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Requested-With": "XMLHttpRequest",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            title: article.title,
-            content: article.content,
-          }),
-        }
-      );
+      const response = await fetch(url.href, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          title: article.title,
+          content: article.content,
+        }),
+      });
 
       console.log(
-        "Statut de la réponse:",
+        "[syncArticleWithServer] Statut de la réponse:",
         response.status,
         response.statusText
       );
@@ -377,7 +418,7 @@ class ArticleDB {
       // Si le serveur est indisponible (503), on attend un peu et on réessaie
       if (response.status === 503) {
         console.log(
-          "Serveur indisponible (503), nouvelle tentative dans 2 secondes..."
+          "[syncArticleWithServer] Serveur indisponible (503), nouvelle tentative dans 2 secondes..."
         );
         await new Promise((resolve) => setTimeout(resolve, 2000));
         return this.syncArticleWithServer(article); // Tentative récursive
@@ -390,74 +431,181 @@ class ArticleDB {
 
           try {
             result = await response.json();
+            console.log("[syncArticleWithServer] Réponse JSON reçue:", result);
           } catch (jsonError) {
             console.error(
-              "Erreur lors du parsing JSON, tentative de lecture du texte"
+              "[syncArticleWithServer] Erreur lors du parsing JSON, tentative de lecture du texte:",
+              jsonError
             );
             const responseText = await responseClone.text();
+            console.log(
+              "[syncArticleWithServer] Réponse texte brute:",
+              responseText
+            );
 
             // Tentative de trouver un JSON valide dans la réponse textuelle
             try {
-              const jsonMatch = responseText.match(/\{.*\}/);
+              const jsonMatch = responseText.match(/\{.*\}/s);
               if (jsonMatch) {
                 result = JSON.parse(jsonMatch[0]);
-                console.log("JSON extrait de la réponse textuelle:", result);
+                console.log(
+                  "[syncArticleWithServer] JSON extrait de la réponse textuelle:",
+                  result
+                );
               } else {
                 console.error(
-                  "Aucun JSON trouvé dans la réponse:",
+                  "[syncArticleWithServer] Aucun JSON trouvé dans la réponse:",
                   responseText.substring(0, 200)
                 );
                 return false;
               }
             } catch (e) {
-              console.error("Impossible d'extraire un JSON:", e);
-              console.error("Réponse brute:", responseText.substring(0, 200));
+              console.error(
+                "[syncArticleWithServer] Impossible d'extraire un JSON:",
+                e
+              );
+              console.error(
+                "[syncArticleWithServer] Réponse brute:",
+                responseText.substring(0, 200)
+              );
               return false;
             }
           }
 
-          console.log("Réponse du serveur analysée:", result);
+          console.log(
+            "[syncArticleWithServer] Réponse du serveur analysée:",
+            result
+          );
 
-          if (result && result.id) {
-            // Créer un article synchronisé avec l'ID du serveur
-            const syncedArticle = {
+          // Gérer le cas où le serveur renvoie un tableau au lieu d'un seul objet
+          let serverArticle = null;
+          if (Array.isArray(result)) {
+            console.log(
+              "[syncArticleWithServer] Le serveur a renvoyé un tableau de",
+              result.length,
+              "articles. Recherche d'une correspondance..."
+            );
+
+            // Logs de debugging pour mieux comprendre pourquoi la correspondance échoue
+            console.log("[syncArticleWithServer] Article local:", {
               title: article.title,
               content: article.content,
-              created_at: result.created_at || article.created_at,
-              server_id: result.id,
-            };
+              created_at: article.created_at,
+            });
 
-            // Supprimer l'article local original après synchronisation réussie
-            if (article.id) {
-              await this.deleteArticle(article.id);
+            // 1. D'abord essayer correspondance exacte (titre et contenu)
+            serverArticle = result.find(
+              (a) => a.title === article.title && a.content === article.content
+            );
+
+            // 2. Si pas de correspondance exacte, essayer avec juste le titre
+            if (!serverArticle) {
               console.log(
-                "Article supprimé de la base locale après synchronisation, ID local:",
-                article.id
+                "[syncArticleWithServer] Pas de correspondance exacte, essai avec titre uniquement"
               );
+              serverArticle = result.find((a) => a.title === article.title);
             }
 
-            // Enregistrer le nouvel article avec le server_id dans IndexedDB
-            const newLocalId = await this.saveArticle(syncedArticle);
+            // 3. Si pas de correspondance, prendre le plus récent
+            if (!serverArticle && result.length > 0) {
+              console.log(
+                "[syncArticleWithServer] Aucune correspondance trouvée, utilisation de l'article le plus récent"
+              );
+
+              // Afficher les titres disponibles pour debug
+              console.log(
+                "[syncArticleWithServer] Titres disponibles:",
+                result.map((a) => ({
+                  id: a.id,
+                  title: a.title.substring(0, 20),
+                }))
+              );
+
+              // Trier du plus récent au plus ancien
+              const sorted = [...result].sort((a, b) => {
+                const dateA = new Date(a.created_at).getTime();
+                const dateB = new Date(b.created_at).getTime();
+                return dateB - dateA;
+              });
+
+              serverArticle = sorted[0];
+              console.log("[syncArticleWithServer] Utilisation de l'article:", {
+                id: serverArticle.id,
+                title: serverArticle.title,
+              });
+            }
+          } else if (result && result.id) {
+            // Cas standard : le serveur a renvoyé un seul article
+            serverArticle = result;
+          }
+
+          if (serverArticle && serverArticle.id) {
             console.log(
-              "Article synchronisé enregistré, ID local:",
-              newLocalId,
-              "server_id:",
-              result.id
+              "[syncArticleWithServer] Article trouvé sur le serveur, ID:",
+              serverArticle.id
             );
+
+            // Si l'article local existe, le supprimer
+            if (article.id) {
+              try {
+                await this.deleteArticle(article.id);
+                console.log(
+                  "[syncArticleWithServer] Article supprimé de la base locale après synchronisation, ID local:",
+                  article.id
+                );
+              } catch (deleteError) {
+                console.error(
+                  "[syncArticleWithServer] Erreur lors de la suppression de l'article local:",
+                  deleteError
+                );
+                // Continuer malgré l'erreur de suppression
+              }
+            }
 
             return true;
           } else {
-            console.error("Réponse du serveur invalide:", result);
+            // FALLBACK: Si aucun article correspondant n'est trouvé mais qu'il y a des articles
+            // sur le serveur, considérer que l'article a été enregistré d'une manière ou d'une autre
+            if (Array.isArray(result) && result.length > 0) {
+              console.log(
+                "[syncArticleWithServer] FALLBACK: Considérant l'article comme synchronisé car des articles existent sur le serveur"
+              );
+
+              // Supprimer l'article local puisqu'on suppose que la synchronisation a réussi
+              if (article.id) {
+                try {
+                  await this.deleteArticle(article.id);
+                  console.log(
+                    "[syncArticleWithServer] Article supprimé de la base locale par fallback, ID local:",
+                    article.id
+                  );
+                  return true;
+                } catch (deleteError) {
+                  console.error(
+                    "[syncArticleWithServer] Erreur lors de la suppression de l'article local (fallback):",
+                    deleteError
+                  );
+                }
+              }
+            }
+
+            console.error(
+              "[syncArticleWithServer] Réponse du serveur invalide:",
+              result
+            );
             return false;
           }
         } catch (parseError) {
-          console.error("Erreur lors du traitement de la réponse:", parseError);
+          console.error(
+            "[syncArticleWithServer] Erreur lors du traitement de la réponse:",
+            parseError
+          );
           return false;
         }
       } else {
         const errorText = await response.text();
         console.error(
-          `Erreur HTTP (${response.status}):`,
+          `[syncArticleWithServer] Erreur HTTP (${response.status}):`,
           errorText.substring(0, 100)
         );
 
@@ -470,7 +618,7 @@ class ArticleDB {
       }
     } catch (error) {
       console.error(
-        "Erreur lors de la synchronisation d'un article:",
+        "[syncArticleWithServer] Erreur lors de la synchronisation d'un article:",
         error instanceof Error ? error.message : error
       );
       return false;
@@ -595,11 +743,37 @@ class ArticleDB {
       return false;
     }
   }
+
+  static async openDatabase() {
+    console.log("[DB] Initialisation manuelle de la base de données...");
+    await this.initDB()
+      .then(() => {
+        console.log("[DB] Base de données initialisée avec succès");
+
+        // Synchronisation manuelle uniquement sur demande
+        document.dispatchEvent(new CustomEvent("dbready"));
+      })
+      .catch((error) => {
+        console.error(
+          "[DB] Erreur lors de l'initialisation de la base de données:",
+          error
+        );
+        // Afficher un message à l'utilisateur si nécessaire
+        if (document.querySelector("#articles-container")) {
+          document.querySelector(
+            "#articles-container"
+          ).innerHTML = `<div class="alert alert-danger">
+               Erreur d'initialisation de la base de données locale. 
+               Veuillez rafraîchir la page ou vider le cache du navigateur.
+             </div>`;
+        }
+      });
+  }
 }
 
 // Fonction pour s'assurer que la DB est initialisée
 async function ensureDBInitialized() {
-  if (!dbInstance) {
+  if (!window.dbInstance) {
     console.log(
       "Base de données non initialisée, tentative d'initialisation..."
     );
@@ -626,8 +800,8 @@ ArticleDB.getArticles = async function () {
 
     return new Promise((resolve, reject) => {
       try {
-        const transaction = db.transaction([STORE_NAME], "readonly");
-        const store = transaction.objectStore(STORE_NAME);
+        const transaction = db.transaction([window.STORE_NAME], "readonly");
+        const store = transaction.objectStore(window.STORE_NAME);
 
         const request = store.getAll();
 

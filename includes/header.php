@@ -1,3 +1,9 @@
+<?php
+// Démarrer la session si elle n'est pas déjà démarrée
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -31,21 +37,39 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="index.php">
-                <img src="public/assets/img/Logo_CNPP_250.jpg" alt="Logo" width="150">
-            </a>
-            <div class="title">
-                <h1>Application Audit</h1>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a class="navbar-brand" href="index.php">
+                    <img src="public/assets/img/Logo_CNPP_250.jpg" alt="Logo" width="150">
+                </a>
+                <div class="title flex-grow-1 text-center">
+                    <h1>Application Audit</h1>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
             </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Accueil</a>
-                    </li>
-                </ul>
+            
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo isset($_GET['action']) && $_GET['action'] === 'articles' ? 'active' : ''; ?>" 
+                               href="index.php?action=articles">
+                                <i class="fas fa-newspaper"></i> Articles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo isset($_GET['action']) && $_GET['action'] === 'audits' ? 'active' : ''; ?>" 
+                               href="index.php?action=audits">
+                                <i class="fas fa-clipboard-check"></i> Audits
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>

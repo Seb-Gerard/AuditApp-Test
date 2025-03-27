@@ -1,150 +1,83 @@
-<!-- Ce fichier est inclus par le contrôleur, qui a déjà chargé le header -->
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Articles</h1>
-        <div>
-            <button id="syncButton" class="btn btn-primary me-2" style="display: none;">
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                Synchroniser les articles hors ligne
-            </button>
-            <a href="/Audit/index.php?action=create" class="btn btn-success">Nouvel article</a>
-        </div>
-    </div>
+<?php
+$pageTitle = "Gestion des articles";
+include_once __DIR__ . '/../../includes/header.php';
 
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success">
-            <?php 
-            echo $_SESSION['success'];
-            unset($_SESSION['success']);
-            ?>
-        </div>
-    <?php endif; ?>
+// Récupérer les articles directement de la base de données
+$articleModel = new Article();
+$articles = $articleModel->getAll();
+?>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger">
-            <?php 
-            echo $_SESSION['error'];
-            unset($_SESSION['error']);
-            ?>
-        </div>
-    <?php endif; ?>
-
-    <div id="syncSuccess" class="alert alert-success" style="display: none;">
-        Synchronisation réussie!
-    </div>
-
-    <div id="articlesContainer" class="row">
-        <?php foreach ($articles as $article): ?>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><?php echo htmlspecialchars($article['title']); ?></h5>
-                        <p class="card-text"><?php echo nl2br(htmlspecialchars($article['content'])); ?></p>
-                        <p class="card-text"><small class="text-muted">Créé le: <?php echo $article['created_at']; ?></small></p>
+<div class="container mt-5 articles-page">
+    <h2 class="mb-4">Gestion des articles</h2>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="h5 mb-0">Articles</h3>
+                    <div>
+                        <a href="index.php?action=articles&display=create" class="btn btn-sm btn-primary me-2">
+                            <i class="fas fa-plus"></i> Nouvel article
+                        </a>
+                        <button id="sync-button" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-sync"></i> Synchroniser
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="articles-list">
+                        <?php if (empty($articles)): ?>
+                            <p class="text-center text-muted">Aucun article disponible.</p>
+                        <?php else: ?>
+                            <?php foreach ($articles as $article): ?>
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><?= htmlspecialchars($article['title']) ?></h5>
+                                        <p class="card-text"><?= nl2br(htmlspecialchars($article['content'])) ?></p>
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Créé le <?= date('d/m/Y H:i', strtotime($article['created_at'])) ?>
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
-        <?php endforeach; ?>
+        </div>
     </div>
 </div>
 
-<script src="/Audit/js/db.js"></script>
+<!-- Inclusion du Service Worker uniquement -->
 <script>
-    // Vérifier s'il y a des articles en attente de synchronisation
-    async function checkPendingArticles() {
-        try {
-            // D'abord, récupérer les articles localement
-            const articles = await ArticleDB.getArticles();
-            console.log('Articles stockés localement:', articles);
-            
-            const pendingArticles = articles.filter(article => !article.server_id);
-            console.log('Articles en attente:', pendingArticles.length);
-            
-            const syncButton = document.getElementById('syncButton');
-            syncButton.style.display = pendingArticles.length > 0 ? 'inline-block' : 'none';
-            
-            // Si nous sommes en ligne et qu'il y a des articles en attente, tenter de les synchroniser
-            if (navigator.onLine && pendingArticles.length > 0) {
-                try {
-                    // Synchroniser avec le serveur, mais ne pas bloquer l'affichage
-                    setTimeout(async () => {
-                        try {
-                            for (const article of pendingArticles) {
-                                await ArticleDB.syncArticleWithServer(article);
-                            }
-                            // Vérifier à nouveau après la synchronisation
-                            const remainingPending = (await ArticleDB.getArticles())
-                                .filter(article => !article.server_id);
-                            syncButton.style.display = remainingPending.length > 0 ? 'inline-block' : 'none';
-                        } catch (syncError) {
-                            console.error('Erreur lors de la synchronisation automatique:', syncError);
-                        }
-                    }, 1000);
-                } catch (error) {
-                    console.error('Erreur lors de la synchronisation:', error);
-                }
-            }
-            
-            return pendingArticles.length > 0;
-        } catch (error) {
-            console.error('Erreur lors de la vérification des articles:', error);
-            return false;
-        }
-    }
+// Initialisation du service worker (s'il est supporté)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./sw.js")
+      .then((registration) => {
+        console.log("Service Worker enregistré avec succès:", registration);
+      })
+      .catch((error) => {
+        console.log("Échec de l'enregistrement du Service Worker:", error);
+      });
+  });
+}
+</script>
 
-    // Gérer la synchronisation manuelle
-    document.getElementById('syncButton').addEventListener('click', async () => {
-        const button = document.getElementById('syncButton');
-        const spinner = button.querySelector('.spinner-border');
-        
-        try {
-            button.disabled = true;
-            spinner.classList.remove('d-none');
-
-            // Demander la synchronisation au Service Worker
-            if ('serviceWorker' in navigator) {
-                const registration = await navigator.serviceWorker.ready;
-                await registration.sync.register('sync-articles');
-                
-                // Afficher un message de confirmation
-                const syncSuccess = document.getElementById('syncSuccess');
-                syncSuccess.style.display = 'block';
-                
-                // Cacher le message après 3 secondes
-                setTimeout(() => {
-                    syncSuccess.style.display = 'none';
-                }, 3000);
-                
-                // Rafraîchir la page après un court délai
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            }
-        } catch (error) {
-            console.error('Erreur lors de la synchronisation:', error);
-            alert('Erreur lors de la synchronisation');
-        } finally {
-            setTimeout(() => {
-                button.disabled = false;
-                spinner.classList.add('d-none');
-            }, 1000);
-        }
-    });
-
-    // Écouter les messages du Service Worker pour la synchronisation
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.addEventListener('message', (event) => {
-            if (event.data && event.data.type === 'SYNC_COMPLETED' && event.data.success) {
-                console.log('Synchronisation terminée avec succès');
-                window.location.reload(); // Recharger la page pour afficher les nouveaux articles
-            }
+<!-- Synchronisation manuelle uniquement lorsque le bouton est cliqué -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const syncButton = document.getElementById('sync-button');
+    if (syncButton) {
+        syncButton.addEventListener('click', function() {
+            // Rediriger vers la page actuelle pour rafraîchir les articles
+            window.location.reload();
         });
     }
+});
+</script>
 
-    // Vérifier les articles en attente au chargement de la page
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.ready.then(() => {
-            checkPendingArticles();
-        });
-    }
-</script> 
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?> 
