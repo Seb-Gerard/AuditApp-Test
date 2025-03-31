@@ -14,6 +14,48 @@ $additionalScripts = [
 include_once __DIR__ . '/includes/header.php';
 ?>
 
+<!-- Préchargement forcé de db.js -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Forcer le téléchargement de db.js avant d'utiliser l'application
+    const dbScriptUrl = 'public/assets/js/db.js';
+    
+    // Fonction pour vérifier si ArticleDB est défini
+    function checkArticleDB() {
+        if (typeof ArticleDB !== 'undefined') {
+            console.log('ArticleDB est correctement chargé!');
+            // Déclencher un événement personnalisé pour indiquer que ArticleDB est prêt
+            document.dispatchEvent(new Event('articledb_ready'));
+        } else {
+            console.warn('ArticleDB n\'est toujours pas défini, tentative de rechargement...');
+            // Tenter de charger le script manuellement
+            loadScript(dbScriptUrl);
+        }
+    }
+    
+    // Fonction pour charger dynamiquement un script
+    function loadScript(url) {
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = url;
+            script.onload = () => {
+                console.log(`Script ${url} chargé avec succès`);
+                setTimeout(checkArticleDB, 500); // Vérifier après un court délai
+                resolve();
+            };
+            script.onerror = (error) => {
+                console.error(`Erreur lors du chargement de ${url}:`, error);
+                reject(error);
+            };
+            document.head.appendChild(script);
+        });
+    }
+    
+    // Vérifier d'abord si ArticleDB est déjà défini
+    setTimeout(checkArticleDB, 500);
+});
+</script>
+
 <div class="container mt-5">
     <div class="alert alert-warning" id="offlineAlert">
         <h4 class="alert-heading">Mode hors ligne</h4>
@@ -189,30 +231,65 @@ include_once __DIR__ . '/includes/header.php';
                     }
                 });
                 
-                // Charger les articles immédiatement
-                loadArticles();
+                // Attendre que ArticleDB soit prêt avant de charger les articles
+                document.addEventListener('articledb_ready', function() {
+                    console.log('ArticleDB est prêt, chargement des articles...');
+                    loadArticles();
+                }, { once: true });
+                
+                // Vérifier si ArticleDB est déjà prêt
+                if (typeof ArticleDB !== 'undefined') {
+                    console.log('ArticleDB déjà prêt, chargement des articles...');
+                    loadArticles();
+                }
             })
             .catch(error => {
                 console.error('Erreur d\'enregistrement du Service Worker:', error);
                 // Malgré l'erreur, tenter de charger les articles quand même
-                loadArticles();
+                document.addEventListener('articledb_ready', function() {
+                    loadArticles();
+                }, { once: true });
             });
     } else {
         console.warn('Les Service Workers ne sont pas supportés par ce navigateur.');
         // Charger les articles même sans Service Worker
-        loadArticles();
+        document.addEventListener('articledb_ready', function() {
+            loadArticles();
+        }, { once: true });
     }
 
     // Charger les articles stockés localement
     async function loadArticles() {
         try {
             console.log('Tentative de chargement des articles depuis IndexedDB...');
+            
             // Vérifier que ArticleDB est bien défini
             if (typeof ArticleDB === 'undefined') {
-                console.error('ArticleDB n\'est pas défini!');
-                document.getElementById('articlesContainer').innerHTML = 
-                    '<div class="col-12"><p class="text-danger">Erreur: La base de données n\'est pas disponible</p></div>';
-                return;
+                console.warn("ArticleDB n'est pas encore disponible, attente en cours...");
+                
+                // Attendre que ArticleDB soit prêt
+                await new Promise((resolve, reject) => {
+                    if (typeof ArticleDB !== 'undefined') {
+                        resolve();
+                    } else {
+                        const timeoutId = setTimeout(() => {
+                            document.removeEventListener('articledb_ready', readyHandler);
+                            reject(new Error("ArticleDB n'est pas disponible après le timeout"));
+                        }, 5000);
+                        
+                        const readyHandler = () => {
+                            clearTimeout(timeoutId);
+                            resolve();
+                        };
+                        
+                        document.addEventListener('articledb_ready', readyHandler, { once: true });
+                    }
+                });
+                
+                // Vérifier encore une fois après l'attente
+                if (typeof ArticleDB === 'undefined') {
+                    throw new Error("ArticleDB n'est toujours pas défini après l'attente");
+                }
             }
             
             const articles = await ArticleDB.getArticles();
@@ -283,6 +360,31 @@ include_once __DIR__ . '/includes/header.php';
         const content = document.getElementById('content').value;
 
         try {
+            // S'assurer que ArticleDB est défini
+            if (typeof ArticleDB === 'undefined') {
+                console.warn("ArticleDB n'est pas encore disponible, attente en cours...");
+                
+                // Retarder la soumission jusqu'à ce que ArticleDB soit prêt
+                const waitForArticleDB = () => {
+                    return new Promise((resolve) => {
+                        if (typeof ArticleDB !== 'undefined') {
+                            resolve();
+                        } else {
+                            document.addEventListener('articledb_ready', resolve, { once: true });
+                            
+                            // Timeout de sécurité
+                            setTimeout(() => {
+                                document.removeEventListener('articledb_ready', resolve);
+                                alert("Impossible de sauvegarder l'article: ArticleDB n'a pas pu être chargé.");
+                                reject(new Error("ArticleDB non disponible après timeout"));
+                            }, 5000);
+                        }
+                    });
+                };
+                
+                await waitForArticleDB();
+            }
+            
             await ArticleDB.saveArticle({
                 title,
                 content,
@@ -306,7 +408,7 @@ include_once __DIR__ . '/includes/header.php';
             }
         } catch (error) {
             console.error('Erreur lors de la sauvegarde:', error);
-            alert('Erreur lors de la sauvegarde de l\'article');
+            alert('Erreur lors de la sauvegarde de l\'article: ' + (error.message || 'Erreur inconnue'));
         }
     });
 
@@ -326,7 +428,26 @@ include_once __DIR__ . '/includes/header.php';
             
             // Vérifier la disponibilité d'ArticleDB
             if (typeof ArticleDB === 'undefined') {
-                throw new Error('ArticleDB n\'est pas disponible');
+                console.warn("ArticleDB n'est pas encore disponible, attente en cours...");
+                
+                // Attendre que ArticleDB soit prêt
+                await new Promise((resolve, reject) => {
+                    if (typeof ArticleDB !== 'undefined') {
+                        resolve();
+                    } else {
+                        const timeoutId = setTimeout(() => {
+                            document.removeEventListener('articledb_ready', readyHandler);
+                            reject(new Error("ArticleDB n'est pas disponible après le timeout"));
+                        }, 5000);
+                        
+                        const readyHandler = () => {
+                            clearTimeout(timeoutId);
+                            resolve();
+                        };
+                        
+                        document.addEventListener('articledb_ready', readyHandler, { once: true });
+                    }
+                });
             }
             
             // Utiliser directement la synchronisation manuelle pour plus de fiabilité
@@ -368,8 +489,26 @@ include_once __DIR__ . '/includes/header.php';
             
             // Vérifier la disponibilité d'ArticleDB
             if (typeof ArticleDB === 'undefined') {
-                console.error('ArticleDB n\'est pas disponible pour la synchronisation');
-                return false;
+                console.warn("ArticleDB n'est pas encore disponible, attente en cours...");
+                
+                // Attendre que ArticleDB soit prêt
+                await new Promise((resolve, reject) => {
+                    if (typeof ArticleDB !== 'undefined') {
+                        resolve();
+                    } else {
+                        const timeoutId = setTimeout(() => {
+                            document.removeEventListener('articledb_ready', readyHandler);
+                            reject(new Error("ArticleDB n'est pas disponible après le timeout"));
+                        }, 5000);
+                        
+                        const readyHandler = () => {
+                            clearTimeout(timeoutId);
+                            resolve();
+                        };
+                        
+                        document.addEventListener('articledb_ready', readyHandler, { once: true });
+                    }
+                });
             }
             
             // Obtenir tous les articles locaux

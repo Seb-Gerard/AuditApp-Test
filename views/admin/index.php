@@ -232,7 +232,7 @@
         <div class="tab-pane fade" id="nav-points" role="tabpanel" aria-labelledby="nav-points-tab">
             <div class="card">
                 <div class="card-body">
-                    <form action="index.php?controller=admin&method=createVigilancePoint" method="POST">
+                    <form action="index.php?controller=admin&method=createVigilancePoint" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="vigilance_category" class="form-label">Catégorie</label>
                             <select class="form-select" id="vigilance_category" required>
@@ -257,6 +257,11 @@
                                 <label for="vigilance_description" class="form-label">Description</label>
                                 <textarea class="form-control" id="vigilance_description" name="description" rows="3"></textarea>
                             </div>
+                            <div class="mb-3">
+                                <label for="vigilance_image" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="vigilance_image" name="image" accept="image/*">
+                                <small class="form-text text-muted">Formats acceptés : JPG, PNG, GIF. Taille max : 2Mo</small>
+                            </div>
                             <button type="submit" class="btn btn-primary">Ajouter un point de vigilance</button>
                         </div>
                     </form>
@@ -269,6 +274,13 @@
                             <?php foreach ($pointsVigilance as $point): ?>
                                 <li class="list-group-item d-flex justify-content-between align-items-start" data-subcategory="<?= $point['sous_categorie_id'] ?>">
                                     <div class="ms-2 me-auto">
+                                        <?php if (!empty($point['image'])): ?>
+                                            <div class="point-image mb-2">
+                                                <img src="public/uploads/points_vigilance/<?= htmlspecialchars($point['image']) ?>" 
+                                                     alt="<?= htmlspecialchars($point['nom']) ?>" 
+                                                     class="img-thumbnail" style="max-width: 100px;">
+                                            </div>
+                                        <?php endif; ?>
                                         <strong><?= htmlspecialchars($point['nom']) ?></strong>
                                         <br><small class="text-muted">
                                             <?= htmlspecialchars($point['categorie_nom']) ?> > <?= htmlspecialchars($point['sous_categorie_nom']) ?>
@@ -279,7 +291,7 @@
                                     </div>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-outline-primary" 
-                                                onclick="editPoint(<?= $point['id'] ?>, <?= $point['sous_categorie_id'] ?>, '<?= addslashes($point['nom']) ?>', '<?= addslashes($point['description']) ?>')">
+                                                onclick="editPoint(<?= $point['id'] ?>, <?= $point['sous_categorie_id'] ?>, '<?= addslashes($point['nom']) ?>', '<?= addslashes($point['description']) ?>', '<?= addslashes($point['image'] ?? '') ?>')">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger" 
@@ -300,7 +312,7 @@
                                     <h5 class="modal-title">Modifier le point de vigilance</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <form action="index.php?controller=admin&method=updateVigilancePoint" method="POST">
+                                <form action="index.php?controller=admin&method=updateVigilancePoint" method="POST" enctype="multipart/form-data">
                                     <div class="modal-body">
                                         <input type="hidden" id="edit_point_id" name="id">
                                         <div class="mb-3">
@@ -324,6 +336,12 @@
                                         <div class="mb-3">
                                             <label for="edit_point_description" class="form-label">Description</label>
                                             <textarea class="form-control" id="edit_point_description" name="description" rows="3"></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit_point_image" class="form-label">Image</label>
+                                            <div id="edit_point_image_preview" class="mb-2"></div>
+                                            <input type="file" class="form-control" id="edit_point_image" name="image" accept="image/*">
+                                            <small class="form-text text-muted">Formats acceptés : JPG, PNG, GIF. Taille max : 2Mo</small>
                                         </div>
                                     </div>
                                     <div class="modal-footer">

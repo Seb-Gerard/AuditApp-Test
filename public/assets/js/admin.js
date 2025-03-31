@@ -76,7 +76,7 @@ function confirmDeleteSousCategorie(id, nom) {
 }
 
 // Fonctions pour la gestion des points de vigilance
-function editPoint(id, sousCategorieId, nom, description) {
+function editPoint(id, sous_categorie_id, nom, description, image) {
   const idElement = document.getElementById("edit_point_id");
   const nomElement = document.getElementById("edit_point_nom");
   const descElement = document.getElementById("edit_point_description");
@@ -88,37 +88,63 @@ function editPoint(id, sousCategorieId, nom, description) {
 
     // Récupérer la catégorie parente de la sous-catégorie
     fetch(
-      `index.php?controller=admin&method=getSousCategorieDetails&id=${sousCategorieId}`
+      "index.php?controller=admin&method=getSousCategorieDetails&id=" +
+        sous_categorie_id
     )
       .then((response) => response.json())
       .then((data) => {
-        const categoryElement = document.getElementById("edit_point_category");
-        if (categoryElement) {
-          categoryElement.value = data.categorie_id;
-        }
-        // Charger les sous-catégories de cette catégorie
-        return fetch(
-          `index.php?controller=admin&method=getSousCategories&categorie_id=${data.categorie_id}`
-        );
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        const subcategorySelect = document.getElementById(
-          "edit_point_subcategory"
-        );
-        if (subcategorySelect) {
-          subcategorySelect.innerHTML =
-            '<option value="">Sélectionnez une sous-catégorie</option>';
-          data.forEach((sousCateg) => {
-            subcategorySelect.innerHTML += `
-                    <option value="${sousCateg.id}">${sousCateg.nom}</option>
-                `;
-          });
-          subcategorySelect.value = sousCategorieId;
+        if (data.categorie_id) {
+          const categoryElement = document.getElementById(
+            "edit_point_category"
+          );
+          if (categoryElement) {
+            categoryElement.value = data.categorie_id;
+            // Déclencher le changement pour charger les sous-catégories
+            const event = new Event("change");
+            categoryElement.dispatchEvent(event);
+
+            // Attendre un peu que les sous-catégories soient chargées
+            setTimeout(() => {
+              const subcategoryElement = document.getElementById(
+                "edit_point_subcategory"
+              );
+              if (subcategoryElement) {
+                subcategoryElement.value = sous_categorie_id;
+              }
+            }, 300);
+          }
         }
       });
 
-    showModal("editPointModal");
+    // Afficher l'image existante s'il y en a une
+    const imagePreview = document.getElementById("edit_point_image_preview");
+    if (imagePreview) {
+      imagePreview.innerHTML = "";
+
+      if (image) {
+        const img = document.createElement("img");
+        img.src = "public/uploads/points_vigilance/" + image;
+        img.alt = "Image existante";
+        img.className = "img-thumbnail";
+        img.style.maxWidth = "200px";
+        imagePreview.appendChild(img);
+      }
+    }
+
+    // Afficher le modal
+    try {
+      const modalElement = document.getElementById("editPointModal");
+      if (modalElement && typeof bootstrap !== "undefined" && bootstrap.Modal) {
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+      } else {
+        showModal("editPointModal");
+      }
+    } catch (e) {
+      console.error("Erreur lors de l'affichage du modal:", e);
+      // Fallback au cas où bootstrap n'est pas disponible
+      showModal("editPointModal");
+    }
   }
 }
 
@@ -379,7 +405,7 @@ function initAdminPanel() {
                   point.sous_categorie_id
                 }, '${point.nom.replace(/'/g, "\\'")}', '${(
                   point.description || ""
-                ).replace(/'/g, "\\'")}')">
+                ).replace(/'/g, "\\'")}', '${point.image}')">
                                             <i class="fas fa-edit"></i>
                                         </button>
                                         <button type="button" class="btn btn-sm btn-outline-danger" 

@@ -78,17 +78,47 @@ class AdminController {
             $sous_categorie_id = $_POST['sous_categorie_id'] ?? '';
             $nom = $_POST['nom'] ?? '';
             $description = $_POST['description'] ?? '';
+            $image = null;
+            
+            // Traitement de l'image si elle est présente
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $upload_dir = 'public/uploads/points_vigilance/';
+                
+                // Créer le répertoire s'il n'existe pas
+                if (!file_exists($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+                
+                // Générer un nom de fichier unique pour éviter les conflits
+                $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $file_name = uniqid('point_') . '.' . $file_extension;
+                $target_file = $upload_dir . $file_name;
+                
+                // Déplacer le fichier téléchargé vers le répertoire cible
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                    $image = $file_name;
+                } else {
+                    $_SESSION['error'] = "Erreur lors de l'upload de l'image.";
+                    header('Location: index.php?controller=admin&tab=points');
+                    exit;
+                }
+            }
             
             if (!empty($sous_categorie_id) && !empty($nom)) {
                 $this->pointVigilanceModel->create([
                     'sous_categorie_id' => $sous_categorie_id,
                     'nom' => $nom,
-                    'description' => $description
+                    'description' => $description,
+                    'image' => $image
                 ]);
+                $_SESSION['success'] = "Le point de vigilance a été créé avec succès.";
                 header('Location: index.php?controller=admin&tab=points');
                 exit;
             }
         }
+        $_SESSION['error'] = "Données manquantes pour créer le point de vigilance.";
+        header('Location: index.php?controller=admin&tab=points');
+        exit;
     }
 
     public function updateCategory() {
@@ -192,13 +222,51 @@ class AdminController {
             $nom = $_POST['nom'] ?? '';
             $description = $_POST['description'] ?? '';
             
+            $data = [
+                'id' => $id,
+                'sous_categorie_id' => $sous_categorie_id,
+                'nom' => $nom,
+                'description' => $description
+            ];
+            
+            // Traitement de l'image si elle est présente et si elle a été modifiée
+            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $upload_dir = 'public/uploads/points_vigilance/';
+                
+                // Créer le répertoire s'il n'existe pas
+                if (!file_exists($upload_dir)) {
+                    mkdir($upload_dir, 0777, true);
+                }
+                
+                // Récupérer l'ancienne image pour la supprimer si elle existe
+                $point = $this->pointVigilanceModel->getById($id);
+                if ($point && !empty($point['image'])) {
+                    $old_image_path = $upload_dir . $point['image'];
+                    if (file_exists($old_image_path)) {
+                        unlink($old_image_path);
+                    }
+                }
+                
+                // Générer un nom de fichier unique pour éviter les conflits
+                $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                $file_name = uniqid('point_') . '.' . $file_extension;
+                $target_file = $upload_dir . $file_name;
+                
+                // Déplacer le fichier téléchargé vers le répertoire cible
+                if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                    $data['image'] = $file_name;
+                } else {
+                    $_SESSION['error'] = "Erreur lors de l'upload de l'image.";
+                    header('Location: index.php?controller=admin&tab=points');
+                    exit;
+                }
+            }
+            
             if (!empty($id) && !empty($sous_categorie_id) && !empty($nom)) {
-                $this->pointVigilanceModel->update([
-                    'id' => $id,
-                    'sous_categorie_id' => $sous_categorie_id,
-                    'nom' => $nom,
-                    'description' => $description
-                ]);
+                $this->pointVigilanceModel->update($data);
+                $_SESSION['success'] = "Le point de vigilance a été mis à jour avec succès.";
+            } else {
+                $_SESSION['error'] = "Données manquantes pour mettre à jour le point de vigilance.";
             }
         }
         header('Location: index.php?controller=admin&tab=points');
@@ -210,7 +278,19 @@ class AdminController {
             $id = $_POST['id'] ?? '';
             
             if (!empty($id)) {
+                // Récupérer l'image pour la supprimer si elle existe
+                $point = $this->pointVigilanceModel->getById($id);
+                if ($point && !empty($point['image'])) {
+                    $image_path = 'public/uploads/points_vigilance/' . $point['image'];
+                    if (file_exists($image_path)) {
+                        unlink($image_path);
+                    }
+                }
+                
                 $this->pointVigilanceModel->delete($id);
+                $_SESSION['success'] = "Le point de vigilance a été supprimé avec succès.";
+            } else {
+                $_SESSION['error'] = "ID du point de vigilance manquant.";
             }
         }
         header('Location: index.php?controller=admin&tab=points');

@@ -1,31 +1,40 @@
 <?php
-$pageTitle = "Nouvel Audit";
+$pageTitle = "Modifier l'Audit";
 include_once __DIR__ . '/../../includes/header.php';
 ?>
 
 <div class="container mt-5 audit-page">
-    <h2 class="mb-4">Nouvel Audit</h2>
+    <div class="row mb-4">
+        <div class="col-md-9">
+            <h2 class="mb-4">Modifier l'Audit #<?php echo htmlspecialchars($audit['numero_site']); ?></h2>
+        </div>
+        <div class="col-md-3 text-end">
+            <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Retour aux détails
+            </a>
+        </div>
+    </div>
     
-    <form action="index.php?action=audits&method=create" method="POST" class="needs-validation" id="audit-form" novalidate>
+    <form action="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" method="POST" class="needs-validation" id="audit-form" novalidate>
         <div class="container">
             <div class="row mb-4">
                 <div class="col-md-3">
-                    <input type="text" class="form-control" name="numero_site" placeholder="N° du site" required>
+                    <input type="text" class="form-control" name="numero_site" placeholder="N° du site" required value="<?php echo htmlspecialchars($audit['numero_site']); ?>">
                 </div>
                 <div class="col-md-3">
-                    <input type="text" class="form-control" name="nom_entreprise" placeholder="Nom de l'entreprise" required>
+                    <input type="text" class="form-control" name="nom_entreprise" placeholder="Nom de l'entreprise" required value="<?php echo htmlspecialchars($audit['nom_entreprise']); ?>">
                 </div>
                 <div class="col-md-2">
-                    <input type="date" class="form-control" name="date_creation" required>
+                    <input type="date" class="form-control" name="date_creation" required value="<?php echo htmlspecialchars($audit['date_creation']); ?>">
                 </div>
                 <div class="col-md-2">
                     <select name="statut" class="form-select">
-                        <option value="en_cours" selected>En cours</option>
-                        <option value="termine">Terminé</option>
+                        <option value="en_cours" <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'selected' : ''; ?>>En cours</option>
+                        <option value="termine" <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'selected' : ''; ?>>Terminé</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Créer</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Mettre à jour</button>
                 </div>
             </div>
         </div>
@@ -109,116 +118,104 @@ include_once __DIR__ . '/../../includes/header.php';
         </div>
     </form>
 </div>
-
-<!-- Inclusions des scripts JavaScript -->
+<!-- Script d'initialisation avec les points existants -->
 <script src="public/assets/js/admin.js?v=<?php echo time(); ?>"></script>
 <script src="public/assets/js/audit_manager.js?v=<?php echo time(); ?>"></script>
-
-<!-- Script d'initialisation du formulaire -->
 <script>
-// Fonction d'initialisation sécurisée
-function initAuditManager() {
-    if (typeof AuditManager !== 'undefined') {
-        if (typeof AuditManager.manualInit === 'function') {
-            AuditManager.manualInit();
-        } else if (typeof AuditManager.init === 'function') {
-            AuditManager.init();
-        }
-    }
-}
-
-// Essayer d'initialiser immédiatement
-initAuditManager();
-
-// Fallback - DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-    // S'assurer que le formulaire a un ID
-    const auditForm = document.querySelector('form[action="index.php?action=audits&method=create"]');
-    if (auditForm && !auditForm.id) {
-        auditForm.id = 'audit-form';
+    if (typeof AuditManager !== 'undefined') {
+        // Initialiser le gestionnaire d'audit
+        AuditManager.manualInit();
+        
+        // Précharger les points de vigilance existants
+        <?php if (!empty($pointsVigilance)): ?>
+        // Ajouter chaque point existant
+        <?php foreach ($pointsVigilance as $point): ?>
+            AuditManager.addPointVigilance(
+                <?php echo $point['point_vigilance_id']; ?>,
+                <?php echo $point['categorie_id']; ?>,
+                <?php echo $point['sous_categorie_id']; ?>,
+                "<?php echo addslashes($point['categorie_nom']); ?>",
+                "<?php echo addslashes($point['sous_categorie_nom']); ?>",
+                "<?php echo addslashes($point['point_vigilance_nom']); ?>"
+            );
+        <?php endforeach; ?>
+        <?php endif; ?>
     }
-    
-    // Réessayer après un court délai
-    setTimeout(initAuditManager, 300);
-});
-
-// Fallback final - window load
-window.addEventListener('load', function() {
-    setTimeout(initAuditManager, 500);
 });
 </script>
 
 <style>
     .dropdown-check-list {
-  position: relative;
-  width: 100%;
-}
+        position: relative;
+        width: 100%;
+    }
 
-.dropdown-check-button {
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 10px 15px;
-}
+    .dropdown-check-button {
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 10px 15px;
+    }
 
-.dropdown-check-items {
-  display: none;
-  position: absolute;
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  z-index: 1000;
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  padding: 0 2rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    .dropdown-check-items {
+        display: none;
+        position: absolute;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        padding: 0 2rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-.dropdown-check-items.show {
-  display: block;
-}
+    .dropdown-check-items.show {
+        display: block;
+    }
 
-.dropdown-check-items .form-check {
-  padding: 8px;
-  margin-bottom: 2px;
-  border-radius: 4px;
-}
+    .dropdown-check-items .form-check {
+        padding: 8px;
+        margin-bottom: 2px;
+        border-radius: 4px;
+    }
 
-.dropdown-check-items .form-check:hover {
-  background-color: #f8f9fa;
-}
+    .dropdown-check-items .form-check:hover {
+        background-color: #f8f9fa;
+    }
 
-.dropdown-check-items .form-check-input:checked + .form-check-label {
-  font-weight: bold;
-}
+    .dropdown-check-items .form-check-input:checked + .form-check-label {
+        font-weight: bold;
+    }
+    
+    /* Styles pour le drag-and-drop */
+    #selected_points_list tr {
+        cursor: move;
+        transition: background-color 0.2s ease;
+    }
 
-/* Styles pour le drag-and-drop */
-#selected_points_list tr {
-  cursor: move;
-  transition: background-color 0.2s ease;
-}
+    #selected_points_list tr.dragging {
+        opacity: 0.6;
+        background-color: #f0f0f0;
+        border: 1px dashed #007bff;
+    }
 
-#selected_points_list tr.dragging {
-  opacity: 0.6;
-  background-color: #f0f0f0;
-  border: 1px dashed #007bff;
-}
+    #selected_points_list tr.drag-over {
+        background-color: #e6f7ff;
+        border-top: 2px solid #007bff;
+    }
 
-#selected_points_list tr.drag-over {
-  background-color: #e6f7ff;
-  border-top: 2px solid #007bff;
-}
+    .drag-handle {
+        cursor: move;
+        user-select: none;
+    }
 
-.drag-handle {
-  cursor: move;
-  user-select: none;
-}
-
-.drag-handle:hover {
-  color: #007bff;
-}
+    .drag-handle:hover {
+        color: #007bff;
+    }
 </style>
 
 <?php include_once __DIR__ . '/../../includes/footer.php'; ?> 

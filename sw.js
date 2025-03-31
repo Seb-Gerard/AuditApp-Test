@@ -11,9 +11,11 @@ const urlsToCache = [
   "/Audit/index.php?action=articles",
   "/Audit/public/assets/css/style.css",
   "/Audit/public/assets/img/Logo_CNPP_250.jpg",
+  "/Audit/public/assets/js/db.js",
 ];
 
 // Note: Nous n'importons PAS db.js car il utilise window qui n'est pas disponible dans le SW
+// mais nous le mettons en cache pour que la page offline.php puisse y accéder
 
 self.addEventListener("install", (event) => {
   // @ts-ignore

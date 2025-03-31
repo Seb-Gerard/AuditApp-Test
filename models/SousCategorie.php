@@ -38,6 +38,7 @@ class SousCategorie {
         $stmt = $this->db->prepare("
             SELECT pv.*, 
                    sc.nom as sous_categorie_nom,
+                   c.id as categorie_id,
                    c.nom as categorie_nom,
                    (SELECT COUNT(*) FROM criteres cr WHERE cr.point_vigilance_id = pv.id) as nb_criteres,
                    (SELECT COUNT(*) FROM audit_points ap WHERE ap.point_vigilance_id = pv.id) as nb_audits

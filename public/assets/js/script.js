@@ -1,12 +1,6 @@
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("sw.js")
-      .then((registration) => {
-        console.log("Service Worker enregistré avec succès:", registration);
-      })
-      .catch((error) => {
-        console.log("Échec de l'enregistrement du Service Worker:", error);
-      });
-  });
-}
+/**
+ * Ce fichier est conservé pour des raisons de compatibilité.
+ * Le code du service worker a été déplacé vers index.js pour unifier l'initialisation.
+ *
+ * @deprecated Utilisez index.js à la place
+ */
