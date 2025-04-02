@@ -635,7 +635,7 @@
         if (this.selectedPoints.length === 0) {
           const tr = document.createElement("tr");
           const td = document.createElement("td");
-          td.colSpan = 5; // Ajusté pour 5 colonnes (action + categ + sous-categ + point + supprimer)
+          td.colSpan = 5; // Ajusté pour 5 colonnes
           td.className = "text-center";
           td.textContent = "Aucun point sélectionné";
           tr.appendChild(td);
@@ -648,71 +648,101 @@
         // Afficher la section
         section.style.display = "block";
 
-        // Générer les lignes pour chaque point
+        // Organiser les points par sous-catégorie
+        const pointsBySubCategory = {};
+
         this.selectedPoints.forEach((point, index) => {
-          const tr = document.createElement("tr");
-          tr.draggable = true;
-          tr.setAttribute("data-point-id", point.id);
-          tr.setAttribute("data-index", index);
+          const scId = point.sous_categorie_id;
+          if (!pointsBySubCategory[scId]) {
+            pointsBySubCategory[scId] = {
+              id: scId,
+              nom: point.sous_categorie_nom,
+              categorie_nom: point.categorie_nom,
+              points: [],
+            };
+          }
+          pointsBySubCategory[scId].points.push({ ...point, index });
+        });
 
-          // Ajouter les gestionnaires d'événements pour le drag and drop
-          tr.addEventListener("dragstart", this.handleDragStart.bind(this));
-          tr.addEventListener("dragover", this.handleDragOver.bind(this));
-          tr.addEventListener("dragenter", this.handleDragEnter.bind(this));
-          tr.addEventListener("dragleave", this.handleDragLeave.bind(this));
-          tr.addEventListener("drop", this.handleDrop.bind(this));
-          tr.addEventListener("dragend", this.handleDragEnd.bind(this));
+        // Générer les lignes pour chaque sous-catégorie
+        Object.values(pointsBySubCategory).forEach((sc, scIndex) => {
+          // Créer une rangée pour le titre de la sous-catégorie
+          const scHeaderRow = document.createElement("tr");
+          scHeaderRow.className = "table-secondary subcategory-header";
 
-          // Cellule Action avec uniquement la poignée de glisser-déposer
-          const tdAction = document.createElement("td");
-          tdAction.className = "col-1 text-center align-middle";
+          const scHeaderCell = document.createElement("td");
+          scHeaderCell.colSpan = 5;
+          scHeaderCell.innerHTML = `<strong>${sc.categorie_nom} / ${sc.nom}</strong>`;
+          scHeaderRow.appendChild(scHeaderCell);
+          container.appendChild(scHeaderRow);
 
-          // Poignée pour le drag and drop
-          const dragHandle = document.createElement("span");
-          dragHandle.className = "drag-handle";
-          dragHandle.innerHTML =
-            '<i class="fas fa-grip-vertical text-muted" style="cursor: move;"></i>';
-          tdAction.appendChild(dragHandle);
-          tr.appendChild(tdAction);
+          // Générer les rangées pour chaque point de cette sous-catégorie
+          sc.points.forEach((point, pointIndex) => {
+            const tr = document.createElement("tr");
+            tr.draggable = true;
+            tr.setAttribute("data-point-id", point.id);
+            tr.setAttribute("data-index", point.index);
+            tr.setAttribute("data-sous-categorie-id", sc.id);
 
-          // Cellule Catégorie
-          const tdCat = document.createElement("td");
-          tdCat.className = "col-2 align-middle";
-          tdCat.textContent = point.categorie_nom || "-";
-          tr.appendChild(tdCat);
+            // Ajouter les gestionnaires d'événements pour le drag and drop
+            tr.addEventListener("dragstart", this.handleDragStart.bind(this));
+            tr.addEventListener("dragover", this.handleDragOver.bind(this));
+            tr.addEventListener("dragenter", this.handleDragEnter.bind(this));
+            tr.addEventListener("dragleave", this.handleDragLeave.bind(this));
+            tr.addEventListener("drop", this.handleDrop.bind(this));
+            tr.addEventListener("dragend", this.handleDragEnd.bind(this));
 
-          // Cellule Sous-catégorie
-          const tdSousCat = document.createElement("td");
-          tdSousCat.className = "col-2 align-middle";
-          tdSousCat.textContent = point.sous_categorie_nom || "-";
-          tr.appendChild(tdSousCat);
+            // Cellule Action avec uniquement la poignée de glisser-déposer
+            const tdAction = document.createElement("td");
+            tdAction.className = "col-1 text-center align-middle";
 
-          // Cellule Point de vigilance
-          const tdNom = document.createElement("td");
-          tdNom.className = "col-6 align-middle"; // Réduit à col-6 pour faire place à la colonne de suppression
-          tdNom.textContent = point.nom || "";
-          tr.appendChild(tdNom);
+            // Poignée pour le drag and drop
+            const dragHandle = document.createElement("span");
+            dragHandle.className = "drag-handle";
+            dragHandle.innerHTML =
+              '<i class="fas fa-grip-vertical text-muted" style="cursor: move;"></i>';
+            tdAction.appendChild(dragHandle);
+            tr.appendChild(tdAction);
 
-          // Nouvelle cellule pour le bouton de suppression
-          const tdDelete = document.createElement("td");
-          tdDelete.className = "col-1 text-center align-middle";
+            // Cellule Catégorie
+            const tdCat = document.createElement("td");
+            tdCat.className = "col-2 align-middle";
+            tdCat.textContent = point.categorie_nom || "-";
+            tr.appendChild(tdCat);
 
-          // Bouton de suppression
-          const button = document.createElement("button");
-          button.type = "button";
-          button.className = "btn btn-sm btn-danger remove-point";
-          button.title = "Supprimer ce point";
-          button.onclick = () => this.removePointVigilance(point.id);
+            // Cellule Sous-catégorie
+            const tdSousCat = document.createElement("td");
+            tdSousCat.className = "col-2 align-middle";
+            tdSousCat.textContent = point.sous_categorie_nom || "-";
+            tr.appendChild(tdSousCat);
 
-          const icon = document.createElement("i");
-          icon.className = "fas fa-trash";
-          button.appendChild(icon);
+            // Cellule Point de vigilance
+            const tdNom = document.createElement("td");
+            tdNom.className = "col-6 align-middle";
+            tdNom.textContent = point.nom || "";
+            tr.appendChild(tdNom);
 
-          tdDelete.appendChild(button);
-          tr.appendChild(tdDelete);
+            // Nouvelle cellule pour le bouton de suppression
+            const tdDelete = document.createElement("td");
+            tdDelete.className = "col-1 text-center align-middle";
 
-          // Ajouter au conteneur
-          container.appendChild(tr);
+            // Bouton de suppression
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "btn btn-sm btn-danger remove-point";
+            button.title = "Supprimer ce point";
+            button.onclick = () => this.removePointVigilance(point.id);
+
+            const icon = document.createElement("i");
+            icon.className = "fas fa-trash";
+            button.appendChild(icon);
+
+            tdDelete.appendChild(button);
+            tr.appendChild(tdDelete);
+
+            // Ajouter au conteneur
+            container.appendChild(tr);
+          });
         });
       } catch (error) {
         console.error(
@@ -825,6 +855,10 @@
     handleDragStart: function (e) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("text/plain", e.target.getAttribute("data-index"));
+      e.dataTransfer.setData(
+        "sous-categorie-id",
+        e.target.getAttribute("data-sous-categorie-id")
+      );
       e.target.classList.add("dragging");
     },
 
@@ -843,14 +877,20 @@
      * Gestionnaire d'événement pour l'entrée dans une zone pendant le glisser-déposer
      */
     handleDragEnter: function (e) {
-      e.target.closest("tr")?.classList.add("drag-over");
+      const row = e.target.closest("tr");
+      if (row && !row.classList.contains("subcategory-header")) {
+        row.classList.add("drag-over");
+      }
     },
 
     /**
      * Gestionnaire d'événement pour la sortie d'une zone pendant le glisser-déposer
      */
     handleDragLeave: function (e) {
-      e.target.closest("tr")?.classList.remove("drag-over");
+      const row = e.target.closest("tr");
+      if (row) {
+        row.classList.remove("drag-over");
+      }
     },
 
     /**
@@ -862,7 +902,11 @@
 
       // Récupérer l'élément sur lequel on dépose
       const dropTargetRow = e.target.closest("tr");
-      if (!dropTargetRow) return false;
+      if (
+        !dropTargetRow ||
+        dropTargetRow.classList.contains("subcategory-header")
+      )
+        return false;
 
       // Récupérer les indices
       const draggedIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
@@ -870,6 +914,11 @@
         dropTargetRow.getAttribute("data-index"),
         10
       );
+      const targetSousCategorieId = dropTargetRow.getAttribute(
+        "data-sous-categorie-id"
+      );
+      const draggedSousCategorieId =
+        e.dataTransfer.getData("sous-categorie-id");
 
       if (
         isNaN(draggedIndex) ||
@@ -879,10 +928,30 @@
         return false;
       }
 
+      // Vérifier si les éléments sont dans la même sous-catégorie
+      if (draggedSousCategorieId !== targetSousCategorieId) {
+        alert(
+          "Vous ne pouvez déplacer un point que dans la même sous-catégorie."
+        );
+        return false;
+      }
+
       // Réorganiser le tableau des points sélectionnés
       const draggedPoint = this.selectedPoints[draggedIndex];
-      this.selectedPoints.splice(draggedIndex, 1);
-      this.selectedPoints.splice(targetIndex, 0, draggedPoint);
+      const newPoints = [...this.selectedPoints];
+
+      // Supprimer l'élément dragué
+      newPoints.splice(draggedIndex, 1);
+
+      // Recalculer l'index cible après suppression
+      const newTargetIndex =
+        targetIndex > draggedIndex ? targetIndex - 1 : targetIndex;
+
+      // Insérer l'élément à sa nouvelle position
+      newPoints.splice(newTargetIndex, 0, draggedPoint);
+
+      // Mettre à jour la liste complète
+      this.selectedPoints = newPoints;
 
       // Mettre à jour l'affichage et les champs cachés
       this.updateHiddenFields();

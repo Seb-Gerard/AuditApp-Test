@@ -3,6 +3,21 @@ $pageTitle = "Liste des Audits";
 include_once __DIR__ . '/../../includes/header.php';
 ?>
 
+<style>
+    /* Styles pour les en-têtes de sous-catégories */
+    .subcategory-header {
+        background-color: #f0f5ff !important;
+        font-weight: bold;
+    }
+    
+    .subcategory-header td {
+        padding: 8px 12px;
+        border-top: 2px solid #c0d6ff;
+        border-bottom: 2px solid #c0d6ff;
+        color: #2c5282;
+    }
+</style>
+
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Liste des Audits</h2>

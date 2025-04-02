@@ -219,6 +219,20 @@ window.addEventListener('load', function() {
 .drag-handle:hover {
   color: #007bff;
 }
+
+/* Styles pour les en-têtes de sous-catégories */
+.subcategory-header {
+  background-color: #f0f5ff !important;
+  font-weight: bold;
+  cursor: default !important;
+}
+
+.subcategory-header td {
+  padding: 8px 12px;
+  border-top: 2px solid #c0d6ff;
+  border-bottom: 2px solid #c0d6ff;
+  color: #2c5282;
+}
 </style>
 
 <?php include_once __DIR__ . '/../../includes/footer.php'; ?> 
