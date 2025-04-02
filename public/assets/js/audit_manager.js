@@ -8,6 +8,17 @@
  * - Validation du formulaire
  */
 
+// Fonction pour confirmer la suppression d'un audit
+function confirmDelete(id) {
+  if (
+    confirm(
+      "Êtes-vous sûr de vouloir supprimer cet audit ? Cette action est irréversible."
+    )
+  ) {
+    window.location.href = "index.php?action=audits&method=delete&id=" + id;
+  }
+}
+
 // S'assurer que le module est défini globalement
 (function (global) {
   "use strict";

@@ -36,35 +36,35 @@ if (session_status() === PHP_SESSION_NONE) {
     <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : 'Accueil'; ?></title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center w-100">
-                <a class="navbar-brand" href="index.php">
-                    <img src="public/assets/img/Logo_CNPP_250.jpg" alt="Logo" width="150">
+                <a class="navbar-brand text-light" href="index.php">
+                    <img src="public/assets/img/CNPP_logotype_blanc.png" alt="Logo" width="100">
                 </a>
                 <div class="title flex-grow-1 text-center">
-                    <h1>Application Audit</h1>
+                    <h1 class="text-light">Application Audit</h1>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
             </div>
             
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+            <div class="offcanvas offcanvas-end bg-primary" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    <h5 class="offcanvas-title text-dark" id="offcanvasNavbarLabel">Menu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
-                    <ul class="navbar-nav">
+                    <ul class="navbar-nav mobile-menu">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo isset($_GET['action']) && $_GET['action'] === 'articles' ? 'active' : ''; ?>" 
+                            <a class="nav-link text-dark <?php echo isset($_GET['action']) && $_GET['action'] === 'articles' ? 'active' : ''; ?>" 
                                href="index.php?action=articles">
                                 <i class="fas fa-newspaper"></i> Articles
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo isset($_GET['action']) && $_GET['action'] === 'audits' ? 'active' : ''; ?>" 
+                            <a class="nav-link text-dark <?php echo isset($_GET['action']) && $_GET['action'] === 'audits' ? 'active' : ''; ?>" 
                                href="index.php?action=audits">
                                 <i class="fas fa-clipboard-check"></i> Audits
                             </a>

@@ -55,11 +55,30 @@ CREATE TABLE audit_points (
     ordre INT NOT NULL DEFAULT 1,
     statut TINYINT(1) DEFAULT 0,
     commentaire TEXT,
+    mesure_reglementaire TINYINT(1) DEFAULT 0,
+    mode_preuve TEXT,
+    non_audite TINYINT(1) DEFAULT 0,
+    resultat ENUM('satisfait', 'non_satisfait') DEFAULT NULL,
+    justification TEXT,
+    plan_action_numero INT DEFAULT NULL,
+    plan_action_description TEXT,
     PRIMARY KEY (audit_id, point_vigilance_id),
     FOREIGN KEY (audit_id) REFERENCES audits(id) ON DELETE CASCADE,
     FOREIGN KEY (point_vigilance_id) REFERENCES points_vigilance(id) ON DELETE CASCADE,
     FOREIGN KEY (categorie_id) REFERENCES categories(id) ON DELETE CASCADE,
     FOREIGN KEY (sous_categorie_id) REFERENCES sous_categories(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table pour stocker les documents et photos liés aux points d'audit
+CREATE TABLE audit_point_documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    audit_id INT NOT NULL,
+    point_vigilance_id INT NOT NULL,
+    type ENUM('photo', 'document') NOT NULL,
+    nom_fichier VARCHAR(255) NOT NULL,
+    chemin_fichier VARCHAR(255) NOT NULL,
+    date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (audit_id, point_vigilance_id) REFERENCES audit_points(audit_id, point_vigilance_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table des critères

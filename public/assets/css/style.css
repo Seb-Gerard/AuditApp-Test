@@ -1,0 +1,272 @@
+/**
+ * Audit Management System - Custom Stylesheet
+ * Customizes Bootstrap variables for consistent theming
+ */
+
+:root {
+  /* Couleurs principales */
+  --primary-color: #153c89; /* Bleu primaire (bg-primary, btn-primary, text-primary) */
+  --secondary-color: #009ee3; /* Gris secondaire (bg-secondary, btn-secondary, text-secondary) */
+  --success-color: #80357a; /* Vert succès (bg-success, btn-success, text-success) */
+  --danger-color: #e84d0e; /* Rouge danger (bg-danger, btn-danger, text-danger) */
+  --warning-color: #fbb900; /* Jaune avertissement (bg-warning, btn-warning, text-warning) */
+  --info-color: #009ee3; /* Bleu info (bg-info, btn-info, text-info) */
+  --light-color: #f8f9fa; /* Gris clair (bg-light, text-light) */
+  --dark-color: #ffffff; /* Gris foncé (bg-dark, text-dark) */
+
+  /* Couleurs spécifiques à l'application */
+  --subcategory-bg-color: #f0f5ff; /* Couleur de fond des en-têtes sous-catégories */
+  --subcategory-border-color: #009ee3; /* Couleur de bordure des en-têtes sous-catégories */
+  --subcategory-text-color: #153c89; /* Couleur de texte des en-têtes sous-catégories */
+
+  /* Options d'état */
+  --non-audite-color: #ffeeba; /* Couleur pour les éléments non audités */
+  --satisfait-color: var(
+    --success-color
+  ); /* Couleur pour les résultats satisfaits */
+  --non-satisfait-color: var(
+    --danger-color
+  ); /* Couleur pour les résultats non satisfaits */
+}
+
+/* Redéfinition des couleurs Bootstrap */
+.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+.text-primary {
+  color: var(--primary-color) !important;
+}
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+.btn-outline-primary {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+.btn-outline-primary:hover {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color) !important;
+}
+.text-secondary {
+  color: var(--secondary-color) !important;
+}
+.btn-secondary {
+  background-color: var(--secondary-color) !important;
+  border-color: var(--secondary-color) !important;
+}
+
+.bg-success {
+  background-color: var(--success-color) !important;
+}
+.text-success {
+  color: var(--success-color) !important;
+}
+.btn-success {
+  background-color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+}
+
+.bg-danger {
+  background-color: var(--danger-color) !important;
+}
+.text-danger {
+  color: var(--danger-color) !important;
+}
+.btn-danger {
+  background-color: var(--danger-color) !important;
+  border-color: var(--danger-color) !important;
+}
+
+.bg-warning {
+  background-color: var(--warning-color) !important;
+}
+.text-warning {
+  color: var(--warning-color) !important;
+}
+.btn-warning {
+  background-color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+}
+
+.bg-info {
+  background-color: var(--info-color) !important;
+}
+.text-info {
+  color: var(--info-color) !important;
+}
+.btn-info {
+  background-color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
+}
+
+.bg-light {
+  background-color: var(--light-color) !important;
+}
+.text-light {
+  color: var(--light-color) !important;
+}
+
+.bg-dark {
+  background-color: var(--dark-color) !important;
+}
+.text-dark {
+  color: var(--dark-color) !important;
+}
+
+/* Styles spécifiques de l'application */
+.subcategory-header {
+  background-color: var(--subcategory-bg-color) !important;
+  font-weight: bold;
+}
+
+.subcategory-header td {
+  padding: 8px 12px;
+  border-top: 2px solid var(--subcategory-border-color);
+  border-bottom: 2px solid var(--subcategory-border-color);
+  color: var(--subcategory-text-color);
+}
+
+/* Style pour les badges d'état */
+.badge.bg-warning {
+  background-color: var(--warning-color) !important;
+  color: var(--dark-color) !important;
+}
+
+.badge.bg-success {
+  background-color: var(--success-color) !important;
+}
+
+/* Styles pour les éléments non audités */
+.non-audite-item {
+  background-color: var(--non-audite-color);
+  opacity: 0.85;
+}
+
+/* Styles pour les résultats */
+.resultat-satisfait {
+  color: var(--satisfait-color);
+}
+
+.resultat-non-satisfait {
+  color: var(--non-satisfait-color);
+}
+
+/* Card border colors */
+.border-warning {
+  border-color: var(--warning-color) !important;
+}
+
+.border-success {
+  border-color: var(--success-color) !important;
+}
+
+.border-danger {
+  border-color: var(--danger-color) !important;
+}
+
+.bg-warning.bg-opacity-25 {
+  background-color: rgba(var(--warning-color-rgb), 0.25) !important;
+}
+
+/* Convertir les couleurs hexadécimales en RGB pour les transparences */
+:root {
+  --primary-color-rgb: 13, 110, 253; /* équivalent RGB de #0d6efd */
+  --warning-color-rgb: 255, 193, 7; /* équivalent RGB de #ffc107 */
+  --success-color-rgb: 25, 135, 84; /* équivalent RGB de #198754 */
+  --danger-color-rgb: 220, 53, 69; /* équivalent RGB de #dc3545 */
+}
+
+/* Styles pour les surcouches avec transparence */
+.bg-warning-light {
+  background-color: rgba(var(--warning-color-rgb), 0.2) !important;
+}
+
+.bg-success-light {
+  background-color: rgba(var(--success-color-rgb), 0.2) !important;
+}
+
+.bg-danger-light {
+  background-color: rgba(var(--danger-color-rgb), 0.2) !important;
+}
+
+.bg-primary-light {
+  background-color: rgba(var(--primary-color-rgb), 0.2) !important;
+}
+
+/* Style pour les icônes FontAwesome dans les boutons */
+.btn i.fas,
+.btn i.far,
+.btn i.fab {
+  color: white !important;
+}
+
+/* Style spécifique pour les icônes dans les boutons outline */
+.btn-outline-primary i.fas,
+.btn-outline-secondary i.fas,
+.btn-outline-success i.fas,
+.btn-outline-danger i.fas,
+.btn-outline-warning i.fas,
+.btn-outline-info i.fas,
+.btn-outline-primary i.far,
+.btn-outline-secondary i.far,
+.btn-outline-success i.far,
+.btn-outline-danger i.far,
+.btn-outline-warning i.far,
+.btn-outline-info i.far {
+  color: inherit !important;
+}
+
+/* Style pour les icônes dans les boutons outline au survol */
+.btn-outline-primary:hover i.fas,
+.btn-outline-secondary:hover i.fas,
+.btn-outline-success:hover i.fas,
+.btn-outline-danger:hover i.fas,
+.btn-outline-warning:hover i.fas,
+.btn-outline-info:hover i.fas,
+.btn-outline-primary:hover i.far,
+.btn-outline-secondary:hover i.far,
+.btn-outline-success:hover i.far,
+.btn-outline-danger:hover i.far,
+.btn-outline-warning:hover i.far,
+.btn-outline-info:hover i.far {
+  color: white !important;
+}
+
+/* Exception pour les icônes de grip (poignées de drag & drop) */
+.drag-handle i.fas {
+  color: inherit !important;
+}
+
+/* Style pour l'offcanvas */
+.offcanvas.w-70 {
+  width: 70% !important;
+}
+
+/* Style pour la modal de l'image */
+.modal-backdrop {
+  z-index: 1060 !important;
+}
+.modal {
+  z-index: 1061 !important;
+}
+
+/* Styles pour le menu mobile */
+.mobile-menu .nav-link {
+  color: var(--dark-color) !important;
+}
+
+.mobile-menu .nav-link i.fas,
+.mobile-menu .nav-link i.far,
+.mobile-menu .nav-link i.fab {
+  color: var(--dark-color) !important;
+}
+
+.mobile-menu .nav-link.active {
+  background-color: rgba(var(--primary-color-rgb), 0.1);
+  border-radius: 0.25rem;
+}

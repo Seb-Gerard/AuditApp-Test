@@ -20,6 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Forcer le téléchargement de db.js avant d'utiliser l'application
     const dbScriptUrl = 'public/assets/js/db.js';
     
+    // Vérifier régulièrement l'état de la connexion
+    const connectionCheckInterval = setInterval(handleConnectionChange, 30000); // Vérifier toutes les 30 secondes
+    
+    // Vérifier l'état initial de la connexion
+    handleConnectionChange();
+    
     // Fonction pour vérifier si ArticleDB est défini
     function checkArticleDB() {
         if (typeof ArticleDB !== 'undefined') {
@@ -108,8 +114,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const onlineAlert = document.getElementById('onlineAlert');
     
     // Surveillez les changements de statut de connexion
-    window.addEventListener('online', handleConnectionChange);
-    window.addEventListener('offline', handleConnectionChange);
+    window.addEventListener('online', () => {
+        // Attendre un court instant pour s'assurer que la connexion est stable
+        setTimeout(handleConnectionChange, 500);
+    });
+    window.addEventListener('offline', () => {
+        // Réagir immédiatement à la perte de connexion
+        handleConnectionChange();
+    });
     
     // Surveiller les changements de visibilité pour synchroniser quand l'onglet redevient actif
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -151,12 +163,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const wasOffline = !isOnline;
         isOnline = navigator.onLine;
         
-        if (isOnline) {
-            offlineAlert.style.display = 'none';
-            onlineAlert.style.display = 'block';
+        // Vérifier l'état réel de la connexion indépendamment de navigator.onLine
+        checkRealConnectionStatus().then(isReallyOnline => {
+            // Mettre à jour l'état réel, qui peut différer de navigator.onLine
+            isOnline = isReallyOnline;
             
-            // Si on était hors ligne avant, on lance une vérification
-            if (wasOffline) {
+            // Mettre à jour l'interface utilisateur en conséquence
+            updateConnectionUI(isOnline);
+            
+            // Si on était hors ligne avant et qu'on est réellement en ligne maintenant
+            if (wasOffline && isOnline) {
                 // Afficher un message de synchronisation
                 onlineAlert.innerHTML = `
                     <h4 class="alert-heading">Connexion rétablie!</h4>
@@ -166,20 +182,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 `;
                 
-                // Vérifier les articles en attente après un court délai
+                // Vérifier la connectivité réelle avant de continuer
                 setTimeout(async () => {
                     try {
-                        // Mettre à jour l'affichage des articles pour afficher le bouton de sync si nécessaire
-                        await loadArticles();
+                        // Test de connexion réelle avec le serveur
+                        const testConnection = await fetch('./index.php?test_connection=1', { 
+                            method: 'HEAD',
+                            cache: 'no-store',
+                            timeout: 2000
+                        }).catch(() => {
+                            // Silencieux - pas de message d'erreur en console
+                            return { ok: false };
+                        });
                         
-                        // Vérifier les articles en attente de synchronisation
-                        await checkPendingArticles();
-                        
-                        // Si aucune synchronisation n'a été déclenchée, afficher seulement un message
-                        onlineAlert.innerHTML = `
-                            <h4 class="alert-heading">Connexion rétablie!</h4>
-                            <p>Votre connexion a été rétablie.</p>
-                        `;
+                        if (testConnection.ok) {
+                            // Mettre à jour l'affichage des articles pour afficher le bouton de sync si nécessaire
+                            await loadArticles();
+                            
+                            // Vérifier les articles en attente de synchronisation
+                            await checkPendingArticles();
+                            
+                            // Si aucune synchronisation n'a été déclenchée, afficher seulement un message
+                            onlineAlert.innerHTML = `
+                                <h4 class="alert-heading">Connexion rétablie!</h4>
+                                <p>Votre connexion a été rétablie.</p>
+                            `;
+                        } else {
+                            // La connexion internet est revenue mais le serveur n'est pas disponible
+                            isOnline = false;
+                            updateConnectionUI(false);
+                            
+                            onlineAlert.innerHTML = `
+                                <h4 class="alert-heading">Problème de connexion</h4>
+                                <p>Connexion Internet détectée, mais le serveur n'est pas accessible.</p>
+                                <button id="retryConnBtn" class="btn btn-primary btn-sm">Réessayer la connexion</button>
+                            `;
+                            document.getElementById('retryConnBtn')?.addEventListener('click', () => {
+                                handleConnectionChange();
+                            });
+                            return;
+                        }
                         
                         // Faire disparaître la notification après quelques secondes
                         setTimeout(() => {
@@ -196,10 +238,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }, 1000);
             }
-        } else {
-            offlineAlert.style.display = 'block';
-            onlineAlert.style.display = 'none';
-        }
+        });
     }
     
     // Vérifie l'état initial de la connexion
@@ -404,7 +443,21 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Si en ligne, synchroniser immédiatement
             if (isOnline) {
-                synchronizeArticles();
+                // Double vérification de l'état de la connexion
+                try {
+                    const isReallyOnline = await checkRealConnectionStatus();
+                    
+                    if (isReallyOnline) {
+                        synchronizeArticles();
+                    } else {
+                        // Mettre à jour l'état et l'interface pour refléter que nous sommes en réalité hors ligne
+                        isOnline = false;
+                        updateConnectionUI(false);
+                        // Pas de message d'erreur en console
+                    }
+                } catch (connectionError) {
+                    // Pas de message d'erreur en console
+                }
             }
         } catch (error) {
             console.error('Erreur lors de la sauvegarde:', error);
@@ -424,7 +477,19 @@ document.addEventListener('DOMContentLoaded', function() {
             button.disabled = true;
             spinner.classList.remove('d-none');
 
-            console.log('Début de la synchronisation manuelle des articles');
+            console.log('Tentative de synchronisation des articles...');
+            
+            // Vérification stricte de la connexion réseau
+            const isReallyOnline = await checkRealConnectionStatus();
+            if (!isReallyOnline) {
+                // Message utilisateur sans message d'erreur en console
+                alert('Impossible de synchroniser les articles car le serveur n\'est pas accessible.');
+                
+                // Mettre à jour l'état global
+                isOnline = false;
+                updateConnectionUI(false);
+                return;
+            }
             
             // Vérifier la disponibilité d'ArticleDB
             if (typeof ArticleDB === 'undefined') {
@@ -485,7 +550,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Synchronisation manuelle (fallback)
     async function manualSyncArticles() {
         try {
-            console.log('Démarrage de la synchronisation manuelle des articles');
+            console.log('Tentative de synchronisation manuelle des articles...');
+            
+            // Vérification stricte de la connexion réseau
+            const isReallyOnline = await checkRealConnectionStatus();
+            if (!isReallyOnline) {
+                // Message utilisateur sans message d'erreur en console
+                alert('Impossible de synchroniser les articles car le serveur n\'est pas accessible.');
+                
+                // Mettre à jour l'état global
+                isOnline = false;
+                updateConnectionUI(false);
+                return false;
+            }
             
             // Vérifier la disponibilité d'ArticleDB
             if (typeof ArticleDB === 'undefined') {
@@ -683,6 +760,43 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Erreur globale lors de la synchronisation manuelle:', error);
             return false;
+        }
+    }
+
+    // Fonction synchronisée pour vérifier l'état réel de la connexion
+    async function checkRealConnectionStatus() {
+        try {
+            // Essayer de contacter le serveur pour vérifier la connexion réelle
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            
+            const response = await fetch('./index.php?test_connection=1', {
+                method: 'HEAD',
+                cache: 'no-store',
+                signal: controller.signal
+            }).catch(() => {
+                // Silencieux - pas de message d'erreur en console
+                return { ok: false };
+            });
+            
+            clearTimeout(timeoutId);
+            return response.ok;
+        } catch (error) {
+            // Silencieux - pas de message d'erreur en console
+            return false;
+        }
+    }
+    
+    // Fonction pour mettre à jour l'interface utilisateur avec l'état réel de la connexion
+    function updateConnectionUI(isReallyOnline) {
+        if (isReallyOnline) {
+            offlineAlert.style.display = 'none';
+            onlineAlert.style.display = 'block';
+            document.getElementById('syncButton').style.display = 'inline-block';
+        } else {
+            offlineAlert.style.display = 'block';
+            onlineAlert.style.display = 'none';
+            document.getElementById('syncButton').style.display = 'none';
         }
     }
 </script>
