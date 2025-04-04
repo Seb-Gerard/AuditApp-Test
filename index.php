@@ -1,4 +1,7 @@
 <?php
+// Inclure notre autoloader personnalisé pour gérer les dépendances non installées
+require_once __DIR__ . '/includes/autoload.php';
+
 require_once __DIR__ . '/controllers/HomeController.php';
 require_once __DIR__ . '/controllers/ArticleController.php';
 require_once __DIR__ . '/controllers/AuditController.php';

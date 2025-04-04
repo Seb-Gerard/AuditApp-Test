@@ -6,15 +6,50 @@
 // Variables globales
 const videoStreams = {};
 
+// Pour éviter les erreurs avec bootstrap
+const bootstrap = window.bootstrap || {};
+
 /**
  * Initialisation au chargement du document
  */
 document.addEventListener("DOMContentLoaded", function () {
+  // Ajouter un style pour les champs désactivés
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .disabled-field {
+      background-color: #e9ecef !important;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    
+    /* Style pour formulaires non modifiables (audit terminé) */
+    form[disabled] {
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    form[disabled] input, 
+    form[disabled] textarea, 
+    form[disabled] select, 
+    form[disabled] button {
+      pointer-events: none;
+      background-color: #e9ecef;
+      opacity: 0.7;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // Vérifier si l'audit est terminé
+  const badgeElement = document.querySelector(".badge.bg-success");
+  const isAuditTermine =
+    badgeElement !== null &&
+    badgeElement.textContent &&
+    badgeElement.textContent.trim() === "Terminé";
+
   // Gérer la soumission du formulaire d'évaluation
-  initEvaluationForms();
+  initEvaluationForms(isAuditTermine);
 
   // Gérer la soumission des formulaires de documents
-  initDocumentForms();
+  initDocumentForms(isAuditTermine);
 
   // Initialiser les webcams pour chaque point de vigilance
   const pointsIds = document.querySelectorAll("[data-point-id]");
@@ -32,19 +67,82 @@ document.addEventListener("DOMContentLoaded", function () {
 /**
  * Initialise les formulaires d'évaluation
  */
-function initEvaluationForms() {
+function initEvaluationForms(isAuditTermine) {
   const forms = document.querySelectorAll(".evaluation-form");
 
   forms.forEach((form) => {
-    // Ajouter un gestionnaire pour le checkbox "Non audité" afin de suivre son changement d'état
+    // Ajouter un gestionnaire pour le checkbox "Audité" afin de suivre son changement d'état
     const nonAuditeCheckbox = form.querySelector('[name="non_audite"]');
     if (nonAuditeCheckbox) {
-      nonAuditeCheckbox.addEventListener("change", function () {
+      // Fonction pour mettre à jour l'état des champs du formulaire
+      const updateFieldsStatus = (isChecked) => {
         console.log(
-          "Checkbox Non audité changée : " +
-            (this.checked ? "cochée" : "décochée")
+          "Checkbox Audité changée : " + (isChecked ? "cochée" : "décochée")
         );
-      });
+
+        // Identifier tous les champs du formulaire sauf le commentaire/justification et mesure réglementaire
+        const formFields = form.querySelectorAll(
+          'input:not([name="non_audite"]):not([name="mesure_reglementaire"]), textarea:not([name="justification"]), select'
+        );
+        const resultatRadios = form.querySelectorAll('input[name="resultat"]');
+        // Référence au champ mesure_reglementaire pour s'assurer qu'il reste accessible
+        const mesureReglementaire = form.querySelector(
+          '[name="mesure_reglementaire"]'
+        );
+
+        // Activer/désactiver les champs
+        formFields.forEach((field) => {
+          // Conversion en types spécifiques qui ont la propriété disabled
+          if (
+            field instanceof HTMLInputElement ||
+            field instanceof HTMLTextAreaElement ||
+            field instanceof HTMLSelectElement
+          ) {
+            field.disabled = !isChecked || isAuditTermine;
+          }
+        });
+
+        // Appliquer un style visuel pour indiquer que les champs sont désactivés
+        if (!isChecked || isAuditTermine) {
+          formFields.forEach((field) => {
+            field.classList.add("disabled-field");
+          });
+          // Désactiver les radios également
+          resultatRadios.forEach((radio) => {
+            if (radio instanceof HTMLInputElement) {
+              radio.disabled = true;
+              if (radio.parentElement) {
+                radio.parentElement.classList.add("text-muted");
+              }
+            }
+          });
+        } else {
+          formFields.forEach((field) => {
+            field.classList.remove("disabled-field");
+          });
+          // Réactiver les radios
+          resultatRadios.forEach((radio) => {
+            if (radio instanceof HTMLInputElement) {
+              radio.disabled = false;
+              if (radio.parentElement) {
+                radio.parentElement.classList.remove("text-muted");
+              }
+            }
+          });
+        }
+      };
+
+      // Appliquer l'état initial au chargement de la page
+      if (nonAuditeCheckbox && nonAuditeCheckbox instanceof HTMLInputElement) {
+        updateFieldsStatus(nonAuditeCheckbox.checked);
+
+        // Ajouter l'écouteur d'événement pour les changements
+        nonAuditeCheckbox.addEventListener("change", function () {
+          if (this instanceof HTMLInputElement) {
+            updateFieldsStatus(this.checked);
+          }
+        });
+      }
     }
 
     form.addEventListener("submit", function (e) {
@@ -151,7 +249,7 @@ function initEvaluationForms() {
 /**
  * Initialise les formulaires d'ajout de document
  */
-function initDocumentForms() {
+function initDocumentForms(isAuditTermine) {
   const documentForms = document.querySelectorAll(".document-form");
   documentForms.forEach((form) => {
     form.addEventListener("submit", function (e) {
@@ -269,12 +367,23 @@ function showImageModal(pointId) {
  */
 function showPhotoModal(photoUrl, photoName) {
   // Mettre à jour la source de l'image
-  document.getElementById("modal-photo").src = photoUrl;
-  document.getElementById("viewPhotoModalLabel").textContent = photoName;
+  const modalPhoto = document.getElementById("modal-photo");
+  const modalLabel = document.getElementById("viewPhotoModalLabel");
+
+  if (modalPhoto instanceof HTMLImageElement) {
+    modalPhoto.src = photoUrl;
+  }
+
+  if (modalLabel) {
+    modalLabel.textContent = photoName;
+  }
 
   // Afficher la modal
-  const modal = new bootstrap.Modal(document.getElementById("viewPhotoModal"));
-  modal.show();
+  const modalElement = document.getElementById("viewPhotoModal");
+  if (modalElement && typeof bootstrap.Modal !== "undefined") {
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+  }
 }
 
 /**

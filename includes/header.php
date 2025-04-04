@@ -52,19 +52,19 @@ if (session_status() === PHP_SESSION_NONE) {
             
             <div class="offcanvas offcanvas-end bg-primary" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
                 <div class="offcanvas-header">
-                    <h5 class="offcanvas-title text-dark" id="offcanvasNavbarLabel">Menu</h5>
+                    <h5 class="offcanvas-title text-light" id="offcanvasNavbarLabel">Menu</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
                 <div class="offcanvas-body">
                     <ul class="navbar-nav mobile-menu">
                         <li class="nav-item">
-                            <a class="nav-link text-dark <?php echo isset($_GET['action']) && $_GET['action'] === 'articles' ? 'active' : ''; ?>" 
+                            <a class="nav-link text-light<?php echo isset($_GET['action']) && $_GET['action'] === 'articles' ? 'active' : ''; ?>" 
                                href="index.php?action=articles">
                                 <i class="fas fa-newspaper"></i> Articles
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark <?php echo isset($_GET['action']) && $_GET['action'] === 'audits' ? 'active' : ''; ?>" 
+                            <a class="nav-link text-light<?php echo isset($_GET['action']) && $_GET['action'] === 'audits' ? 'active' : ''; ?>" 
                                href="index.php?action=audits">
                                 <i class="fas fa-clipboard-check"></i> Audits
                             </a>

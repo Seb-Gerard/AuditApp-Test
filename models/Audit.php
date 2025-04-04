@@ -110,7 +110,8 @@ class Audit {
                     ap.resultat,
                     ap.justification,
                     ap.plan_action_numero,
-                    ap.plan_action_description
+                    ap.plan_action_description,
+                    ap.plan_action_priorite
                     FROM audit_points ap
                     JOIN points_vigilance pv ON ap.point_vigilance_id = pv.id
                     JOIN categories c ON ap.categorie_id = c.id
@@ -218,6 +219,17 @@ class Audit {
      * @return bool Succès ou échec de l'opération
      */
     public function updateEvaluation($auditId, $pointVigilanceId, $data) {
+        $fieldsToUpdate = [
+            'mesure_reglementaire' => isset($data['mesure_reglementaire']) ? 1 : 0,
+            'non_audite' => isset($data['non_audite']) ? 1 : 0,
+            'mode_preuve' => $data['mode_preuve'] ?? null,
+            'resultat' => $data['resultat'] ?? null,
+            'justification' => $data['justification'] ?? null,
+            'plan_action_numero' => $data['plan_action_numero'] ?? null,
+            'plan_action_description' => $data['plan_action_description'] ?? null,
+            'plan_action_priorite' => $data['plan_action_priorite'] ?? null
+        ];
+
         try {
             // Vérifier les données actuelles avant la mise à jour
             $sql = "SELECT * FROM audit_points WHERE audit_id = :audit_id AND point_vigilance_id = :point_vigilance_id";
@@ -230,14 +242,6 @@ class Audit {
             
             error_log("Données actuelles avant mise à jour: " . json_encode($currentData));
             
-            // Valider les valeurs reçues
-            $mesureReglementaire = isset($data['mesure_reglementaire']) ? (int)$data['mesure_reglementaire'] : 0;
-            $nonAudite = isset($data['non_audite']) ? (int)$data['non_audite'] : 0;
-            $resultat = isset($data['resultat']) && !empty($data['resultat']) ? $data['resultat'] : null;
-            $justification = isset($data['justification']) ? $data['justification'] : null;
-            $planActionNumero = !empty($data['plan_action_numero']) ? (int)$data['plan_action_numero'] : null;
-            $planActionDescription = isset($data['plan_action_description']) ? $data['plan_action_description'] : null;
-            
             // Préparer la requête SQL de mise à jour
             $sql = "UPDATE audit_points SET 
                     mesure_reglementaire = :mesure_reglementaire,
@@ -246,7 +250,8 @@ class Audit {
                     resultat = :resultat,
                     justification = :justification,
                     plan_action_numero = :plan_action_numero,
-                    plan_action_description = :plan_action_description
+                    plan_action_description = :plan_action_description,
+                    plan_action_priorite = :plan_action_priorite
                     WHERE audit_id = :audit_id AND point_vigilance_id = :point_vigilance_id";
                     
             $stmt = $this->db->prepare($sql);
@@ -254,13 +259,14 @@ class Audit {
             $params = [
                 ':audit_id' => $auditId,
                 ':point_vigilance_id' => $pointVigilanceId,
-                ':mesure_reglementaire' => $mesureReglementaire,
-                ':mode_preuve' => $data['mode_preuve'] ?? null,
-                ':non_audite' => $nonAudite,
-                ':resultat' => $resultat,
-                ':justification' => $justification,
-                ':plan_action_numero' => $planActionNumero,
-                ':plan_action_description' => $planActionDescription
+                ':mesure_reglementaire' => $fieldsToUpdate['mesure_reglementaire'],
+                ':mode_preuve' => $fieldsToUpdate['mode_preuve'],
+                ':non_audite' => $fieldsToUpdate['non_audite'],
+                ':resultat' => $fieldsToUpdate['resultat'],
+                ':justification' => $fieldsToUpdate['justification'],
+                ':plan_action_numero' => $fieldsToUpdate['plan_action_numero'],
+                ':plan_action_description' => $fieldsToUpdate['plan_action_description'],
+                ':plan_action_priorite' => $fieldsToUpdate['plan_action_priorite']
             ];
             
             // Enregistrer le détail des données pour le débogage

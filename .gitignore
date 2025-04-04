@@ -1,0 +1,7 @@
+.htaccess
+/vendor/
+/uploads/
+/public/uploads/
+/public/uploads/audit_photos/
+/public/uploads/audit_documents/
+/public/uploads/points_vigilance/

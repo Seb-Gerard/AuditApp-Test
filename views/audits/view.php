@@ -5,10 +5,25 @@ include_once __DIR__ . '/../../includes/header.php';
 
 <div class="container mt-5">
     <div class="row mb-4">
-        <div class="col-md-9">
+        <div class="col-md-6">
             <h2>Détails de l'Audit</h2>
         </div>
-        <div class="col-md-3 text-end">
+        <div class="col-md-6 text-end">
+            <?php if (!isset($audit['statut']) || $audit['statut'] === 'en_cours'): ?>
+                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine&redirect=resume" 
+                               class="btn btn-primary" title="Terminer l'audit et afficher le résumé">
+                                <i class="fas fa-check"></i> Terminer
+                            </a>
+                        <?php else: ?>
+                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
+                               class="btn btn-primary" title="Marquer comme en cours">
+                                <i class="fas fa-sync"></i> Reprendre
+                            </a>
+                        <?php endif; ?>
+            <a href="index.php?action=audits&method=resume&id=<?php echo $audit['id']; ?>" 
+               class="btn btn-info text-white" title="Voir le résumé de l'audit">
+                <i class="fas fa-chart-pie"></i> Voir le résumé
+            </a>
             <a href="index.php?action=audits" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Retour à la liste
             </a>
@@ -50,17 +65,6 @@ include_once __DIR__ . '/../../includes/header.php';
                         <span class="badge <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'bg-warning' : 'bg-success'; ?> p-2">
                             <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'En cours' : 'Terminé'; ?>
                         </span>
-                        <?php if (!isset($audit['statut']) || $audit['statut'] === 'en_cours'): ?>
-                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine" 
-                               class="btn btn-sm btn-success ms-2" title="Marquer comme terminé">
-                                <i class="fas fa-check"></i> Terminer
-                            </a>
-                        <?php else: ?>
-                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
-                               class="btn btn-sm btn-warning ms-2" title="Marquer comme en cours">
-                                <i class="fas fa-sync"></i> Reprendre
-                            </a>
-                        <?php endif; ?>
                     </p>
                 </div>
             </div>
@@ -150,12 +154,12 @@ include_once __DIR__ . '/../../includes/header.php';
                                                                     <p><i class="fas fa-check-circle text-success"></i> <strong>Mesure réglementaire</strong></p>
                                                                 <?php endif; ?>
                                                                 
-                                                                <?php if (!empty($point['mode_preuve'])): ?>
-                                                                    <p><strong>Mode de preuve:</strong> <?php echo nl2br(htmlspecialchars($point['mode_preuve'])); ?></p>
+                                                                <?php if (!empty($point['non_audite'])): ?>
+                                                                    <p><i class="fas fa-check-circle text-success"></i> <strong>Audité</strong></p>
                                                                 <?php endif; ?>
                                                                 
-                                                                <?php if (!empty($point['non_audite'])): ?>
-                                                                    <p><i class="fas fa-ban text-warning"></i> <strong>Non audité</strong></p>
+                                                                <?php if (!empty($point['mode_preuve'])): ?>
+                                                                    <p><strong>Mode de preuve:</strong> <?php echo nl2br(htmlspecialchars($point['mode_preuve'])); ?></p>
                                                                 <?php endif; ?>
                                                                 
                                                                 <?php if (isset($point['resultat']) && !empty($point['resultat'])): ?>
@@ -179,6 +183,19 @@ include_once __DIR__ . '/../../includes/header.php';
                                                                         <div class="card-body">
                                                                             <?php if (!empty($point['plan_action_numero'])): ?>
                                                                                 <p><strong>N°:</strong> <?php echo htmlspecialchars($point['plan_action_numero']); ?></p>
+                                                                            <?php endif; ?>
+                                                                            
+                                                                            <?php if (!empty($point['plan_action_priorite'])): ?>
+                                                                                <p>
+                                                                                    <strong>Priorité:</strong>
+                                                                                    <?php if($point['plan_action_priorite'] === 'faible'): ?>
+                                                                                        <span class="badge bg-success">Faible</span>
+                                                                                    <?php elseif($point['plan_action_priorite'] === 'moyen'): ?>
+                                                                                        <span class="badge bg-warning">Moyen</span>
+                                                                                    <?php elseif($point['plan_action_priorite'] === 'grande'): ?>
+                                                                                        <span class="badge bg-danger">Grande</span>
+                                                                                    <?php endif; ?>
+                                                                                </p>
                                                                             <?php endif; ?>
                                                                             
                                                                             <?php if (!empty($point['plan_action_description'])): ?>
@@ -248,7 +265,8 @@ include_once __DIR__ . '/../../includes/header.php';
                                                         
                                                         <div class="text-end mt-2">
                                                             <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="offcanvas" 
-                                                                    data-bs-target="#pointOffcanvas-<?php echo $point['point_vigilance_id']; ?>">
+                                                                    data-bs-target="#pointOffcanvas-<?php echo $point['point_vigilance_id']; ?>"
+                                                                    <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                                                 <i class="fas fa-edit"></i> Modifier l'évaluation
                                                             </button>
                                                         </div>
@@ -257,11 +275,12 @@ include_once __DIR__ . '/../../includes/header.php';
                                                 <?php else: ?>
                                                 <div class="mt-2 text-end">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="offcanvas" 
-                                                            data-bs-target="#pointOffcanvas-<?php echo $point['point_vigilance_id']; ?>">
+                                                            data-bs-target="#pointOffcanvas-<?php echo $point['point_vigilance_id']; ?>"
+                                                            <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                                         <i class="fas fa-plus-circle"></i> Évaluer ce point
                                                     </button>
-                                                </div>
-                                                <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
@@ -292,20 +311,29 @@ include_once __DIR__ . '/../../includes/header.php';
                             <span>Évaluation</span>
                             <div>
                                 <button type="button" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" 
-                                        data-bs-target="#photoModal-<?php echo $point['point_vigilance_id']; ?>">
+                                        data-bs-target="#photoModal-<?php echo $point['point_vigilance_id']; ?>"
+                                        <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                     <i class="fas fa-camera"></i> Prendre une photo
                                 </button>
                                 <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" 
-                                        data-bs-target="#documentModal-<?php echo $point['point_vigilance_id']; ?>">
+                                        data-bs-target="#documentModal-<?php echo $point['point_vigilance_id']; ?>"
+                                        <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                     <i class="fas fa-file-upload"></i> Ajouter un document
                                 </button>
                             </div>
                         </div>
                         <div class="card-body">
+                            <?php if (isset($audit['statut']) && $audit['statut'] === 'termine'): ?>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-lock me-2"></i> Cet audit est terminé et ne peut plus être modifié. Pour apporter des modifications, cliquez sur "Reprendre" en haut de la page.
+                                </div>
+                            <?php endif; ?>
+                            
                             <form id="evaluation-form-<?php echo $point['point_vigilance_id']; ?>" 
                                   class="evaluation-form" 
                                   data-audit-id="<?php echo $audit['id']; ?>" 
-                                  data-point-id="<?php echo $point['point_vigilance_id']; ?>">
+                                  data-point-id="<?php echo $point['point_vigilance_id']; ?>"
+                                  <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                 
                                 <input type="hidden" name="audit_id" value="<?php echo $audit['id']; ?>">
                                 <input type="hidden" name="point_vigilance_id" value="<?php echo $point['point_vigilance_id']; ?>">
@@ -319,19 +347,19 @@ include_once __DIR__ . '/../../includes/header.php';
                                     </label>
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label for="mode_preuve-<?php echo $point['point_vigilance_id']; ?>" class="form-label">Mode de preuve attendu</label>
-                                    <textarea class="form-control" id="mode_preuve-<?php echo $point['point_vigilance_id']; ?>" 
-                                              name="mode_preuve" rows="2"><?php echo htmlspecialchars($point['mode_preuve'] ?? ''); ?></textarea>
-                                </div>
-                                
                                 <div class="mb-3 form-check">
                                     <input type="checkbox" class="form-check-input" id="non_audite-<?php echo $point['point_vigilance_id']; ?>" 
                                            name="non_audite" value="1" 
                                            <?php echo (!empty($point['non_audite'])) ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="non_audite-<?php echo $point['point_vigilance_id']; ?>">
-                                        Non Audité
+                                        Audité
                                     </label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="mode_preuve-<?php echo $point['point_vigilance_id']; ?>" class="form-label">Mode de preuve attendu</label>
+                                    <textarea class="form-control" id="mode_preuve-<?php echo $point['point_vigilance_id']; ?>" 
+                                              name="mode_preuve" rows="2"><?php echo htmlspecialchars($point['mode_preuve'] ?? ''); ?></textarea>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -353,7 +381,7 @@ include_once __DIR__ . '/../../includes/header.php';
                                         </label>
                                     </div>
                                     <div class="form-text text-muted">
-                                        Vous pouvez choisir un résultat indépendamment de l'option "Non Audité"
+                                        Vous pouvez choisir un résultat indépendamment de l'option "Audité"
                                     </div>
                                 </div>
                                 
@@ -373,6 +401,16 @@ include_once __DIR__ . '/../../includes/header.php';
                                             <input type="number" class="form-control" id="plan_action_numero-<?php echo $point['point_vigilance_id']; ?>" 
                                                    name="plan_action_numero" value="<?php echo htmlspecialchars($point['plan_action_numero'] ?? ''); ?>">
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="plan_action_priorite-<?php echo $point['point_vigilance_id']; ?>" class="form-label">Priorité</label>
+                                            <select class="form-select" id="plan_action_priorite-<?php echo $point['point_vigilance_id']; ?>" 
+                                                    name="plan_action_priorite">
+                                                <option value="">Sélectionner...</option>
+                                                <option value="faible" <?php echo (isset($point['plan_action_priorite']) && $point['plan_action_priorite'] === 'faible') ? 'selected' : ''; ?>>Faible</option>
+                                                <option value="moyen" <?php echo (isset($point['plan_action_priorite']) && $point['plan_action_priorite'] === 'moyen') ? 'selected' : ''; ?>>Moyen</option>
+                                                <option value="grande" <?php echo (isset($point['plan_action_priorite']) && $point['plan_action_priorite'] === 'grande') ? 'selected' : ''; ?>>Grande</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-md-9">
                                         <div class="mb-3">
@@ -384,7 +422,7 @@ include_once __DIR__ . '/../../includes/header.php';
                                 </div>
                                 
                                 <div class="text-end">
-                                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    <button type="submit" class="btn btn-primary" <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>Enregistrer</button>
                                 </div>
                             </form>
                             
@@ -405,7 +443,8 @@ include_once __DIR__ . '/../../includes/header.php';
                                                     <?php echo date('d/m/Y', strtotime($photo['date_ajout'])); ?>
                                                 </small>
                                                 <button type="button" class="btn btn-sm btn-danger" 
-                                                        onclick="supprimerDocument(<?php echo $photo['id']; ?>)">
+                                                        onclick="supprimerDocument(<?php echo $photo['id']; ?>)"
+                                                        <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
@@ -433,7 +472,8 @@ include_once __DIR__ . '/../../includes/header.php';
                                                 <?php echo date('d/m/Y', strtotime($document['date_ajout'])); ?>
                                             </small>
                                             <button type="button" class="btn btn-sm btn-danger" 
-                                                    onclick="supprimerDocument(<?php echo $document['id']; ?>)">
+                                                    onclick="supprimerDocument(<?php echo $document['id']; ?>)"
+                                                    <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -610,9 +650,19 @@ include_once __DIR__ . '/../../includes/header.php';
     
     <div class="row mt-4">
         <div class="col-12 text-end">
-            <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" class="btn btn-warning">
-                <i class="fas fa-edit"></i> Modifier l'audit
-            </a>
+            <?php if (!isset($audit['statut']) || $audit['statut'] !== 'termine'): ?>
+                <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" class="btn btn-warning">
+                    <i class="fas fa-edit"></i> Modifier l'audit
+                </a>
+            <?php else: ?>
+                <button class="btn btn-warning" disabled title="L'audit terminé ne peut pas être modifié">
+                    <i class="fas fa-edit"></i> Modifier l'audit
+                </button>
+                <div class="mt-2 text-muted">
+                    <small><i class="fas fa-info-circle"></i> Pour modifier cet audit, vous devez d'abord le remettre en mode "En cours".</small>
+                </div>
+            <?php endif; ?>
+            
             <a href="#" onclick="confirmDelete(<?php echo $audit['id']; ?>); return false;" class="btn btn-danger">
                 <i class="fas fa-trash"></i> Supprimer l'audit
             </a>

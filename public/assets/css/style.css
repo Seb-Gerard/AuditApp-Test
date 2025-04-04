@@ -12,7 +12,7 @@
   --warning-color: #fbb900; /* Jaune avertissement (bg-warning, btn-warning, text-warning) */
   --info-color: #009ee3; /* Bleu info (bg-info, btn-info, text-info) */
   --light-color: #f8f9fa; /* Gris clair (bg-light, text-light) */
-  --dark-color: #ffffff; /* Gris foncé (bg-dark, text-dark) */
+  --dark-color: #153c89; /* Gris foncé (bg-dark, text-dark) */
 
   /* Couleurs spécifiques à l'application */
   --subcategory-bg-color: #f0f5ff; /* Couleur de fond des en-têtes sous-catégories */
@@ -134,7 +134,6 @@
 /* Style pour les badges d'état */
 .badge.bg-warning {
   background-color: var(--warning-color) !important;
-  color: var(--dark-color) !important;
 }
 
 .badge.bg-success {
@@ -256,17 +255,48 @@
 }
 
 /* Styles pour le menu mobile */
-.mobile-menu .nav-link {
-  color: var(--dark-color) !important;
-}
 
 .mobile-menu .nav-link i.fas,
 .mobile-menu .nav-link i.far,
 .mobile-menu .nav-link i.fab {
-  color: var(--dark-color) !important;
+  color: var(--light-color) !important;
 }
 
-.mobile-menu .nav-link.active {
-  background-color: rgba(var(--primary-color-rgb), 0.1);
-  border-radius: 0.25rem;
+/* Styles pour les barres de progression de conformité */
+.conformite-satisfait {
+  background-color: var(--danger-color) !important; /* Rouge pour satisfait */
+  color: white;
+  font-weight: bold;
+}
+
+.conformite-partiel {
+  background: linear-gradient(
+    90deg,
+    #777777,
+    var(--danger-color)
+  ) !important; /* Dégradé du gris au rouge */
+  color: white;
+  font-weight: bold;
+}
+
+.conformite-non-satisfait {
+  background-color: #777777 !important; /* Gris pour non satisfait */
+  color: white;
+  font-weight: bold;
+}
+
+/* Textes correspondants */
+.conformite-satisfait-text {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+.conformite-partiel-text {
+  color: #999999; /* Couleur intermédiaire */
+  font-weight: bold;
+}
+
+.conformite-non-satisfait-text {
+  color: #555555;
+  font-weight: bold;
 }

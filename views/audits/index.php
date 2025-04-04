@@ -76,19 +76,21 @@ include_once __DIR__ . '/../../includes/header.php';
                         <?php foreach ($auditsEnCours as $audit): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($audit['numero_site']); ?></td>
-                                <td><?php echo htmlspecialchars($audit['nom_entreprise']); ?></td>
+                                <td>
+                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                        <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
+                                    </a>
+                                </td>
                                 <td><?php echo date('d/m/Y', strtotime($audit['date_creation'])); ?></td>
                                 <td><?php echo date('d/m/Y H:i', strtotime($audit['updated_at'])); ?></td>
                                 <td>
-                                    <span class="badge bg-warning p-2">
+                                    <span class="badge bg-warning p-2 text-light">
                                         En cours
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
-                                       class="btn btn-sm btn-info" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
                                     <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" 
                                        class="btn btn-sm btn-warning" title="Modifier">
                                         <i class="fas fa-edit"></i>
@@ -132,7 +134,13 @@ include_once __DIR__ . '/../../includes/header.php';
                         <?php foreach ($auditsTermines as $audit): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($audit['numero_site']); ?></td>
-                                <td><?php echo htmlspecialchars($audit['nom_entreprise']); ?></td>
+                                <td>
+                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                        <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
+                                    </a>
+                                </td>
                                 <td><?php echo date('d/m/Y', strtotime($audit['date_creation'])); ?></td>
                                 <td><?php echo date('d/m/Y H:i', strtotime($audit['updated_at'])); ?></td>
                                 <td>
@@ -141,10 +149,6 @@ include_once __DIR__ . '/../../includes/header.php';
                                     </span>
                                 </td>
                                 <td>
-                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
-                                       class="btn btn-sm btn-info" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
                                     <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" 
                                        class="btn btn-sm btn-warning" title="Modifier">
                                         <i class="fas fa-edit"></i>

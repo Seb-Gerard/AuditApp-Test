@@ -168,6 +168,16 @@ class AuditController {
             $pointsVigilance[$key]['documents'] = $documents;
         }
         
+        // Vérifier si le format JSON est demandé (pour l'API)
+        if (isset($_GET['format']) && $_GET['format'] === 'json') {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'audit' => $audit,
+                'points' => $pointsVigilance
+            ]);
+            exit;
+        }
+        
         // Inclure le modèle PointVigilance pour l'affichage des images
         require_once __DIR__ . '/../models/PointVigilance.php';
         
@@ -370,65 +380,71 @@ class AuditController {
      * @return void
      */
     public function updateStatus() {
-        try {
-            // Vérifier si l'ID de l'audit et le statut sont valides
-            if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-                throw new Exception("ID d'audit non valide");
-            }
-            
-            if (!isset($_GET['statut']) || !in_array($_GET['statut'], ['en_cours', 'termine'])) {
-                throw new Exception("Statut non valide");
-            }
-            
-            $auditId = (int)$_GET['id'];
-            $statut = $_GET['statut'];
-            
-            // Vérifier que l'audit existe
-            $audit = $this->auditModel->getById($auditId);
-            if (!$audit) {
-                throw new Exception("Audit non trouvé");
-            }
-            
-            // Mettre à jour le statut de l'audit
-            $result = $this->auditModel->updateStatus($auditId, $statut);
-            
-            if (!$result) {
-                throw new Exception("Erreur lors de la mise à jour du statut");
-            }
-            
-            $_SESSION['success'] = "Le statut de l'audit a été mis à jour avec succès";
-            
-            // Rediriger vers la page de détails de l'audit
-            header('Location: index.php?action=audits&method=view&id=' . $auditId);
-            exit;
-            
-        } catch (Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
+        if (!isset($_GET['id']) || !is_numeric($_GET['id']) || !isset($_GET['statut'])) {
+            $_SESSION['error'] = "Paramètres invalides pour la mise à jour du statut";
             header('Location: index.php?action=audits');
             exit;
         }
+        
+        $auditId = $_GET['id'];
+        $statut = $_GET['statut'];
+        
+        if ($statut !== 'en_cours' && $statut !== 'termine') {
+            $_SESSION['error'] = "Statut invalide";
+            header('Location: index.php?action=audits');
+            exit;
+        }
+        
+        try {
+            $success = $this->auditModel->updateStatus($auditId, $statut);
+            
+            if ($success) {
+                $_SESSION['success'] = "Le statut de l'audit a été mis à jour avec succès";
+            } else {
+                $_SESSION['error'] = "Erreur lors de la mise à jour du statut";
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+        
+        // Redirection en fonction du paramètre redirect
+        if (isset($_GET['redirect']) && $_GET['redirect'] === 'resume') {
+            header('Location: index.php?action=audits&method=resume&id=' . $auditId);
+        } else {
+            header('Location: index.php?action=audits&method=view&id=' . $auditId);
+        }
+        exit;
     }
 
     /**
      * Mettre à jour l'évaluation d'un point de vigilance pour un audit
      */
     public function evaluerPoint() {
-        header('Content-Type: application/json');
-        $response = ['success' => false, 'message' => ''];
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
+            exit;
+        }
         
         try {
-            // Vérifier si la requête est de type POST
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                throw new Exception("Méthode non autorisée");
-            }
-            
-            // Vérifier que les paramètres requis sont présents
+            // Valider les données requises
             if (!isset($_POST['audit_id']) || !isset($_POST['point_vigilance_id'])) {
-                throw new Exception("Paramètres manquants");
+                throw new Exception('Paramètres manquants: audit_id et point_vigilance_id sont requis');
             }
             
-            $auditId = intval($_POST['audit_id']);
-            $pointVigilanceId = intval($_POST['point_vigilance_id']);
+            $auditId = (int)$_POST['audit_id'];
+            $pointVigilanceId = (int)$_POST['point_vigilance_id'];
+            
+            // Vérifier si l'audit est terminé
+            $audit = $this->auditModel->getById($auditId);
+            if (!$audit) {
+                throw new Exception('Audit non trouvé');
+            }
+            
+            // Empêcher la modification d'un audit terminé
+            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
+                throw new Exception('Impossible de modifier un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
+            }
             
             // Récupérer l'état actuel pour comparer après mise à jour
             $auditPoints = $this->auditModel->getAuditPointsById($auditId);
@@ -458,7 +474,8 @@ class AuditController {
                 'resultat' => $_POST['resultat'] ?? null,
                 'justification' => $_POST['justification'] ?? null,
                 'plan_action_numero' => !empty($_POST['plan_action_numero']) ? intval($_POST['plan_action_numero']) : null,
-                'plan_action_description' => $_POST['plan_action_description'] ?? null
+                'plan_action_description' => $_POST['plan_action_description'] ?? null,
+                'plan_action_priorite' => $_POST['plan_action_priorite'] ?? null
             ];
             
             // Journaliser les données pour le débogage
@@ -507,7 +524,6 @@ class AuditController {
      */
     public function ajouterDocument() {
         header('Content-Type: application/json');
-        $response = ['success' => false, 'message' => ''];
         
         try {
             // Vérifier si la requête est de type POST
@@ -520,14 +536,26 @@ class AuditController {
                 throw new Exception("Paramètres manquants");
             }
             
+            // Récupérer les données
+            $auditId = intval($_POST['audit_id']);
+            $pointVigilanceId = intval($_POST['point_vigilance_id']);
+            $type = $_POST['type'];
+            
+            // Vérifier si l'audit est terminé
+            $audit = $this->auditModel->getById($auditId);
+            if (!$audit) {
+                throw new Exception('Audit non trouvé');
+            }
+            
+            // Empêcher la modification d'un audit terminé
+            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
+                throw new Exception('Impossible d\'ajouter des documents à un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
+            }
+            
             // Vérifier qu'un fichier a été uploadé
             if (!isset($_FILES['document']) || $_FILES['document']['error'] != 0) {
                 throw new Exception("Erreur lors du téléchargement du fichier");
             }
-            
-            $auditId = intval($_POST['audit_id']);
-            $pointVigilanceId = intval($_POST['point_vigilance_id']);
-            $type = $_POST['type'];
             
             // Vérifier le type
             if ($type !== 'document' && $type !== 'photo') {
@@ -569,20 +597,36 @@ class AuditController {
      */
     public function supprimerDocument() {
         header('Content-Type: application/json');
-        $response = ['success' => false, 'message' => ''];
         
         try {
-            // Vérifier si la requête est de type POST
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            // Vérifier si la requête est de type POST ou GET
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
                 throw new Exception("Méthode non autorisée");
             }
             
-            // Vérifier que l'ID du document est présent
-            if (!isset($_POST['document_id'])) {
-                throw new Exception("ID du document manquant");
+            // Récupérer l'ID du document
+            $documentId = isset($_GET['id']) ? intval($_GET['id']) : (isset($_POST['id']) ? intval($_POST['id']) : 0);
+            
+            if ($documentId <= 0) {
+                throw new Exception("ID de document non valide");
             }
             
-            $documentId = intval($_POST['document_id']);
+            // Récupérer d'abord le document pour obtenir l'ID de l'audit
+            $document = $this->auditDocumentModel->getById($documentId);
+            if (!$document) {
+                throw new Exception("Document non trouvé");
+            }
+            
+            // Vérifier si l'audit est terminé
+            $audit = $this->auditModel->getById($document['audit_id']);
+            if (!$audit) {
+                throw new Exception("Audit non trouvé");
+            }
+            
+            // Empêcher la suppression de documents d'un audit terminé
+            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
+                throw new Exception('Impossible de supprimer des documents d\'un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
+            }
             
             // Supprimer le document
             $success = $this->auditDocumentModel->supprimer($documentId);
@@ -743,5 +787,369 @@ class AuditController {
         error_log("Réponse finale: " . json_encode($response));
         echo json_encode($response);
         exit;
+    }
+    
+    /**
+     * Afficher un résumé de l'audit
+     * Avec statistiques par catégorie et sous-catégorie
+     * et liste des plans d'action
+     */
+    public function resume() {
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            $_SESSION['error'] = "ID d'audit non valide";
+            header('Location: index.php?action=audits');
+            exit;
+        }
+        
+        $auditId = $_GET['id'];
+        $audit = $this->auditModel->getById($auditId);
+        
+        if (!$audit) {
+            $_SESSION['error'] = "Audit non trouvé";
+            header('Location: index.php?action=audits');
+            exit;
+        }
+        
+        // Récupérer tous les points de vigilance de l'audit
+        $pointsVigilance = $this->auditModel->getAuditPointsById($auditId);
+        
+        // Initialiser les tableaux pour les statistiques
+        $categoriesStats = [];
+        $sousCategories = [];
+        $plansAction = [];
+        
+        // Analyser les points de vigilance pour générer les statistiques
+        foreach ($pointsVigilance as $point) {
+            // Stats par catégorie
+            $categorieId = $point['categorie_id'];
+            $categorieName = $point['categorie_nom'];
+            
+            if (!isset($categoriesStats[$categorieId])) {
+                $categoriesStats[$categorieId] = [
+                    'nom' => $categorieName,
+                    'total' => 0,
+                    'audite' => 0,
+                    'non_audite' => 0,
+                    'satisfait' => 0,
+                    'non_satisfait' => 0,
+                    'partiellement' => 0
+                ];
+            }
+            
+            // Stats par sous-catégorie
+            $sousCategorieId = $point['sous_categorie_id'];
+            $sousCategorieName = $point['sous_categorie_nom'];
+            
+            if (!isset($sousCategories[$sousCategorieId])) {
+                $sousCategories[$sousCategorieId] = [
+                    'nom' => $sousCategorieName,
+                    'categorie_nom' => $categorieName,
+                    'total' => 0,
+                    'audite' => 0,
+                    'non_audite' => 0,
+                    'satisfait' => 0,
+                    'non_satisfait' => 0,
+                    'partiellement' => 0
+                ];
+            }
+            
+            // Incrémenter les compteurs
+            $categoriesStats[$categorieId]['total']++;
+            $sousCategories[$sousCategorieId]['total']++;
+            
+            // Évaluation: audité ou non
+            if (!empty($point['non_audite'])) {
+                $categoriesStats[$categorieId]['audite']++;
+                $sousCategories[$sousCategorieId]['audite']++;
+            } else {
+                $categoriesStats[$categorieId]['non_audite']++;
+                $sousCategories[$sousCategorieId]['non_audite']++;
+            }
+            
+            // Évaluation: satisfait, non satisfait, partiellement
+            if (isset($point['resultat'])) {
+                if ($point['resultat'] === 'satisfait') {
+                    $categoriesStats[$categorieId]['satisfait']++;
+                    $sousCategories[$sousCategorieId]['satisfait']++;
+                } elseif ($point['resultat'] === 'non_satisfait') {
+                    $categoriesStats[$categorieId]['non_satisfait']++;
+                    $sousCategories[$sousCategorieId]['non_satisfait']++;
+                } elseif ($point['resultat'] === 'partiellement') {
+                    $categoriesStats[$categorieId]['partiellement']++;
+                    $sousCategories[$sousCategorieId]['partiellement']++;
+                }
+            }
+            
+            // Collecter les plans d'action
+            if (!empty($point['plan_action_description'])) {
+                $plansAction[] = [
+                    'point_vigilance_id' => $point['point_vigilance_id'],
+                    'point_vigilance_nom' => $point['point_vigilance_nom'],
+                    'categorie_nom' => $categorieName,
+                    'sous_categorie_nom' => $sousCategorieName,
+                    'numero' => $point['plan_action_numero'] ?? '',
+                    'description' => $point['plan_action_description'],
+                    'resultat' => $point['resultat'] ?? '',
+                    'priorite' => $point['plan_action_priorite'] ?? ''
+                ];
+            }
+        }
+        
+        // Calculer les pourcentages pour chaque catégorie et sous-catégorie
+        foreach ($categoriesStats as $id => $categorie) {
+            if ($categorie['total'] > 0) {
+                $categoriesStats[$id]['pct_audite'] = round(($categorie['audite'] / $categorie['total']) * 100, 1);
+                $categoriesStats[$id]['pct_non_audite'] = round(($categorie['non_audite'] / $categorie['total']) * 100, 1);
+                
+                $totalEvalues = $categorie['satisfait'] + $categorie['non_satisfait'] + $categorie['partiellement'];
+                if ($totalEvalues > 0) {
+                    $categoriesStats[$id]['pct_satisfait'] = round(($categorie['satisfait'] / $totalEvalues) * 100, 1);
+                    $categoriesStats[$id]['pct_non_satisfait'] = round(($categorie['non_satisfait'] / $totalEvalues) * 100, 1);
+                    $categoriesStats[$id]['pct_partiellement'] = round(($categorie['partiellement'] / $totalEvalues) * 100, 1);
+                }
+            }
+        }
+        
+        foreach ($sousCategories as $id => $sousCategorie) {
+            if ($sousCategorie['total'] > 0) {
+                $sousCategories[$id]['pct_audite'] = round(($sousCategorie['audite'] / $sousCategorie['total']) * 100, 1);
+                $sousCategories[$id]['pct_non_audite'] = round(($sousCategorie['non_audite'] / $sousCategorie['total']) * 100, 1);
+                
+                $totalEvalues = $sousCategorie['satisfait'] + $sousCategorie['non_satisfait'] + $sousCategorie['partiellement'];
+                if ($totalEvalues > 0) {
+                    $sousCategories[$id]['pct_satisfait'] = round(($sousCategorie['satisfait'] / $totalEvalues) * 100, 1);
+                    $sousCategories[$id]['pct_non_satisfait'] = round(($sousCategorie['non_satisfait'] / $totalEvalues) * 100, 1);
+                    $sousCategories[$id]['pct_partiellement'] = round(($sousCategorie['partiellement'] / $totalEvalues) * 100, 1);
+                }
+            }
+        }
+        
+        // Trier les plans d'action par numéro si disponible
+        usort($plansAction, function($a, $b) {
+            if (empty($a['numero']) && empty($b['numero'])) {
+                return 0;
+            }
+            if (empty($a['numero'])) {
+                return 1;
+            }
+            if (empty($b['numero'])) {
+                return -1;
+            }
+            return $a['numero'] - $b['numero'];
+        });
+        
+        include_once __DIR__ . '/../views/audits/resume.php';
+    }
+
+    /**
+     * Exporte le résumé de l'audit en PDF
+     */
+    public function exportPDF() {
+        // Ajouter des logs de débogage
+        error_log('Début de la méthode exportPDF');
+        
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            $_SESSION['error'] = "ID d'audit invalide";
+            error_log('ID d\'audit invalide');
+            header('Location: index.php?action=audits');
+            exit;
+        }
+        
+        $auditId = $_GET['id'];
+        error_log('ID d\'audit récupéré: ' . $auditId);
+        $audit = $this->auditModel->getById($auditId);
+        
+        if (!$audit) {
+            $_SESSION['error'] = "Audit non trouvé";
+            error_log('Audit non trouvé avec ID: ' . $auditId);
+            header('Location: index.php?action=audits');
+            exit;
+        }
+        
+        error_log('Audit trouvé: ' . $audit['numero_site']);
+        
+        // Récupérer les données nécessaires pour le PDF
+        $pointsVigilance = $this->auditModel->getAuditPointsById($auditId);
+        error_log('Nombre de points de vigilance récupérés: ' . count($pointsVigilance));
+        
+        // Créer des tableaux pour stocker les statistiques
+        $categoriesStats = [];
+        $sousCategories = [];
+        $plansAction = [];
+        
+        // Parcourir les points de vigilance pour calculer les statistiques
+        foreach ($pointsVigilance as $point) {
+            // Récupérer les informations de catégorie et sous-catégorie
+            $categorieId = $point['categorie_id'];
+            $categorieName = $point['categorie_nom'];
+            $sousCategorieId = $point['sous_categorie_id'];
+            $sousCategorieName = $point['sous_categorie_nom'];
+            
+            // Initialiser les compteurs si nécessaire pour cette catégorie
+            if (!isset($categoriesStats[$categorieId])) {
+                $categoriesStats[$categorieId] = [
+                    'nom' => $categorieName,
+                    'total' => 0,
+                    'audite' => 0,
+                    'non_audite' => 0,
+                    'satisfait' => 0,
+                    'non_satisfait' => 0,
+                    'partiellement' => 0
+                ];
+            }
+            
+            // Initialiser les compteurs si nécessaire pour cette sous-catégorie
+            if (!isset($sousCategories[$sousCategorieId])) {
+                $sousCategories[$sousCategorieId] = [
+                    'nom' => $sousCategorieName,
+                    'categorie_nom' => $categorieName,
+                    'total' => 0,
+                    'audite' => 0,
+                    'non_audite' => 0,
+                    'satisfait' => 0,
+                    'non_satisfait' => 0,
+                    'partiellement' => 0
+                ];
+            }
+            
+            // Incrémenter les compteurs
+            $categoriesStats[$categorieId]['total']++;
+            $sousCategories[$sousCategorieId]['total']++;
+            
+            // Évaluation: audité ou non
+            if (!empty($point['non_audite'])) {
+                $categoriesStats[$categorieId]['audite']++;
+                $sousCategories[$sousCategorieId]['audite']++;
+            } else {
+                $categoriesStats[$categorieId]['non_audite']++;
+                $sousCategories[$sousCategorieId]['non_audite']++;
+            }
+            
+            // Évaluation: satisfait, non satisfait, partiellement
+            if (isset($point['resultat'])) {
+                if ($point['resultat'] === 'satisfait') {
+                    $categoriesStats[$categorieId]['satisfait']++;
+                    $sousCategories[$sousCategorieId]['satisfait']++;
+                } elseif ($point['resultat'] === 'non_satisfait') {
+                    $categoriesStats[$categorieId]['non_satisfait']++;
+                    $sousCategories[$sousCategorieId]['non_satisfait']++;
+                } elseif ($point['resultat'] === 'partiellement') {
+                    $categoriesStats[$categorieId]['partiellement']++;
+                    $sousCategories[$sousCategorieId]['partiellement']++;
+                }
+            }
+            
+            // Collecter les plans d'action
+            if (!empty($point['plan_action_description'])) {
+                $plansAction[] = [
+                    'point_vigilance_id' => $point['point_vigilance_id'],
+                    'point_vigilance_nom' => $point['point_vigilance_nom'],
+                    'categorie_nom' => $categorieName,
+                    'sous_categorie_nom' => $sousCategorieName,
+                    'numero' => $point['plan_action_numero'] ?? '',
+                    'description' => $point['plan_action_description'],
+                    'resultat' => $point['resultat'] ?? '',
+                    'priorite' => $point['plan_action_priorite'] ?? ''
+                ];
+            }
+        }
+        
+        // Calculer les pourcentages pour chaque catégorie
+        foreach ($categoriesStats as $id => $categorie) {
+            if ($categorie['total'] > 0) {
+                $categoriesStats[$id]['pct_audite'] = round(($categorie['audite'] / $categorie['total']) * 100, 1);
+                
+                $totalEvalues = $categorie['satisfait'] + $categorie['non_satisfait'] + $categorie['partiellement'];
+                if ($totalEvalues > 0) {
+                    $categoriesStats[$id]['pct_satisfait'] = round(($categorie['satisfait'] / $totalEvalues) * 100, 1);
+                    $categoriesStats[$id]['pct_non_satisfait'] = round(($categorie['non_satisfait'] / $totalEvalues) * 100, 1);
+                    $categoriesStats[$id]['pct_partiellement'] = round(($categorie['partiellement'] / $totalEvalues) * 100, 1);
+                }
+            }
+        }
+        
+        // Trier les plans d'action par numéro
+        usort($plansAction, function($a, $b) {
+            if (empty($a['numero']) && empty($b['numero'])) {
+                return 0;
+            }
+            if (empty($a['numero'])) {
+                return 1;
+            }
+            if (empty($b['numero'])) {
+                return -1;
+            }
+            return $a['numero'] - $b['numero'];
+        });
+        
+        // Vérifier si la librairie TCPDF est installée
+        error_log('Vérification de la présence de la librairie TCPDF');
+        if (!class_exists('\\TCPDF')) {
+            error_log('La librairie TCPDF n\'est pas installée');
+            // Si TCPDF n'est pas installé, on redirige vers la page de résumé avec un message d'erreur
+            $_SESSION['error'] = "La librairie TCPDF n'est pas installée. Merci d'exécuter 'composer require tecnickcom/tcpdf' dans le répertoire du projet.";
+            header('Location: index.php?action=audits&method=resume&id=' . $auditId);
+            exit;
+        }
+        
+        error_log('La librairie TCPDF est bien installée, création de l\'instance');
+        try {
+            // Créer une instance de TCPDF
+            $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+            
+            error_log('Instance TCPDF créée avec succès');
+            
+            // Configuration du document
+            $pdf->SetCreator('Audit App');
+            $pdf->SetAuthor('Système Audit');
+            $pdf->SetTitle('Résumé Audit ' . $audit['numero_site']);
+            $pdf->SetSubject('Résumé de l\'audit');
+            
+            // Configuration des marges
+            $pdf->setMargins(15, 15, 15);
+            
+            // Suppression des en-têtes et pieds de page par défaut
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            
+            // Auto page break
+            $pdf->setAutoPageBreak(true, 15);
+            
+            // Police par défaut
+            $pdf->setFont('dejavusans', '', 10);
+            
+            // Ajouter une page
+            $pdf->AddPage();
+            
+            // Commencer à capturer la sortie
+            ob_start();
+            
+            // Inclure le template du PDF (qui est une version modifiée de resume.php)
+            error_log('Inclusion du template resume_pdf.php');
+            include_once __DIR__ . '/../views/audits/resume_pdf.php';
+            
+            // Récupérer le contenu HTML
+            $html = ob_get_clean();
+            error_log('Contenu HTML récupéré, taille: ' . strlen($html) . ' octets');
+            
+            // Ajouter le contenu HTML au PDF
+            $pdf->writeHTML($html, true, false, true, false, '');
+            error_log('HTML ajouté au PDF');
+            
+            // Définir le nom du fichier
+            $filename = 'Audit_' . $audit['numero_site'] . '_' . date('Y-m-d') . '.pdf';
+            error_log('Nom du fichier PDF: ' . $filename);
+            
+            // Envoyer le PDF au navigateur
+            error_log('Envoi du PDF au navigateur...');
+            $pdf->Output($filename, 'D');
+            error_log('PDF envoyé avec succès');
+            exit;
+        } catch (\Exception $e) {
+            error_log('Erreur lors de la génération du PDF: ' . $e->getMessage());
+            $_SESSION['error'] = "Erreur lors de la génération du PDF: " . $e->getMessage();
+            header('Location: index.php?action=audits&method=resume&id=' . $auditId);
+            exit;
+        }
     }
 } 

@@ -2,16 +2,18 @@
 
 /* global self */
 
-const PREFIX = "V2";
+const PREFIX = "V1.4";
 const urlsToCache = [
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
   "/Audit/offline.php",
   "/Audit/index.php?action=articles",
+  "/Audit/index.php?action=audits",
   "/Audit/public/assets/css/style.css",
   "/Audit/public/assets/img/Logo_CNPP_250.jpg",
   "/Audit/public/assets/js/db.js",
+  "/Audit/public/assets/js/auditdb.js",
 ];
 
 // Note: Nous n'importons PAS db.js car il utilise window qui n'est pas disponible dans le SW
@@ -69,6 +71,11 @@ self.addEventListener("fetch", (event) => {
 
   // Ne pas intercepter les requêtes AJAX
   if (event.request.headers.get("X-Requested-With") === "XMLHttpRequest") {
+    return;
+  }
+
+  // Ne pas intercepter les requêtes de test de connexion
+  if (url.searchParams.has("test_connection")) {
     return;
   }
 
@@ -130,6 +137,50 @@ self.addEventListener("fetch", (event) => {
           return new Response("", { status: 503 });
         }
       })()
+    );
+  }
+
+  // Améliorer la mise en cache des API
+  if (
+    event.request.method === "GET" &&
+    url.searchParams.has("action") &&
+    (url.searchParams.get("action") === "audits" ||
+      url.searchParams.get("action") === "articles")
+  ) {
+    console.log("[Service Worker] Intercepting API request for:", url.href);
+
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cloner la réponse car elle ne peut être utilisée qu'une fois
+          const responseToCache = response.clone();
+
+          // Déterminer quel cache utiliser
+          const cacheName =
+            url.searchParams.get("action") === "audits"
+              ? "v1-audits"
+              : "v1-articles";
+
+          caches.open(cacheName).then((cache) => {
+            console.log("[Service Worker] Caching API response in", cacheName);
+            cache.put(event.request, responseToCache);
+          });
+
+          return response;
+        })
+        .catch((err) => {
+          console.log("[Service Worker] Fetch failed, trying cache", err);
+          return caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+              console.log("[Service Worker] Returning cached response");
+              return cachedResponse;
+            }
+            console.log("[Service Worker] No cached response available");
+            return new Response(JSON.stringify([]), {
+              headers: { "Content-Type": "application/json" },
+            });
+          });
+        })
     );
   }
 });
