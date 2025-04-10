@@ -33,7 +33,25 @@ if (session_status() === PHP_SESSION_NONE) {
     }
     ?>
     
-    <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : 'Accueil'; ?></title>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+    
+    <title><?php echo isset($pageTitle) ? $pageTitle : 'Audit Application'; ?></title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">

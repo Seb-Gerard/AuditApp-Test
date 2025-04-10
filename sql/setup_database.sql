@@ -41,6 +41,7 @@ CREATE TABLE audits (
     numero_site VARCHAR(50) NOT NULL,
     nom_entreprise VARCHAR(255) NOT NULL,
     date_creation DATE NOT NULL,
+    logo VARCHAR(255),
     statut ENUM('en_cours', 'termine') DEFAULT 'en_cours',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

@@ -1,150 +1,68 @@
 // Classe pour gérer les audits dans IndexedDB
 class AuditDB {
-  static _initInProgress = false;
   static DB_NAME = "AuditDB";
-  static DB_VERSION = 2;
+  static DB_VERSION = 3;
   static STORE_NAME = "audits";
   static AUDIT_POINTS_STORE = "audit_points";
-  static dbInstance = null;
+  static _dbInstance = null;
+  static _initInProgress = false;
+  static _initPromise = null;
 
   /**
    * Initialise la base de données
    */
-  static async initDB() {
-    if (this.dbInstance) {
-      console.log("[AuditDB] Instance de base de données déjà existante");
-      return Promise.resolve(this.dbInstance);
+  static async init() {
+    if (this._initPromise) {
+      console.log("[AuditDB] Initialisation déjà en cours");
+      return this._initPromise;
     }
 
-    // En cas d'initialisation en boucle, réinitialiser le flag après un délai
-    // pour éviter le blocage permanent
-    if (this._initInProgress) {
-      console.log("[AuditDB] Une initialisation est déjà en cours, attente...");
-      // Anti-blocage : réinitialiser le flag après 3 secondes si aucun événement n'est émis
-      setTimeout(() => {
-        if (this._initInProgress) {
-          console.log(
-            "[AuditDB] Réinitialisation du flag _initInProgress après timeout"
-          );
-          this._initInProgress = false;
-        }
-      }, 3000);
-
-      return new Promise((resolve, reject) => {
-        document.addEventListener(
-          "auditdb_ready",
-          () => {
-            if (this.dbInstance) {
-              resolve(this.dbInstance);
-            } else {
-              reject(
-                new Error(
-                  "La base de données n'a pas été initialisée correctement"
-                )
-              );
-            }
-          },
-          { once: true }
-        );
-
-        // Définir un timeout pour éviter d'attendre indéfiniment
-        setTimeout(() => {
-          reject(
-            new Error(
-              "Timeout lors de l'attente de l'initialisation de la base de données"
-            )
-          );
-        }, 5000);
-      });
-    }
-
-    return new Promise((resolve, reject) => {
-      console.log(
-        "[AuditDB] Ouverture de la base de données:",
-        this.DB_NAME,
-        "version:",
-        this.DB_VERSION
-      );
-
-      // Éviter l'initialisation en boucle
-      if (this._initInProgress) {
-        console.log("[AuditDB] Initialisation déjà en cours, en attente...");
-        document.addEventListener(
-          "auditdb_ready",
-          () => {
-            resolve(this.dbInstance);
-          },
-          { once: true }
-        );
-        return;
-      }
-
-      this._initInProgress = true;
-
-      const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
+    this._initPromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open("AuditDB", 3);
 
       request.onerror = (event) => {
         console.error(
           "[AuditDB] Erreur lors de l'ouverture de la base de données:",
           event.target.error
         );
-        this._initInProgress = false;
-        reject(new Error("Erreur d'ouverture de la base de données AuditDB"));
+        this._initPromise = null;
+        reject(new Error("Erreur lors de l'ouverture de la base de données"));
+      };
+
+      request.onsuccess = (event) => {
+        this._db = event.target.result;
+        console.log("[AuditDB] Base de données ouverte avec succès");
+        this._initPromise = null;
+        resolve(this._db);
       };
 
       request.onupgradeneeded = (event) => {
         console.log("[AuditDB] Mise à niveau de la base de données");
         const db = event.target.result;
 
-        // Créer un object store pour les audits
-        if (!db.objectStoreNames.contains(this.STORE_NAME)) {
-          console.log("[AuditDB] Création du store:", this.STORE_NAME);
-          const auditStore = db.createObjectStore(this.STORE_NAME, {
+        // Créer le store "audits" s'il n'existe pas
+        if (!db.objectStoreNames.contains("audits")) {
+          console.log("[AuditDB] Création du store 'audits'");
+          const store = db.createObjectStore("audits", {
             keyPath: "id",
             autoIncrement: true,
           });
-
-          // Créer des index pour des recherches rapides
-          auditStore.createIndex("numero_site", "numero_site", {
-            unique: false,
-          });
-          auditStore.createIndex("server_id", "server_id", { unique: false });
-          auditStore.createIndex("statut", "statut", { unique: false });
+          store.createIndex("date", "date", { unique: false });
         }
 
-        // Créer un object store pour les points d'audit
-        if (!db.objectStoreNames.contains(this.AUDIT_POINTS_STORE)) {
-          console.log("[AuditDB] Création du store:", this.AUDIT_POINTS_STORE);
-          const pointsStore = db.createObjectStore(this.AUDIT_POINTS_STORE, {
+        // Créer le store "audit_points" s'il n'existe pas
+        if (!db.objectStoreNames.contains("audit_points")) {
+          console.log("[AuditDB] Création du store 'audit_points'");
+          const store = db.createObjectStore("audit_points", {
             keyPath: "id",
             autoIncrement: true,
           });
-
-          // Créer des index pour des recherches rapides
-          pointsStore.createIndex("audit_id", "audit_id", { unique: false });
-          pointsStore.createIndex("point_vigilance_id", "point_vigilance_id", {
-            unique: false,
-          });
-          pointsStore.createIndex("server_id", "server_id", { unique: false });
-          pointsStore.createIndex(
-            "audit_point_id",
-            ["audit_id", "point_vigilance_id"],
-            { unique: false }
-          );
+          store.createIndex("audit_id", "audit_id", { unique: false });
         }
-      };
-
-      request.onsuccess = (event) => {
-        this.dbInstance = event.target.result;
-        console.log("[AuditDB] Base de données ouverte avec succès");
-
-        // Signaler que la base de données est prête
-        this._initInProgress = false;
-        document.dispatchEvent(new CustomEvent("auditdb_ready"));
-
-        resolve(this.dbInstance);
       };
     });
+
+    return this._initPromise;
   }
 
   /**
@@ -152,7 +70,7 @@ class AuditDB {
    */
   static async saveAudit(audit) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       return new Promise((resolve, reject) => {
         try {
           const transaction = db.transaction([this.STORE_NAME], "readwrite");
@@ -219,33 +137,65 @@ class AuditDB {
    */
   static async getAudits() {
     try {
-      const db = await this.initDB();
+      // S'assurer que la base de données est initialisée
+      if (!this._db) {
+        console.log(
+          "[AuditDB] Base de données non initialisée, tentative d'initialisation"
+        );
+        await this.init();
+      }
+
+      if (!this._db) {
+        throw new Error("La base de données n'a pas pu être initialisée");
+      }
+
       return new Promise((resolve, reject) => {
         try {
-          const transaction = db.transaction([this.STORE_NAME], "readonly");
+          const transaction = this._db.transaction(
+            [this.STORE_NAME],
+            "readonly"
+          );
           const store = transaction.objectStore(this.STORE_NAME);
           const request = store.getAll();
 
-          request.onsuccess = function () {
-            console.log(`[AuditDB] ${request.result.length} audits récupérés`);
+          request.onsuccess = () => {
+            console.log(
+              "[AuditDB] Audits récupérés avec succès:",
+              request.result.length
+            );
             resolve(request.result);
           };
 
-          request.onerror = function () {
+          request.onerror = () => {
             console.error(
               "[AuditDB] Erreur lors de la récupération des audits:",
               request.error
             );
             reject(request.error);
           };
+
+          transaction.oncomplete = () => {
+            console.log("[AuditDB] Transaction terminée");
+          };
+
+          transaction.onerror = () => {
+            console.error(
+              "[AuditDB] Erreur de transaction:",
+              transaction.error
+            );
+            reject(transaction.error);
+          };
         } catch (error) {
-          console.error("[AuditDB] Erreur de transaction:", error);
+          console.error(
+            "[AuditDB] Erreur lors de la création de la transaction:",
+            error
+          );
           reject(error);
         }
       });
     } catch (error) {
       console.error(
-        "[AuditDB] Erreur lors de l'initialisation de la base de données pour getAudits:",
+        "[AuditDB] Erreur lors de la récupération des audits:",
         error
       );
       throw error;
@@ -265,7 +215,7 @@ class AuditDB {
    */
   static async getAuditById(id) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       return new Promise((resolve, reject) => {
         try {
           const transaction = db.transaction([this.STORE_NAME], "readonly");
@@ -308,7 +258,7 @@ class AuditDB {
    */
   static async deleteAudit(id) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       // D'abord supprimer tous les points d'audit associés
       await this.deleteAuditPoints(id);
 
@@ -352,7 +302,7 @@ class AuditDB {
    */
   static async saveAuditPoint(point) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       return new Promise((resolve, reject) => {
         try {
           const transaction = db.transaction(
@@ -412,7 +362,7 @@ class AuditDB {
    */
   static async getAuditPoints(auditId) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       return new Promise((resolve, reject) => {
         try {
           const transaction = db.transaction(
@@ -456,7 +406,7 @@ class AuditDB {
    */
   static async deleteAuditPoints(auditId) {
     try {
-      const db = await this.initDB();
+      const db = await this.init();
       const points = await this.getAuditPoints(auditId);
 
       return new Promise(async (resolve, reject) => {
@@ -642,3 +592,9 @@ class AuditDB {
     }
   }
 }
+
+// Exposer la classe AuditDB globalement
+console.log("[AuditDB] Exposition de AuditDB dans window");
+window.AuditDB = AuditDB;
+
+console.log("[AuditDB] Fin du chargement de auditdb.js");

@@ -45,13 +45,45 @@ class AuditController {
                 if (empty($numero_site) || empty($nom_entreprise) || empty($date_creation)) {
                     throw new Exception("Tous les champs obligatoires doivent être remplis");
                 }
+
+                // Traitement du logo
+                $logo = null;
+                if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = 'public/uploads/logos/';
+                    
+                    // Vérifier si le dossier existe, sinon le créer
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    
+                    // Vérifier le type de fichier
+                    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    $fileType = $_FILES['logo']['type'];
+                    
+                    if (!in_array($fileType, $allowedTypes)) {
+                        throw new Exception("Type de fichier non autorisé. Utilisez JPG, PNG ou GIF.");
+                    }
+                    
+                    // Générer un nom unique pour le fichier
+                    $extension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+                    $fileName = uniqid('logo_') . '.' . $extension;
+                    $uploadFile = $uploadDir . $fileName;
+                    
+                    // Déplacer le fichier
+                    if (move_uploaded_file($_FILES['logo']['tmp_name'], $uploadFile)) {
+                        $logo = $fileName;
+                    } else {
+                        throw new Exception("Erreur lors de l'upload du logo");
+                    }
+                }
                 
                 // Créer un nouvel audit
                 $auditId = $this->auditModel->create([
                     'numero_site' => $numero_site,
                     'nom_entreprise' => $nom_entreprise,
                     'date_creation' => $date_creation,
-                    'statut' => $statut
+                    'statut' => $statut,
+                    'logo' => $logo
                 ]);
                 
                 if (!$auditId) {
@@ -265,13 +297,53 @@ class AuditController {
                 if (empty($numero_site) || empty($nom_entreprise) || empty($date_creation)) {
                     throw new Exception("Tous les champs obligatoires doivent être remplis");
                 }
+
+                // Traitement du logo
+                $logo = $audit['logo']; // Garder l'ancien logo par défaut
+                if (isset($_FILES['logo']) && $_FILES['logo']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = 'public/uploads/logos/';
+                    
+                    // Vérifier si le dossier existe, sinon le créer
+                    if (!file_exists($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    
+                    // Vérifier le type de fichier
+                    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    $fileType = $_FILES['logo']['type'];
+                    
+                    if (!in_array($fileType, $allowedTypes)) {
+                        throw new Exception("Type de fichier non autorisé. Utilisez JPG, PNG ou GIF.");
+                    }
+                    
+                    // Supprimer l'ancien logo s'il existe
+                    if (!empty($audit['logo'])) {
+                        $oldLogoPath = $uploadDir . $audit['logo'];
+                        if (file_exists($oldLogoPath)) {
+                            unlink($oldLogoPath);
+                        }
+                    }
+                    
+                    // Générer un nom unique pour le fichier
+                    $extension = pathinfo($_FILES['logo']['name'], PATHINFO_EXTENSION);
+                    $fileName = uniqid('logo_') . '.' . $extension;
+                    $uploadFile = $uploadDir . $fileName;
+                    
+                    // Déplacer le fichier
+                    if (move_uploaded_file($_FILES['logo']['tmp_name'], $uploadFile)) {
+                        $logo = $fileName;
+                    } else {
+                        throw new Exception("Erreur lors de l'upload du logo");
+                    }
+                }
                 
                 // Mettre à jour l'audit
                 $result = $this->auditModel->update($auditId, [
                     'numero_site' => $numero_site,
                     'nom_entreprise' => $nom_entreprise,
                     'date_creation' => $date_creation,
-                    'statut' => $statut
+                    'statut' => $statut,
+                    'logo' => $logo
                 ]);
                 
                 if (!$result) {
@@ -303,7 +375,6 @@ class AuditController {
                                 'point_vigilance_id' => $pointId,
                                 'categorie_id' => $categorieId,
                                 'sous_categorie_id' => $sousCategorieId
-                                // Note: L'ordre est ajouté par la méthode saveAuditPoints basé sur l'index dans le tableau
                             ];
                         }
                     }
@@ -420,174 +491,111 @@ class AuditController {
      * Mettre à jour l'évaluation d'un point de vigilance pour un audit
      */
     public function evaluerPoint() {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Méthode non autorisée']);
-            exit;
+        // Créer le dossier de logs s'il n'existe pas
+        $logDir = __DIR__ . '/../logs';
+        if (!file_exists($logDir)) {
+            mkdir($logDir, 0777, true);
         }
         
-        try {
-            // Valider les données requises
-            if (!isset($_POST['audit_id']) || !isset($_POST['point_vigilance_id'])) {
-                throw new Exception('Paramètres manquants: audit_id et point_vigilance_id sont requis');
-            }
-            
-            $auditId = (int)$_POST['audit_id'];
-            $pointVigilanceId = (int)$_POST['point_vigilance_id'];
-            
-            // Vérifier si l'audit est terminé
-            $audit = $this->auditModel->getById($auditId);
-            if (!$audit) {
-                throw new Exception('Audit non trouvé');
-            }
-            
-            // Empêcher la modification d'un audit terminé
-            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
-                throw new Exception('Impossible de modifier un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
-            }
-            
-            // Récupérer l'état actuel pour comparer après mise à jour
-            $auditPoints = $this->auditModel->getAuditPointsById($auditId);
-            $currentPoint = null;
-            foreach ($auditPoints as $point) {
-                if ($point['point_vigilance_id'] == $pointVigilanceId) {
-                    $currentPoint = $point;
-                    break;
-                }
-            }
-            
-            error_log("État actuel pour le point $pointVigilanceId: " . ($currentPoint ? "non_audite = {$currentPoint['non_audite']}" : "non trouvé"));
-            
-            // Récupérer les données du formulaire
-            // Pour les checkboxes, vérifier explicitement si elles sont présentes
-            // et convertir les valeurs en entiers pour s'assurer du bon type
-            $mesureReglementaire = isset($_POST['mesure_reglementaire']) && ($_POST['mesure_reglementaire'] == '1' || $_POST['mesure_reglementaire'] === true) ? 1 : 0;
-            $nonAudite = isset($_POST['non_audite']) && ($_POST['non_audite'] == '1' || $_POST['non_audite'] === true) ? 1 : 0;
-            
-            error_log("Valeur reçue pour non_audite: " . (isset($_POST['non_audite']) ? $_POST['non_audite'] : "non défini"));
-            error_log("Valeur traitée pour non_audite: $nonAudite");
-            
-            $data = [
-                'mesure_reglementaire' => $mesureReglementaire,
-                'mode_preuve' => $_POST['mode_preuve'] ?? null,
-                'non_audite' => $nonAudite,
-                'resultat' => $_POST['resultat'] ?? null,
-                'justification' => $_POST['justification'] ?? null,
-                'plan_action_numero' => !empty($_POST['plan_action_numero']) ? intval($_POST['plan_action_numero']) : null,
-                'plan_action_description' => $_POST['plan_action_description'] ?? null,
-                'plan_action_priorite' => $_POST['plan_action_priorite'] ?? null
-            ];
-            
-            // Journaliser les données pour le débogage
-            error_log("Données reçues du formulaire: " . json_encode($_POST));
-            error_log("Données traitées: " . json_encode($data));
-            
-            // Mettre à jour l'évaluation
-            $success = $this->auditModel->updateEvaluation($auditId, $pointVigilanceId, $data);
-            
-            if (!$success) {
-                throw new Exception("Erreur lors de la mise à jour de l'évaluation");
-            }
-            
-            // Vérifier que la mise à jour a bien eu lieu
-            $updatedPoints = $this->auditModel->getAuditPointsById($auditId);
-            $updatedPoint = null;
-            foreach ($updatedPoints as $point) {
-                if ($point['point_vigilance_id'] == $pointVigilanceId) {
-                    $updatedPoint = $point;
-                    break;
-                }
-            }
-            
-            if ($updatedPoint) {
-                error_log("État après mise à jour pour le point $pointVigilanceId: non_audite = {$updatedPoint['non_audite']}");
-                if ($currentPoint && $currentPoint['non_audite'] != $updatedPoint['non_audite']) {
-                    error_log("La valeur de non_audite a été modifiée: {$currentPoint['non_audite']} -> {$updatedPoint['non_audite']}");
-                }
-            }
-            
-            $response['success'] = true;
-            $response['message'] = "Évaluation mise à jour avec succès";
-            $response['data'] = $updatedPoint;
-            
-        } catch (Exception $e) {
-            $response['message'] = $e->getMessage();
-            error_log("Erreur dans evaluerPoint: " . $e->getMessage());
-        }
-        
-        echo json_encode($response);
-        exit;
-    }
-    
-    /**
-     * Ajouter un document à un point d'audit
-     */
-    public function ajouterDocument() {
+        // S'assurer que l'en-tête est défini avant toute sortie
         header('Content-Type: application/json');
         
+        // Initialiser la réponse
+        $response = ['success' => false, 'message' => ''];
+        
+        // Journaliser le début de la requête
+        $logMsg = "[" . date('Y-m-d H:i:s') . "] DÉBUT REQUÊTE EVALUER POINT\n";
+        $logMsg .= "POST: " . print_r($_POST, true) . "\n";
+        file_put_contents($logDir . '/controller_logs.log', $logMsg, FILE_APPEND);
+        
         try {
-            // Vérifier si la requête est de type POST
+            // S'assurer qu'aucun affichage ne s'est produit avant
+            if (ob_get_level() == 0) ob_start();
+            
+            // Vérifier que la requête est bien en POST
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                throw new Exception("Méthode non autorisée");
+                $response['message'] = 'Méthode non autorisée';
+                echo json_encode($response);
+                exit;
             }
             
-            // Vérifier que les paramètres requis sont présents
-            if (!isset($_POST['audit_id']) || !isset($_POST['point_vigilance_id']) || !isset($_POST['type'])) {
-                throw new Exception("Paramètres manquants");
+            // Récupérer et valider les paramètres requis
+            if (empty($_POST['audit_id']) || empty($_POST['point_vigilance_id'])) {
+                $response['message'] = 'Paramètres manquants (audit_id, point_vigilance_id)';
+                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: Paramètres manquants\n", FILE_APPEND);
+                echo json_encode($response);
+                exit;
             }
             
-            // Récupérer les données
-            $auditId = intval($_POST['audit_id']);
-            $pointVigilanceId = intval($_POST['point_vigilance_id']);
-            $type = $_POST['type'];
+            $auditId = filter_var($_POST['audit_id'], FILTER_VALIDATE_INT);
+            $pointVigilanceId = filter_var($_POST['point_vigilance_id'], FILTER_VALIDATE_INT);
             
-            // Vérifier si l'audit est terminé
+            if (!$auditId || !$pointVigilanceId) {
+                $response['message'] = 'Paramètres invalides';
+                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: Paramètres invalides: audit_id=$auditId, point_id=$pointVigilanceId\n", FILE_APPEND);
+                echo json_encode($response);
+                exit;
+            }
+            
+            // Vérifier que l'audit existe et n'est pas terminé
             $audit = $this->auditModel->getById($auditId);
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Audit trouvé: " . print_r($audit, true) . "\n", FILE_APPEND);
+            
             if (!$audit) {
-                throw new Exception('Audit non trouvé');
+                $response['message'] = 'Audit non trouvé';
+                echo json_encode($response);
+                exit;
             }
             
-            // Empêcher la modification d'un audit terminé
-            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
-                throw new Exception('Impossible d\'ajouter des documents à un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
+            if ($audit['statut'] === 'termine') {
+                $response['message'] = 'Impossible de modifier un audit terminé';
+                echo json_encode($response);
+                exit;
             }
             
-            // Vérifier qu'un fichier a été uploadé
-            if (!isset($_FILES['document']) || $_FILES['document']['error'] != 0) {
-                throw new Exception("Erreur lors du téléchargement du fichier");
+            // Préparer les données à enregistrer - vérifier explicitement la présence de chaque paramètre
+            $data = [
+                'audit_id' => $auditId,
+                'point_vigilance_id' => $pointVigilanceId,
+                'mesure_reglementaire' => isset($_POST['mesure_reglementaire']) ? filter_var($_POST['mesure_reglementaire'], FILTER_VALIDATE_INT) : 0,
+                'non_audite' => isset($_POST['non_audite']) ? filter_var($_POST['non_audite'], FILTER_VALIDATE_INT) : 0,
+                'mode_preuve' => isset($_POST['mode_preuve']) ? trim(htmlspecialchars($_POST['mode_preuve'])) : null,
+                'resultat' => isset($_POST['resultat']) ? trim(htmlspecialchars($_POST['resultat'])) : null,
+                'justification' => isset($_POST['justification']) ? trim(htmlspecialchars($_POST['justification'])) : null,
+                'plan_action_numero' => !empty($_POST['plan_action_numero']) ? filter_var($_POST['plan_action_numero'], FILTER_VALIDATE_INT) : null,
+                'plan_action_priorite' => isset($_POST['plan_action_priorite']) ? trim(htmlspecialchars($_POST['plan_action_priorite'])) : null,
+                'plan_action_description' => isset($_POST['plan_action_description']) ? trim(htmlspecialchars($_POST['plan_action_description'])) : null
+            ];
+            
+            // Journaliser les données traitées
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Données traitées pour updateEvaluation: " . print_r($data, true) . "\n", FILE_APPEND);
+            
+            // Mettre à jour ou créer l'évaluation
+            $result = $this->auditModel->updateEvaluation($auditId, $pointVigilanceId, $data);
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Résultat updateEvaluation: " . ($result ? "SUCCÈS" : "ÉCHEC") . "\n", FILE_APPEND);
+            
+            if ($result) {
+                $response['success'] = true;
+                $response['message'] = 'Évaluation enregistrée avec succès';
+            } else {
+                $response['message'] = 'Erreur lors de l\'enregistrement de l\'évaluation';
             }
-            
-            // Vérifier le type
-            if ($type !== 'document' && $type !== 'photo') {
-                throw new Exception("Type de fichier non valide");
-            }
-            
-            // Ajouter le document
-            $documentId = $this->auditDocumentModel->ajouter($auditId, $pointVigilanceId, $type, $_FILES['document']);
-            
-            if (!$documentId) {
-                throw new Exception("Erreur lors de l'ajout du document");
-            }
-            
-            // Récupérer les informations du document
-            $documents = $this->auditDocumentModel->getDocumentsByPoint($auditId, $pointVigilanceId, $type);
-            $newDocument = null;
-            
-            foreach ($documents as $doc) {
-                if ($doc['id'] == $documentId) {
-                    $newDocument = $doc;
-                    break;
-                }
-            }
-            
-            $response['success'] = true;
-            $response['message'] = "Document ajouté avec succès";
-            $response['document'] = $newDocument;
             
         } catch (Exception $e) {
-            $response['message'] = $e->getMessage();
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Exception: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString() . "\n", FILE_APPEND);
+            $response['message'] = 'Une erreur est survenue: ' . $e->getMessage();
         }
         
+        // Vider tous les buffers de sortie avant d'envoyer le JSON
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        
+        // Journaliser la réponse finale
+        file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Réponse finale: " . json_encode($response) . "\n", FILE_APPEND);
+        
+        // Toujours renvoyer une réponse JSON
+        header('Content-Type: application/json');
         echo json_encode($response);
         exit;
     }
@@ -596,50 +604,92 @@ class AuditController {
      * Supprimer un document
      */
     public function supprimerDocument() {
+        // Définir le type de contenu comme JSON
         header('Content-Type: application/json');
         
+        // S'assurer qu'aucun contenu HTML n'est déjà dans le buffer
+        if (ob_get_length()) {
+            ob_clean();
+        }
+        
+        // Initialiser la réponse
+        $response = [
+            'success' => false,
+            'message' => ''
+        ];
+
         try {
-            // Vérifier si la requête est de type POST ou GET
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
-                throw new Exception("Méthode non autorisée");
+            // Vérifier la méthode de requête
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $response['message'] = 'Méthode non autorisée. Utilisez POST.';
+                echo json_encode($response);
+                exit;
             }
-            
-            // Récupérer l'ID du document
-            $documentId = isset($_GET['id']) ? intval($_GET['id']) : (isset($_POST['id']) ? intval($_POST['id']) : 0);
-            
-            if ($documentId <= 0) {
-                throw new Exception("ID de document non valide");
+
+            // Récupérer et valider le document_id
+            $documentId = isset($_POST['id']) ? intval($_POST['id']) : 0;
+            if (!$documentId) {
+                $response['message'] = 'ID du document manquant ou invalide.';
+                echo json_encode($response);
+                exit;
             }
+
+            error_log("Tentative de suppression du document ID: " . $documentId);
+
+            // Instancier le modèle Audit
+            $auditModel = new Audit();
             
-            // Récupérer d'abord le document pour obtenir l'ID de l'audit
-            $document = $this->auditDocumentModel->getById($documentId);
+            // Récupérer les informations du document
+            $document = $auditModel->getDocumentById($documentId);
+            
             if (!$document) {
-                throw new Exception("Document non trouvé");
+                $response['message'] = 'Document non trouvé.';
+                echo json_encode($response);
+                exit;
             }
             
-            // Vérifier si l'audit est terminé
-            $audit = $this->auditModel->getById($document['audit_id']);
+            // Vérifier si l'audit est complété
+            $audit = $auditModel->getById($document['audit_id']);
             if (!$audit) {
-                throw new Exception("Audit non trouvé");
+                $response['message'] = 'Audit non trouvé.';
+                echo json_encode($response);
+                exit;
             }
             
-            // Empêcher la suppression de documents d'un audit terminé
-            if (isset($audit['statut']) && $audit['statut'] === 'termine') {
-                throw new Exception('Impossible de supprimer des documents d\'un audit terminé. Veuillez d\'abord le remettre en mode "En cours".');
+            if ($audit['statut'] === 'completed') {
+                $response['message'] = 'Impossible de modifier un audit complété.';
+                echo json_encode($response);
+                exit;
             }
             
-            // Supprimer le document
-            $success = $this->auditDocumentModel->supprimer($documentId);
-            
-            if (!$success) {
-                throw new Exception("Erreur lors de la suppression du document");
+            // Supprimer le fichier physique si présent
+            if (!empty($document['chemin_fichier']) && file_exists($document['chemin_fichier'])) {
+                if (!unlink($document['chemin_fichier'])) {
+                    error_log("Impossible de supprimer le fichier: " . $document['chemin_fichier']);
+                } else {
+                    error_log("Fichier supprimé: " . $document['chemin_fichier']);
+                }
             }
             
-            $response['success'] = true;
-            $response['message'] = "Document supprimé avec succès";
+            // Supprimer l'entrée de la base de données
+            $result = $auditModel->supprimerDocument($documentId);
             
+            if ($result) {
+                $response['success'] = true;
+                $response['message'] = 'Document supprimé avec succès.';
+                error_log("Document supprimé avec succès: ID=" . $documentId);
+            } else {
+                $response['message'] = 'Erreur lors de la suppression du document.';
+                error_log("Échec de la suppression du document: ID=" . $documentId);
+            }
         } catch (Exception $e) {
-            $response['message'] = $e->getMessage();
+            error_log("Erreur dans supprimerDocument: " . $e->getMessage());
+            $response['message'] = 'Une erreur est survenue lors de la suppression du document: ' . $e->getMessage();
+        }
+        
+        // S'assurer qu'aucun HTML ou autre contenu n'est envoyé avant le JSON
+        if (ob_get_length()) {
+            ob_clean();
         }
         
         echo json_encode($response);
@@ -650,10 +700,16 @@ class AuditController {
      * Prendre une photo via la webcam
      */
     public function prendrePhoto() {
+        // Toujours définir l'en-tête Content-Type en premier
         header('Content-Type: application/json');
+        
+        // Initialiser la réponse
         $response = ['success' => false, 'message' => ''];
         
         try {
+            // Suppression de la vérification AJAX, car elle est trop restrictive 
+            // avec le Service Worker qui intercepte les requêtes
+            
             // Vérifier si la requête est de type POST
             if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
                 throw new Exception("Méthode non autorisée");
@@ -781,7 +837,16 @@ class AuditController {
             
         } catch (Exception $e) {
             error_log("Exception dans prendrePhoto: " . $e->getMessage());
+            $response['success'] = false;
             $response['message'] = $e->getMessage();
+            
+            // Trace complète pour le débogage
+            error_log("Trace: " . $e->getTraceAsString());
+        }
+        
+        // S'assurer qu'aucun HTML ou autre contenu ne soit affiché avant la réponse JSON
+        if (ob_get_length()) {
+            ob_clean();
         }
         
         error_log("Réponse finale: " . json_encode($response));
@@ -1151,5 +1216,146 @@ class AuditController {
             header('Location: index.php?action=audits&method=resume&id=' . $auditId);
             exit;
         }
+    }
+
+    /**
+     * Teste la structure de la table audit_points
+     * 
+     * @return void
+     */
+    public function testStructure() {
+        header('Content-Type: application/json');
+        
+        try {
+            $auditModel = new Audit();
+            $result = $auditModel->debugTableStructure();
+            
+            echo json_encode($result);
+        } catch (Exception $e) {
+            echo json_encode([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
+        exit;
+    }
+
+    /**
+     * Ajouter un document à un point de vigilance
+     */
+    public function ajouterDocument() {
+        // Définir le type de contenu comme JSON
+        header('Content-Type: application/json');
+        
+        // Initialiser la réponse
+        $response = ['success' => false, 'message' => ''];
+
+        try {
+            // Vérifier la méthode de requête
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                $response['message'] = 'Méthode non autorisée. Utilisez POST.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Vérifier les paramètres requis
+            if (!isset($_POST['audit_id']) || !isset($_POST['point_vigilance_id'])) {
+                $response['message'] = 'Paramètres manquants (audit_id, point_vigilance_id)';
+                echo json_encode($response);
+                exit;
+            }
+
+            $auditId = intval($_POST['audit_id']);
+            $pointVigilanceId = intval($_POST['point_vigilance_id']);
+
+            if (!$auditId || !$pointVigilanceId) {
+                $response['message'] = 'Paramètres invalides (audit_id, point_vigilance_id)';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Vérifier que l'audit existe et n'est pas terminé
+            $audit = $this->auditModel->getById($auditId);
+            if (!$audit) {
+                $response['message'] = 'Audit non trouvé';
+                echo json_encode($response);
+                exit;
+            }
+
+            if ($audit['statut'] === 'completed') {
+                $response['message'] = 'Impossible de modifier un audit complété';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Vérifier que le fichier a été correctement téléchargé
+            if (!isset($_FILES['document']) || $_FILES['document']['error'] !== UPLOAD_ERR_OK) {
+                $errorMessage = 'Erreur lors du téléchargement du fichier';
+                if (isset($_FILES['document'])) {
+                    switch ($_FILES['document']['error']) {
+                        case UPLOAD_ERR_INI_SIZE:
+                            $errorMessage = 'Le fichier dépasse la taille maximale autorisée';
+                            break;
+                        case UPLOAD_ERR_FORM_SIZE:
+                            $errorMessage = 'Le fichier dépasse la taille maximale autorisée par le formulaire';
+                            break;
+                        case UPLOAD_ERR_PARTIAL:
+                            $errorMessage = 'Le fichier n\'a été que partiellement téléchargé';
+                            break;
+                        case UPLOAD_ERR_NO_FILE:
+                            $errorMessage = 'Aucun fichier n\'a été téléchargé';
+                            break;
+                    }
+                }
+                $response['message'] = $errorMessage;
+                echo json_encode($response);
+                exit;
+            }
+
+            // Vérifier le type MIME du fichier
+            $allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $fileType = $finfo->file($_FILES['document']['tmp_name']);
+
+            if (!in_array($fileType, $allowedTypes)) {
+                $response['message'] = 'Type de fichier non autorisé. Utilisez PDF, DOC, DOCX, JPG, PNG ou GIF.';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Ajouter le document
+            $documentId = $this->auditModel->ajouterDocument(
+                $auditId, 
+                $pointVigilanceId, 
+                $_FILES['document']['name'], 
+                $_FILES['document']['tmp_name']
+            );
+
+            if (!$documentId) {
+                $response['message'] = 'Erreur lors de l\'ajout du document';
+                echo json_encode($response);
+                exit;
+            }
+
+            // Récupérer les informations du document ajouté
+            $documentInfo = $this->auditModel->getDocumentById($documentId);
+
+            $response['success'] = true;
+            $response['message'] = 'Document ajouté avec succès';
+            $response['document'] = $documentInfo;
+
+        } catch (Exception $e) {
+            error_log("Erreur dans ajouterDocument: " . $e->getMessage());
+            $response['message'] = 'Une erreur est survenue lors de l\'ajout du document: ' . $e->getMessage();
+        }
+
+        // S'assurer qu'aucun HTML ou autre contenu n'est envoyé avant le JSON
+        if (ob_get_length()) {
+            ob_clean();
+        }
+
+        echo json_encode($response);
+        exit;
     }
 } 

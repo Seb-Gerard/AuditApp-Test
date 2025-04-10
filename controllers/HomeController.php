@@ -16,6 +16,10 @@ class HomeController {
         $articleCount = $this->articleModel->getCount();
         $auditCount = $this->auditModel->getCount();
         
+        // Récupérer les compteurs d'audits par statut
+        $auditEnCoursCount = $this->auditModel->getCountByStatus('en_cours');
+        $auditTermineCount = $this->auditModel->getCountByStatus('termine');
+        
         // Passer les données à la vue
         include_once __DIR__ . '/../views/home.php';
     }

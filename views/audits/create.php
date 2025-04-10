@@ -6,26 +6,38 @@ include_once __DIR__ . '/../../includes/header.php';
 <div class="container mt-5 audit-page">
     <h2 class="mb-4">Nouvel Audit</h2>
     
-    <form action="index.php?action=audits&method=create" method="POST" class="needs-validation" id="audit-form" novalidate>
+    <form action="index.php?action=audits&method=create" method="POST" class="needs-validation" id="audit-form" novalidate enctype="multipart/form-data">
         <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="logo" class="form-label">Logo de l'entreprise</label>
+                        <input type="file" class="form-control" name="logo" id="logo" accept="image/*">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="numero_site" class="form-label">Numéro du site</label>
+                    <input type="text" class="form-control" name="numero_site" id="numero_site" placeholder="N° du site" required>
+                </div>
+                <div class="col-md-5">
+                    <label for="nom_entreprise" class="form-label">Nom de l'entreprise</label>
+                    <input type="text" class="form-control" name="nom_entreprise" id="nom_entreprise" placeholder="Nom de l'entreprise" required>
+                </div>
+            </div>
             <div class="row mb-4">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" name="numero_site" placeholder="N° du site" required>
+                <div class="col-md-4">
+                    <label for="date_creation" class="form-label">Date de création</label>
+                    <input type="date" class="form-control" name="date_creation" id="date_creation" required>
                 </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" name="nom_entreprise" placeholder="Nom de l'entreprise" required>
-                </div>
-                <div class="col-md-2">
-                    <input type="date" class="form-control" name="date_creation" required>
-                </div>
-                <div class="col-md-2">
-                    <select name="statut" class="form-select">
+                <div class="col-md-4">
+                    <label for="statut" class="form-label">Statut</label>
+                    <select name="statut" id="statut" class="form-select">
                         <option value="en_cours" selected>En cours</option>
                         <option value="termine">Terminé</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Créer</button>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">Créer</button>
                 </div>
             </div>
         </div>

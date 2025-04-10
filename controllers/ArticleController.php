@@ -184,6 +184,19 @@ class ArticleController {
         exit;
     }
 
+    /**
+     * Liste les articles au format JSON (pour l'API)
+     */
+    public function list() {
+        try {
+            $articles = $this->articleModel->getAll();
+            $this->sendJsonResponse($articles);
+        } catch (\Exception $e) {
+            error_log('Exception dans ArticleController::list: ' . $e->getMessage());
+            $this->sendJsonResponse(['error' => 'Erreur serveur: ' . $e->getMessage()], 500);
+        }
+    }
+
     private function isAjaxRequest() {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }

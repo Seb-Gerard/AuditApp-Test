@@ -193,4 +193,22 @@ class AuditDocument {
             return false;
         }
     }
+
+    /**
+     * Récupère un document par son ID
+     *
+     * @param int $id ID du document
+     * @return array|false Les informations du document ou false si non trouvé
+     */
+    public function getById($id) {
+        try {
+            $sql = "SELECT * FROM audit_point_documents WHERE id = :id";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log("Erreur lors de la récupération du document: " . $e->getMessage());
+            return false;
+        }
+    }
 } 

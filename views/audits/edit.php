@@ -15,26 +15,45 @@ include_once __DIR__ . '/../../includes/header.php';
         </div>
     </div>
     
-    <form action="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" method="POST" class="needs-validation" id="audit-form" novalidate>
+    <form action="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" method="POST" class="needs-validation" id="audit-form" novalidate enctype="multipart/form-data">
         <div class="container">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="logo" class="form-label">Logo de l'entreprise</label>
+                        <?php if (!empty($audit['logo'])): ?>
+                            <div class="mb-2">
+                                <img src="public/uploads/logos/<?php echo htmlspecialchars($audit['logo']); ?>" 
+                                     alt="Logo actuel" class="img-thumbnail" style="max-height: 50px;">
+                            </div>
+                        <?php endif; ?>
+                        <input type="file" class="form-control" name="logo" id="logo" accept="image/*">
+                        <small class="form-text text-muted">Laissez vide pour conserver le logo actuel</small>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="numero_site" class="form-label">Numéro du site</label>
+                    <input type="text" class="form-control" name="numero_site" id="numero_site" placeholder="N° du site" required value="<?php echo htmlspecialchars($audit['numero_site']); ?>">
+                </div>
+                <div class="col-md-5">
+                    <label for="nom_entreprise" class="form-label">Nom de l'entreprise</label>
+                    <input type="text" class="form-control" name="nom_entreprise" id="nom_entreprise" placeholder="Nom de l'entreprise" required value="<?php echo htmlspecialchars($audit['nom_entreprise']); ?>">
+                </div>
+            </div>
             <div class="row mb-4">
-                <div class="col-md-3">
-                    <input type="text" class="form-control" name="numero_site" placeholder="N° du site" required value="<?php echo htmlspecialchars($audit['numero_site']); ?>">
+                <div class="col-md-4">
+                    <label for="date_creation" class="form-label">Date de création</label>
+                    <input type="date" class="form-control" name="date_creation" id="date_creation" required value="<?php echo htmlspecialchars($audit['date_creation']); ?>">
                 </div>
-                <div class="col-md-3">
-                    <input type="text" class="form-control" name="nom_entreprise" placeholder="Nom de l'entreprise" required value="<?php echo htmlspecialchars($audit['nom_entreprise']); ?>">
-                </div>
-                <div class="col-md-2">
-                    <input type="date" class="form-control" name="date_creation" required value="<?php echo htmlspecialchars($audit['date_creation']); ?>">
-                </div>
-                <div class="col-md-2">
-                    <select name="statut" class="form-select">
+                <div class="col-md-4">
+                    <label for="statut" class="form-label">Statut</label>
+                    <select name="statut" id="statut" class="form-select">
                         <option value="en_cours" <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'selected' : ''; ?>>En cours</option>
                         <option value="termine" <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'selected' : ''; ?>>Terminé</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-primary" id="submitBtn">Mettre à jour</button>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">Mettre à jour</button>
                 </div>
             </div>
         </div>

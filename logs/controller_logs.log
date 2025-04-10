@@ -1,0 +1,815 @@
+[2025-04-10 12:33:47] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:33:47] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 12:33:47] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:33:47] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 12:33:47] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 12:34:17] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:34:17] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 12:34:17] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:34:17] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 12:34:17] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 12:36:29] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:36:29] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 12:36:29] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 12:36:29] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 12:36:29] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:25:35] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:25:35] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:25:35] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:25:35] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:25:35] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:25:43] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:25:43] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:25:43] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:25:43] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:25:43] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:26:18] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:26:18] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:26:18] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:26:18] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:26:18] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:27:50] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:27:50] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:27:50] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:27:50] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:27:50] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:28:02] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:28:02] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:28:02] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:28:02] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:28:02] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:33:14] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:14] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:33:14] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:14] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:33:14] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:33:31] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:31] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:33:31] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:31] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:33:31] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:33:37] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:37] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:33:37] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:33:37] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:33:37] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:34:07] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:34:07] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:34:07] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:34:07] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:34:07] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:34:17] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => fkjopjifezipojfeozijfmeofhnlzek
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:34:17] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:34:17] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 7
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => fkjopjifezipojfeozijfmeofhnlzek
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:34:17] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:34:17] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:36:23] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:23] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:36:23] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:23] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:36:23] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:36:36] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:36] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:36:36] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:36] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:36:36] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:36:49] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:49] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:36:49] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:36:49] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:36:49] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:37:21] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:37:21] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:37:21] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:37:21] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:37:21] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 13:40:00] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:40:00] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 13:40:00] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 13:40:00] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 13:40:00] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-10 14:11:31] DÉBUT REQUÊTE EVALUER POINT
+POST: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => hyiuloyhoiu
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 14:11:31] Audit trouvé: Array
+(
+    [id] => 9
+    [numero_site] => 001
+    [nom_entreprise] => Jimmy
+    [logo] => 
+    [date_creation] => 2025-04-09
+    [statut] => en_cours
+    [created_at] => 2025-04-09 00:17:56
+    [updated_at] => 2025-04-09 00:17:56
+)
+
+[2025-04-10 14:11:31] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 9
+    [point_vigilance_id] => 8
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => fjkezpjfpzejf
+    [resultat] => 
+    [justification] => hyiuloyhoiu
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-10 14:11:31] Résultat updateEvaluation: SUCCÈS
+[2025-04-10 14:11:31] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}

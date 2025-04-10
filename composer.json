@@ -1,5 +1,9 @@
 {
-    "require": {
-        "tecnickcom/tcpdf": "^6.9"
-    }
+  "require": {
+    "tecnickcom/tcpdf": "^6.9",
+    "ext-gd": "*"
+  },
+  "suggest": {
+    "ext-imagick": "Pour un meilleur support des images dans TCPDF"
+  }
 }

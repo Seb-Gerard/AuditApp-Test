@@ -34,12 +34,27 @@ function getColorClass($percentage, $inverse = false) {
             <h5 class="mb-0">Informations générales</h5>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>SITE :</strong> <?php echo htmlspecialchars($audit['numero_site'] . ' - ' . $audit['nom_entreprise']); ?></p>
+            <div class="row align-items-center">
+                <?php if (!empty($audit['logo'])): ?>
+                <div class="col-md-2 text-center mb-3 mb-md-0">
+                    <img src="public/uploads/logos/<?php echo htmlspecialchars($audit['logo']); ?>" 
+                         alt="Logo de l'entreprise"
+                         class="img-fluid"
+                         style="max-height: 100px; max-width: 100%;">
                 </div>
-                <div class="col-md-6 text-end">
-                    <p><strong>DATE :</strong> <?php echo date('d/m/Y', strtotime($audit['updated_at'])); ?></p>
+                <div class="col-md-10">
+                <?php else: ?>
+                <div class="col-12">
+                <?php endif; ?>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>SITE :</strong> <?php echo htmlspecialchars($audit['numero_site']); ?></p>
+                            <p><strong>ENTREPRISE :</strong> <?php echo htmlspecialchars($audit['nom_entreprise']); ?></p>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <p><strong>DATE :</strong> <?php echo date('d/m/Y', strtotime($audit['updated_at'])); ?></p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -55,9 +70,9 @@ function getColorClass($percentage, $inverse = false) {
                 <table class="table table-bordered">
                     <thead class="bg-info text-white text-center">
                         <tr>
-                            <th style="vertical-align: middle;">Thème</th>
-                            <th style="vertical-align: middle;">% Audité</th>
-                            <th style="vertical-align: middle;">% Conformité</th>
+                            <th style="vertical-align: middle; width: 33%;">Thème</th>
+                            <th style="vertical-align: middle; width: 33%;">% Audité</th>
+                            <th style="vertical-align: middle; width: 33%;">% Conformité</th>
                         </tr>
                     </thead>
                     <tbody>

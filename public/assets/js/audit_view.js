@@ -69,71 +69,86 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 function initEvaluationForms(isAuditTermine) {
   const forms = document.querySelectorAll(".evaluation-form");
+  console.log("Initialisation de", forms.length, "formulaires d'évaluation");
 
-  forms.forEach((form) => {
-    // Ajouter un gestionnaire pour le checkbox "Audité" afin de suivre son changement d'état
+  forms.forEach((form, index) => {
+    // Récupérer les checkboxes
     const nonAuditeCheckbox = form.querySelector('[name="non_audite"]');
+    const mesureReglementaireCheckbox = form.querySelector(
+      '[name="mesure_reglementaire"]'
+    );
+
+    // Empêcher la soumission automatique au clic sur les checkboxes
+    if (mesureReglementaireCheckbox) {
+      // Remplacer l'écouteur d'événement existant par un qui empêche complètement la soumission
+      mesureReglementaireCheckbox.removeEventListener("click", function (e) {});
+      mesureReglementaireCheckbox.addEventListener("click", function (e) {
+        // Empêcher simplement la propagation de l'événement
+        e.stopPropagation();
+        // Ne pas utiliser preventDefault() qui empêcherait le changement d'état
+        console.log("Clic sur mesure_reglementaire, état:", this.checked);
+      });
+    }
+
     if (nonAuditeCheckbox) {
+      // Remplacer l'écouteur d'événement existant par un qui empêche complètement la soumission
+      nonAuditeCheckbox.removeEventListener("click", function (e) {});
+      nonAuditeCheckbox.addEventListener("click", function (e) {
+        // Empêcher simplement la propagation de l'événement
+        e.stopPropagation();
+        // Ne pas utiliser preventDefault() qui empêcherait le changement d'état
+        console.log("Clic sur non_audite, état:", this.checked);
+      });
+
       // Fonction pour mettre à jour l'état des champs du formulaire
       const updateFieldsStatus = (isChecked) => {
-        console.log(
-          "Checkbox Audité changée : " + (isChecked ? "cochée" : "décochée")
+        console.log("updateFieldsStatus appelé avec isChecked=", isChecked);
+
+        // Sélectionner les éléments avec vérification de type
+        const textInputs = Array.from(
+          form.querySelectorAll('input[type="text"], input[type="number"]')
+        ).filter((el) => el instanceof HTMLInputElement);
+
+        const textareas = Array.from(form.querySelectorAll("textarea")).filter(
+          (el) => el instanceof HTMLTextAreaElement
         );
 
-        // Identifier tous les champs du formulaire sauf le commentaire/justification et mesure réglementaire
-        const formFields = form.querySelectorAll(
-          'input:not([name="non_audite"]):not([name="mesure_reglementaire"]), textarea:not([name="justification"]), select'
-        );
-        const resultatRadios = form.querySelectorAll('input[name="resultat"]');
-        // Référence au champ mesure_reglementaire pour s'assurer qu'il reste accessible
-        const mesureReglementaire = form.querySelector(
-          '[name="mesure_reglementaire"]'
+        const selects = Array.from(form.querySelectorAll("select")).filter(
+          (el) => el instanceof HTMLSelectElement
         );
 
-        // Activer/désactiver les champs
-        formFields.forEach((field) => {
-          // Conversion en types spécifiques qui ont la propriété disabled
-          if (
-            field instanceof HTMLInputElement ||
-            field instanceof HTMLTextAreaElement ||
-            field instanceof HTMLSelectElement
-          ) {
-            field.disabled = !isChecked || isAuditTermine;
+        const radios = Array.from(
+          form.querySelectorAll('input[type="radio"]')
+        ).filter((el) => el instanceof HTMLInputElement);
+
+        // Ne jamais désactiver les checkboxes pour qu'elles restent indépendantes l'une de l'autre
+        // Les checkboxes "Mesure réglementaire" et "Audité" doivent toujours être actives
+
+        // Gérer les champs de texte, les textareas et les selects
+        [...textInputs, ...textareas, ...selects].forEach((field) => {
+          field.disabled = !isChecked || isAuditTermine;
+          if (!isChecked || isAuditTermine) {
+            field.classList.add("disabled-field");
+          } else {
+            field.classList.remove("disabled-field");
           }
         });
 
-        // Appliquer un style visuel pour indiquer que les champs sont désactivés
-        if (!isChecked || isAuditTermine) {
-          formFields.forEach((field) => {
-            field.classList.add("disabled-field");
-          });
-          // Désactiver les radios également
-          resultatRadios.forEach((radio) => {
-            if (radio instanceof HTMLInputElement) {
-              radio.disabled = true;
-              if (radio.parentElement) {
-                radio.parentElement.classList.add("text-muted");
-              }
+        // Gérer séparément les boutons radio
+        radios.forEach((radio) => {
+          radio.disabled = !isChecked || isAuditTermine;
+          if (radio.parentElement) {
+            if (!isChecked || isAuditTermine) {
+              radio.parentElement.classList.add("text-muted");
+            } else {
+              radio.parentElement.classList.remove("text-muted");
             }
-          });
-        } else {
-          formFields.forEach((field) => {
-            field.classList.remove("disabled-field");
-          });
-          // Réactiver les radios
-          resultatRadios.forEach((radio) => {
-            if (radio instanceof HTMLInputElement) {
-              radio.disabled = false;
-              if (radio.parentElement) {
-                radio.parentElement.classList.remove("text-muted");
-              }
-            }
-          });
-        }
+          }
+        });
       };
 
       // Appliquer l'état initial au chargement de la page
-      if (nonAuditeCheckbox && nonAuditeCheckbox instanceof HTMLInputElement) {
+      if (nonAuditeCheckbox instanceof HTMLInputElement) {
         updateFieldsStatus(nonAuditeCheckbox.checked);
 
         // Ajouter l'écouteur d'événement pour les changements
@@ -145,103 +160,181 @@ function initEvaluationForms(isAuditTermine) {
       }
     }
 
+    // S'assurer que les champs cachés sont bien présents et avec des valeurs
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      console.log("Soumission du formulaire");
 
-      const formData = new FormData(this);
+      // Récupérer les identifiants depuis les attributs data du formulaire
       const auditId = this.getAttribute("data-audit-id");
       const pointId = this.getAttribute("data-point-id");
 
-      // Vérifier explicitement l'état des cases à cocher et les ajouter avec la bonne valeur
-      const mesureReglementaireChecked =
-        form.querySelector('[name="mesure_reglementaire"]')?.checked || false;
-      const nonAuditeChecked =
-        form.querySelector('[name="non_audite"]')?.checked || false;
-
-      // Supprimer les valeurs existantes pour éviter les doublons
-      if (formData.has("mesure_reglementaire")) {
-        formData.delete("mesure_reglementaire");
-      }
-      if (formData.has("non_audite")) {
-        formData.delete("non_audite");
+      if (!auditId || !pointId) {
+        console.error(
+          "ERREUR: Attributs data-audit-id ou data-point-id manquants"
+        );
+        alert(
+          "Erreur: Identifiants manquants. Veuillez recharger la page et réessayer."
+        );
+        return;
       }
 
-      // Ajouter les valeurs correctes
-      formData.append(
-        "mesure_reglementaire",
-        mesureReglementaireChecked ? "1" : "0"
-      );
-      formData.append("non_audite", nonAuditeChecked ? "1" : "0");
+      console.log(`IDs récupérés: audit=${auditId}, point=${pointId}`);
 
-      console.log(
-        "Valeur envoyée pour non_audite: " + formData.get("non_audite")
+      // Créer un FormData pour l'envoi
+      const formData = new FormData();
+      formData.append("audit_id", auditId);
+      formData.append("point_vigilance_id", pointId);
+
+      // Récupérer l'état des checkboxes
+      const mesureReglementaireEl = this.querySelector(
+        '[name="mesure_reglementaire"]'
       );
+      const nonAuditeEl = this.querySelector('[name="non_audite"]');
+
+      // Ajouter les valeurs des checkboxes, avec vérification explicite
+      if (mesureReglementaireEl instanceof HTMLInputElement) {
+        const mesureValue = mesureReglementaireEl.checked ? "1" : "0";
+        formData.append("mesure_reglementaire", mesureValue);
+        console.log(
+          `mesure_reglementaire=${mesureValue} (${
+            mesureReglementaireEl.checked ? "coché" : "non coché"
+          })`
+        );
+      } else {
+        formData.append("mesure_reglementaire", "0");
+        console.log("mesure_reglementaire=0 (élément non trouvé)");
+      }
+
+      if (nonAuditeEl instanceof HTMLInputElement) {
+        const nonAuditeValue = nonAuditeEl.checked ? "1" : "0";
+        formData.append("non_audite", nonAuditeValue);
+        console.log(
+          `non_audite=${nonAuditeValue} (${
+            nonAuditeEl.checked ? "coché" : "non coché"
+          })`
+        );
+      } else {
+        formData.append("non_audite", "0");
+        console.log("non_audite=0 (élément non trouvé)");
+      }
+
+      // Récupérer les valeurs des autres champs
+      const fieldsToCollect = [
+        { name: "mode_preuve", isRequired: false },
+        { name: "resultat", isRequired: false },
+        { name: "justification", isRequired: false },
+        { name: "plan_action_numero", isRequired: false },
+        { name: "plan_action_priorite", isRequired: false },
+        { name: "plan_action_description", isRequired: false },
+      ];
+
+      fieldsToCollect.forEach((field) => {
+        const fieldElement = this.querySelector(`[name="${field.name}"]`);
+        if (fieldElement) {
+          let value = "";
+
+          // Traitement spécial pour les radios
+          if (field.name === "resultat") {
+            const selectedRadio = this.querySelector(
+              `input[name="${field.name}"]:checked`
+            );
+            value = selectedRadio ? selectedRadio.value : "";
+          } else {
+            value = fieldElement.value || "";
+          }
+
+          formData.append(field.name, value);
+          console.log(`${field.name}=${value}`);
+        } else if (field.isRequired) {
+          console.error(`Champ requis ${field.name} manquant`);
+          return;
+        }
+      });
 
       // Afficher un indicateur de chargement
       const submitBtn = this.querySelector('button[type="submit"]');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.innerHTML =
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enregistrement...';
-      submitBtn.disabled = true;
+      if (submitBtn) {
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML =
+          '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enregistrement...';
+        submitBtn.disabled = true;
 
-      // Envoyer les données au serveur
-      fetch("index.php?action=audits&method=evaluerPoint", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Erreur réseau");
-          }
-          return response.json();
+        // Ajouter un message de chargement
+        const loadingMessage = document.createElement("div");
+        loadingMessage.className = "alert alert-info mt-3";
+        loadingMessage.innerHTML = "Envoi des données en cours...";
+        this.appendChild(loadingMessage);
+
+        // Envoyer les données au serveur
+        fetch("index.php?action=audits&method=evaluerPoint", {
+          method: "POST",
+          body: formData,
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+          },
         })
-        .then((data) => {
-          console.log("Réponse du serveur:", data);
+          .then((response) => {
+            console.log("Réponse du serveur:", response.status);
+            console.log("Headers:", [...response.headers.entries()]);
+            console.log("Response type:", response.type);
+            console.log("Response URL:", response.url);
 
-          if (data.success) {
-            // Afficher un message de succès
-            const alert = document.createElement("div");
-            alert.className = "alert alert-success mt-3";
-            alert.textContent = data.message;
-            form.appendChild(alert);
+            return response.text().then((text) => {
+              console.log("Texte brut de la réponse:", text);
+              if (!text) {
+                throw new Error("Réponse vide du serveur");
+              }
+              try {
+                // Essayer de parser le texte en JSON
+                return JSON.parse(text);
+              } catch (e) {
+                console.error("Réponse non-JSON reçue:", text);
+                throw new Error("Réponse invalide: " + text.substring(0, 100));
+              }
+            });
+          })
+          .then((data) => {
+            console.log("Données reçues:", data);
+            loadingMessage.remove();
 
-            // Forcer le rechargement de la page après 1 seconde pour montrer la mise à jour
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          } else {
+            if (data.success) {
+              // Afficher un message de succès
+              const alert = document.createElement("div");
+              alert.className = "alert alert-success mt-3";
+              alert.textContent = data.message || "Enregistrement réussi";
+              form.appendChild(alert);
+
+              // Forcer le rechargement de la page après 1 seconde
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            } else {
+              // Afficher un message d'erreur
+              const alert = document.createElement("div");
+              alert.className = "alert alert-danger mt-3";
+              alert.textContent = data.message || "Une erreur est survenue";
+              form.appendChild(alert);
+            }
+          })
+          .catch((error) => {
+            console.error("Erreur:", error);
+            loadingMessage.remove();
+
             // Afficher un message d'erreur
             const alert = document.createElement("div");
             alert.className = "alert alert-danger mt-3";
-            alert.textContent = data.message || "Une erreur est survenue";
+            alert.textContent =
+              "Une erreur est survenue lors de la communication avec le serveur: " +
+              error.message;
             form.appendChild(alert);
-
-            // Supprimer l'alerte après 3 secondes
-            setTimeout(() => {
-              alert.remove();
-            }, 3000);
-          }
-        })
-        .catch((error) => {
-          console.error("Erreur:", error);
-
-          // Afficher un message d'erreur
-          const alert = document.createElement("div");
-          alert.className = "alert alert-danger mt-3";
-          alert.textContent =
-            "Une erreur est survenue lors de la communication avec le serveur";
-          form.appendChild(alert);
-
-          // Supprimer l'alerte après 3 secondes
-          setTimeout(() => {
-            alert.remove();
-          }, 3000);
-        })
-        .finally(() => {
-          // Restaurer le bouton
-          submitBtn.innerHTML = originalText;
-          submitBtn.disabled = false;
-        });
+          })
+          .finally(() => {
+            // Restaurer le bouton
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+          });
+      }
     });
   });
 }
@@ -251,11 +344,75 @@ function initEvaluationForms(isAuditTermine) {
  */
 function initDocumentForms(isAuditTermine) {
   const documentForms = document.querySelectorAll(".document-form");
+
+  // Corriger les problèmes d'attributs aria-hidden sur les modals
+  document.querySelectorAll(".modal").forEach((modal) => {
+    // Remplacer aria-hidden par inert quand la modal est cachée
+    if (modal.getAttribute("aria-hidden") === "true") {
+      modal.removeAttribute("aria-hidden");
+      modal.setAttribute("inert", "");
+    }
+
+    // S'assurer que la modal utilise inert au lieu de aria-hidden
+    modal.addEventListener("hide.bs.modal", function () {
+      // Utiliser un délai pour permettre à Bootstrap de terminer sa fermeture
+      setTimeout(() => {
+        if (this.getAttribute("aria-hidden") === "true") {
+          this.removeAttribute("aria-hidden");
+          this.setAttribute("inert", "");
+        }
+      }, 50);
+    });
+
+    // Retirer inert lors de l'affichage
+    modal.addEventListener("show.bs.modal", function () {
+      if (this.hasAttribute("inert")) {
+        this.removeAttribute("inert");
+      }
+    });
+  });
+
   documentForms.forEach((form) => {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
+      console.log("Soumission du formulaire de document");
 
-      const formData = new FormData(this);
+      // Vérifier si les champs requis sont présents
+      const auditIdField = this.querySelector('input[name="audit_id"]');
+      const pointVigilanceIdField = this.querySelector(
+        'input[name="point_vigilance_id"]'
+      );
+
+      if (
+        !auditIdField ||
+        !pointVigilanceIdField ||
+        !auditIdField.value ||
+        !pointVigilanceIdField.value
+      ) {
+        alert(
+          "Erreur: Paramètres manquants (audit_id, point_vigilance_id). Veuillez réessayer."
+        );
+        return;
+      }
+
+      // Créer un nouveau FormData pour plus de contrôle
+      const formData = new FormData();
+
+      // Ajouter explicitement les identifiants
+      formData.append("audit_id", auditIdField.value);
+      formData.append("point_vigilance_id", pointVigilanceIdField.value);
+      formData.append("type", "document");
+
+      // Ajouter le fichier
+      const fileInput = this.querySelector('input[type="file"]');
+      if (fileInput && fileInput.files && fileInput.files[0]) {
+        formData.append("document", fileInput.files[0]);
+        console.log("Fichier ajouté:", fileInput.files[0].name);
+      } else {
+        alert("Veuillez sélectionner un fichier à télécharger");
+        return;
+      }
+
       const submitBtn = this.querySelector('button[type="submit"]');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML =
@@ -265,19 +422,70 @@ function initDocumentForms(isAuditTermine) {
       fetch("index.php?action=audits&method=ajouterDocument", {
         method: "POST",
         body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
       })
-        .then((response) => response.json())
+        .then((response) => {
+          console.log("Status:", response.status);
+          console.log("Headers:", [...response.headers.entries()]);
+
+          if (!response.ok) {
+            throw new Error("Erreur réseau: " + response.status);
+          }
+
+          // Vérifier le type de contenu retourné
+          const contentType = response.headers.get("content-type");
+          if (contentType && contentType.includes("text/html")) {
+            // Le serveur a renvoyé du HTML au lieu de JSON
+            return response.text().then((html) => {
+              console.error(
+                "Le serveur a renvoyé du HTML au lieu de JSON:",
+                html.substring(0, 500)
+              );
+              throw new Error(
+                "Réponse invalide du serveur (HTML au lieu de JSON)"
+              );
+            });
+          }
+
+          return response.text().then((text) => {
+            console.log("Texte de la réponse:", text);
+
+            if (!text) {
+              throw new Error("Réponse vide");
+            }
+
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              console.error("Texte non JSON reçu:", text.substring(0, 500));
+              throw new Error("La réponse n'est pas au format JSON");
+            }
+          });
+        })
         .then((data) => {
           if (data.success) {
-            // Fermer la modal
+            console.log("Document ajouté avec succès");
+
+            // Fermer la modal de manière sécurisée
             const modalId =
               "documentModal-" + formData.get("point_vigilance_id");
             const modal = document.getElementById(modalId);
-            const bsModal = bootstrap.Modal.getInstance(modal);
-            bsModal.hide();
 
-            // Rafraîchir la page pour afficher le nouveau document
-            window.location.reload();
+            if (modal) {
+              // Utiliser notre fonction closeModal pour une fermeture cohérente
+              closeModal(modal);
+            }
+
+            // Rafraîchir la page avec un paramètre pour éviter le cache
+            setTimeout(() => {
+              window.location.href =
+                window.location.href.split("?")[0] +
+                `?action=audits&method=view&id=${
+                  auditIdField.value
+                }&nocache=${Date.now()}`;
+            }, 300);
           } else {
             // Afficher un message d'erreur
             alert(
@@ -286,9 +494,10 @@ function initDocumentForms(isAuditTermine) {
           }
         })
         .catch((error) => {
-          console.error("Erreur:", error);
+          console.error("Erreur lors du téléchargement:", error);
           alert(
-            "Une erreur est survenue lors de la communication avec le serveur"
+            "Une erreur est survenue lors de la communication avec le serveur: " +
+              error.message
           );
         })
         .finally(() => {
@@ -306,7 +515,7 @@ function initDocumentForms(isAuditTermine) {
 function initModalAccessibility() {
   document.querySelectorAll(".modal").forEach((modal) => {
     modal.addEventListener("hide.bs.modal", function () {
-      // Supprimer aria-hidden qui cause des problèmes
+      // Supprimer aria-hidden qui cause des problèmes d'accessibilité
       setTimeout(() => {
         if (this.getAttribute("aria-hidden") === "true") {
           this.removeAttribute("aria-hidden");
@@ -344,20 +553,81 @@ function confirmDelete(id) {
  * @param {number} pointId - L'ID du point de vigilance
  */
 function showImageModal(pointId) {
-  // Fermer l'offcanvas
-  const offcanvas = document.querySelector(".offcanvas.show");
-  if (offcanvas) {
-    const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvas);
-    if (bsOffcanvas) {
-      bsOffcanvas.hide();
-    }
-  }
+  try {
+    // 1. Fermer l'offcanvas sans dépendre de bootstrap
+    const offcanvas = document.querySelector(".offcanvas.show");
+    if (offcanvas) {
+      // Fermeture manuelle directe
+      offcanvas.classList.remove("show");
+      if (offcanvas instanceof HTMLElement) {
+        offcanvas.style.display = "none";
+      }
 
-  // Afficher la modal
-  const modal = new bootstrap.Modal(
-    document.getElementById("imageModal-" + pointId)
-  );
-  modal.show();
+      // Supprimer aria-modal et ajouter aria-hidden
+      offcanvas.removeAttribute("aria-modal");
+      offcanvas.setAttribute("aria-hidden", "true");
+
+      // Réactiver le défilement
+      document.body.classList.remove("offcanvas-open");
+      document.body.style.removeProperty("overflow");
+      document.body.style.removeProperty("padding-right");
+    }
+
+    // 2. Afficher la modal manuellement sans dépendre de bootstrap
+    const modalElement = document.getElementById("imageModal-" + pointId);
+    if (!modalElement) {
+      console.error("Élément modal non trouvé:", "imageModal-" + pointId);
+      return;
+    }
+
+    // Affichage direct de la modal
+    modalElement.classList.add("show");
+    if (modalElement instanceof HTMLElement) {
+      modalElement.style.display = "block";
+    }
+
+    // Configurer l'accessibilité
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.removeAttribute("aria-hidden");
+
+    // Ajouter un backdrop
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show";
+    document.body.appendChild(backdrop);
+
+    // Bloquer le défilement du body
+    document.body.classList.add("modal-open");
+
+    // Ajouter gestionnaire de fermeture pour les boutons
+    const closeButtons = modalElement.querySelectorAll(
+      '[data-bs-dismiss="modal"]'
+    );
+    closeButtons.forEach((button) => {
+      // Supprime les gestionnaires existants pour éviter les doublons
+      const oldClone = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(oldClone, button);
+      }
+
+      // Ajoute un nouveau gestionnaire de fermeture
+      oldClone.addEventListener("click", function () {
+        // Fermeture manuelle
+        modalElement.classList.remove("show");
+        if (modalElement instanceof HTMLElement) {
+          modalElement.style.display = "none";
+        }
+
+        // Supprimer le backdrop
+        const backdrops = document.querySelectorAll(".modal-backdrop");
+        backdrops.forEach((backdrop) => backdrop.remove());
+
+        // Réactiver le défilement
+        document.body.classList.remove("modal-open");
+      });
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'affichage de la modal d'image:", error);
+  }
 }
 
 /**
@@ -366,23 +636,72 @@ function showImageModal(pointId) {
  * @param {string} photoName - Le nom de la photo
  */
 function showPhotoModal(photoUrl, photoName) {
-  // Mettre à jour la source de l'image
-  const modalPhoto = document.getElementById("modal-photo");
-  const modalLabel = document.getElementById("viewPhotoModalLabel");
+  try {
+    // Mettre à jour la source de l'image
+    const modalPhoto = document.getElementById("modal-photo");
+    const modalLabel = document.getElementById("viewPhotoModalLabel");
+    const modalElement = document.getElementById("viewPhotoModal");
 
-  if (modalPhoto instanceof HTMLImageElement) {
-    modalPhoto.src = photoUrl;
-  }
+    if (!modalElement) {
+      console.error("Élément modal non trouvé: viewPhotoModal");
+      return;
+    }
 
-  if (modalLabel) {
-    modalLabel.textContent = photoName;
-  }
+    if (modalPhoto instanceof HTMLImageElement) {
+      modalPhoto.src = photoUrl;
+    }
 
-  // Afficher la modal
-  const modalElement = document.getElementById("viewPhotoModal");
-  if (modalElement && typeof bootstrap.Modal !== "undefined") {
-    const modal = new bootstrap.Modal(modalElement);
-    modal.show();
+    if (modalLabel) {
+      modalLabel.textContent = photoName;
+    }
+
+    // Afficher la modal directement
+    modalElement.classList.add("show");
+    if (modalElement instanceof HTMLElement) {
+      modalElement.style.display = "block";
+    }
+
+    // Configurer l'accessibilité
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.removeAttribute("aria-hidden");
+
+    // Ajouter un backdrop
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show";
+    document.body.appendChild(backdrop);
+
+    // Bloquer le défilement du body
+    document.body.classList.add("modal-open");
+
+    // Ajouter gestionnaire de fermeture pour les boutons
+    const closeButtons = modalElement.querySelectorAll(
+      '[data-bs-dismiss="modal"]'
+    );
+    closeButtons.forEach((button) => {
+      // Supprime les gestionnaires existants pour éviter les doublons
+      const oldClone = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(oldClone, button);
+      }
+
+      // Ajoute un nouveau gestionnaire de fermeture
+      oldClone.addEventListener("click", function () {
+        // Fermeture manuelle
+        modalElement.classList.remove("show");
+        if (modalElement instanceof HTMLElement) {
+          modalElement.style.display = "none";
+        }
+
+        // Supprimer le backdrop
+        const backdrops = document.querySelectorAll(".modal-backdrop");
+        backdrops.forEach((backdrop) => backdrop.remove());
+
+        // Réactiver le défilement
+        document.body.classList.remove("modal-open");
+      });
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'affichage de la modal photo:", error);
   }
 }
 
@@ -392,42 +711,119 @@ function showPhotoModal(photoUrl, photoName) {
  */
 function supprimerDocument(documentId) {
   if (confirm("Êtes-vous sûr de vouloir supprimer ce document/cette photo ?")) {
-    const formData = new FormData();
-    formData.append("document_id", documentId);
+    try {
+      console.log("Tentative de suppression du document ID:", documentId);
 
-    fetch("index.php?action=audits&method=supprimerDocument", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          // Supprimer l'élément du DOM
-          const photoContainer = document.getElementById(
-            "photo-container-" + documentId
-          );
-          if (photoContainer) {
-            photoContainer.remove();
-          }
+      // Préparer les données à envoyer
+      const formData = new FormData();
+      formData.append("id", String(documentId));
 
-          const documentContainer = document.getElementById(
-            "document-container-" + documentId
-          );
-          if (documentContainer) {
-            documentContainer.remove();
-          }
-        } else {
-          alert(
-            data.message || "Une erreur est survenue lors de la suppression"
-          );
-        }
+      // Afficher un indicateur de chargement
+      const loadingElement = document.createElement("div");
+      loadingElement.className =
+        "loading-indicator position-fixed top-50 start-50 translate-middle bg-light p-3 rounded shadow";
+      loadingElement.innerHTML =
+        '<div class="spinner-border text-primary" role="status"></div><div class="mt-2">Suppression en cours...</div>';
+      document.body.appendChild(loadingElement);
+
+      // Effectuer la demande de suppression
+      fetch("index.php?action=audits&method=supprimerDocument", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
       })
-      .catch((error) => {
-        console.error("Erreur:", error);
-        alert(
-          "Une erreur est survenue lors de la communication avec le serveur"
-        );
-      });
+        .then((response) => {
+          console.log("Réponse de suppression - Status:", response.status);
+          console.log("Réponse de suppression - Headers:", [
+            ...response.headers.entries(),
+          ]);
+
+          if (!response.ok) {
+            throw new Error(
+              `Erreur réseau: ${response.status} ${response.statusText}`
+            );
+          }
+
+          // Vérifier le type de contenu retourné
+          const contentType = response.headers.get("content-type");
+          console.log("Type de contenu de la réponse:", contentType);
+
+          if (!contentType || !contentType.includes("application/json")) {
+            // Le serveur a renvoyé un format non-JSON
+            return response.text().then((text) => {
+              console.error(
+                "Format de réponse invalide (non JSON):",
+                text.substring(0, 500)
+              );
+              throw new Error("Format de réponse invalide");
+            });
+          }
+
+          return response.text().then((text) => {
+            console.log("Texte de la réponse:", text);
+
+            if (!text) {
+              throw new Error("Réponse vide du serveur");
+            }
+
+            try {
+              return JSON.parse(text);
+            } catch (e) {
+              console.error(
+                "Échec du parsing JSON:",
+                e,
+                "Texte reçu:",
+                text.substring(0, 500)
+              );
+              throw new Error("La réponse n'est pas au format JSON valide");
+            }
+          });
+        })
+        .then((data) => {
+          if (data.success) {
+            // Suppression réussie - recharger la page avec un timestamp pour éviter le cache
+            console.log("Suppression réussie, rechargement de la page");
+
+            // Récupérer l'ID de l'audit
+            const auditIdElement = document.querySelector(
+              'input[name="audit_id"]'
+            );
+            const auditId = auditIdElement ? auditIdElement.value : null;
+
+            if (!auditId) {
+              console.error("Impossible de récupérer l'ID de l'audit");
+              throw new Error("ID d'audit non trouvé");
+            }
+
+            setTimeout(() => {
+              window.location.href = `index.php?action=audits&method=view&id=${auditId}&nocache=${Date.now()}`;
+            }, 500);
+          } else {
+            // Afficher le message d'erreur du serveur
+            console.error("Le serveur a renvoyé une erreur:", data.message);
+            alert(
+              data.message || "Une erreur est survenue lors de la suppression"
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Erreur complète lors de la suppression:", error);
+          alert(
+            "Une erreur est survenue lors de la suppression: " + error.message
+          );
+        })
+        .finally(() => {
+          // Supprimer l'indicateur de chargement
+          if (loadingElement && loadingElement.parentNode) {
+            loadingElement.parentNode.removeChild(loadingElement);
+          }
+        });
+    } catch (error) {
+      console.error("Erreur critique lors de la suppression:", error);
+      alert("Une erreur critique est survenue: " + error.message);
+    }
   }
 }
 
@@ -451,20 +847,45 @@ function initWebcam(pointId) {
   // Gérer l'affichage de la modal
   modal.addEventListener("show.bs.modal", function () {
     // Réinitialiser la vue par défaut (vidéo visible, canvas caché)
-    document.getElementById("camera-container-" + pointId).style.display =
-      "block";
-    document.getElementById(
+    const cameraContainer = document.getElementById(
+      "camera-container-" + pointId
+    );
+    const capturedContainer = document.getElementById(
       "captured-photo-container-" + pointId
-    ).style.display = "none";
-    document.getElementById("capture-btn-" + pointId).style.display =
-      "inline-block";
-    document.getElementById("save-btn-" + pointId).style.display = "none";
-    document.getElementById("retake-btn-" + pointId).style.display = "none";
+    );
+    const captureBtn = document.getElementById("capture-btn-" + pointId);
+    const saveBtn = document.getElementById("save-btn-" + pointId);
+    const retakeBtn = document.getElementById("retake-btn-" + pointId);
+
+    // Vérifier que les éléments existent avant de modifier leurs propriétés
+    if (cameraContainer instanceof HTMLElement) {
+      cameraContainer.style.display = "block";
+    }
+
+    if (capturedContainer instanceof HTMLElement) {
+      capturedContainer.style.display = "none";
+    }
+
+    if (captureBtn instanceof HTMLElement) {
+      captureBtn.style.display = "inline-block";
+    }
+
+    if (saveBtn instanceof HTMLElement) {
+      saveBtn.style.display = "none";
+    }
+
+    if (retakeBtn instanceof HTMLElement) {
+      retakeBtn.style.display = "none";
+    }
   });
 
   // Gérer l'affichage complet de la modal
   modal.addEventListener("shown.bs.modal", function () {
     const video = document.getElementById("video-" + pointId);
+    if (!video || !(video instanceof HTMLVideoElement)) {
+      console.error("Élément vidéo non trouvé ou de type incorrect");
+      return;
+    }
 
     // Demander l'accès à la webcam
     navigator.mediaDevices
@@ -495,25 +916,79 @@ function initWebcam(pointId) {
  * @param {number} pointId - L'ID du point de vigilance
  */
 function capturePhoto(pointId) {
-  const video = document.getElementById("video-" + pointId);
-  const canvas = document.getElementById("canvas-" + pointId);
+  try {
+    const video = document.getElementById("video-" + pointId);
+    const canvas = document.getElementById("canvas-" + pointId);
 
-  // Configurer le canvas à la taille de la vidéo
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
+    if (!video || !canvas) {
+      console.error("Erreur: Video ou canvas non trouvé");
+      alert("Erreur: Impossible de capturer la photo - éléments manquants");
+      return;
+    }
 
-  // Dessiner l'image vidéo sur le canvas
-  const context = canvas.getContext("2d");
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // S'assurer que nous avons des éléments du bon type
+    const videoElement = video instanceof HTMLVideoElement ? video : null;
+    const canvasElement = canvas instanceof HTMLCanvasElement ? canvas : null;
 
-  // Afficher le canvas et les boutons d'action
-  document.getElementById("camera-container-" + pointId).style.display = "none";
-  document.getElementById("captured-photo-container-" + pointId).style.display =
-    "block";
-  document.getElementById("capture-btn-" + pointId).style.display = "none";
-  document.getElementById("save-btn-" + pointId).style.display = "inline-block";
-  document.getElementById("retake-btn-" + pointId).style.display =
-    "inline-block";
+    if (!videoElement || !canvasElement) {
+      console.error("Erreur: Les éléments ne sont pas du bon type");
+      alert(
+        "Erreur: Impossible de capturer la photo - type d'éléments incorrect"
+      );
+      return;
+    }
+
+    // Configurer le canvas à la taille de la vidéo
+    if (videoElement.videoWidth && videoElement.videoHeight) {
+      canvasElement.width = videoElement.videoWidth;
+      canvasElement.height = videoElement.videoHeight;
+    } else {
+      // Fallback si les dimensions de la vidéo ne sont pas disponibles
+      canvasElement.width = videoElement.offsetWidth || 640;
+      canvasElement.height = videoElement.offsetHeight || 480;
+    }
+
+    // Dessiner l'image vidéo sur le canvas
+    const context = canvasElement.getContext("2d");
+    if (!context) {
+      console.error("Erreur: Impossible d'obtenir le contexte 2D du canvas");
+      alert(
+        "Erreur: Impossible de capturer la photo - problème avec le canvas"
+      );
+      return;
+    }
+
+    context.drawImage(
+      videoElement,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height
+    );
+
+    // Afficher le canvas et les boutons d'action
+    const cameraContainer = document.getElementById(
+      "camera-container-" + pointId
+    );
+    const capturedContainer = document.getElementById(
+      "captured-photo-container-" + pointId
+    );
+    const captureBtn = document.getElementById("capture-btn-" + pointId);
+    const saveBtn = document.getElementById("save-btn-" + pointId);
+    const retakeBtn = document.getElementById("retake-btn-" + pointId);
+
+    if (cameraContainer instanceof HTMLElement)
+      cameraContainer.style.display = "none";
+    if (capturedContainer instanceof HTMLElement)
+      capturedContainer.style.display = "block";
+    if (captureBtn instanceof HTMLElement) captureBtn.style.display = "none";
+    if (saveBtn instanceof HTMLElement) saveBtn.style.display = "inline-block";
+    if (retakeBtn instanceof HTMLElement)
+      retakeBtn.style.display = "inline-block";
+  } catch (error) {
+    console.error("Erreur lors de la capture de la photo:", error);
+    alert("Une erreur est survenue lors de la capture de la photo");
+  }
 }
 
 /**
@@ -521,15 +996,30 @@ function capturePhoto(pointId) {
  * @param {number} pointId - L'ID du point de vigilance
  */
 function retakePhoto(pointId) {
-  // Afficher à nouveau la vidéo et masquer le canvas
-  document.getElementById("camera-container-" + pointId).style.display =
-    "block";
-  document.getElementById("captured-photo-container-" + pointId).style.display =
-    "none";
-  document.getElementById("capture-btn-" + pointId).style.display =
-    "inline-block";
-  document.getElementById("save-btn-" + pointId).style.display = "none";
-  document.getElementById("retake-btn-" + pointId).style.display = "none";
+  try {
+    // Afficher à nouveau la vidéo et masquer le canvas
+    const cameraContainer = document.getElementById(
+      "camera-container-" + pointId
+    );
+    const capturedContainer = document.getElementById(
+      "captured-photo-container-" + pointId
+    );
+    const captureBtn = document.getElementById("capture-btn-" + pointId);
+    const saveBtn = document.getElementById("save-btn-" + pointId);
+    const retakeBtn = document.getElementById("retake-btn-" + pointId);
+
+    if (cameraContainer instanceof HTMLElement)
+      cameraContainer.style.display = "block";
+    if (capturedContainer instanceof HTMLElement)
+      capturedContainer.style.display = "none";
+    if (captureBtn instanceof HTMLElement)
+      captureBtn.style.display = "inline-block";
+    if (saveBtn instanceof HTMLElement) saveBtn.style.display = "none";
+    if (retakeBtn instanceof HTMLElement) retakeBtn.style.display = "none";
+  } catch (error) {
+    console.error("Erreur lors de la reprise de photo:", error);
+    alert("Une erreur est survenue lors de la reprise de la photo");
+  }
 }
 
 /**
@@ -539,102 +1029,292 @@ function retakePhoto(pointId) {
  */
 function savePhoto(auditId, pointId) {
   const canvas = document.getElementById("canvas-" + pointId);
-  const imageData = canvas.toDataURL("image/jpeg");
-
-  console.log(
-    "Préparation de l'image pour l'envoi. Taille de la chaîne: " +
-      imageData.length
-  );
-
-  // Vérifier que l'image a bien le format attendu
-  if (!imageData.startsWith("data:image/jpeg;base64,")) {
-    console.error(
-      "Format d'image incorrect:",
-      imageData.substring(0, 50) + "..."
-    );
-    alert("Erreur: format d'image incorrect");
+  if (!canvas) {
+    alert("Erreur: Canvas non trouvé");
     return;
   }
 
-  // Préparer les données à envoyer
-  const formData = new FormData();
-  formData.append("audit_id", auditId);
-  formData.append("point_vigilance_id", pointId);
-  formData.append("image_base64", imageData);
-
-  console.log("Données prêtes à être envoyées:", {
-    audit_id: auditId,
-    point_vigilance_id: pointId,
-    image_base64_length: imageData.length,
-  });
-
-  // Désactiver les boutons pendant l'envoi
-  document.getElementById("save-btn-" + pointId).disabled = true;
-  document.getElementById("retake-btn-" + pointId).disabled = true;
-  document.getElementById("save-btn-" + pointId).innerHTML =
-    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Envoi en cours...';
-
-  // Arrêter le flux vidéo avant d'envoyer la photo
-  if (videoStreams[pointId]) {
-    videoStreams[pointId].getTracks().forEach((track) => track.stop());
-    videoStreams[pointId] = null;
+  // S'assurer que nous avons un élément canvas
+  if (!(canvas instanceof HTMLCanvasElement)) {
+    alert("Erreur: L'élément trouvé n'est pas un canvas");
+    return;
   }
 
-  console.log(
-    "Envoi de la requête à index.php?action=audits&method=prendrePhoto"
-  );
+  try {
+    const imageData = canvas.toDataURL("image/jpeg");
 
-  // Envoyer l'image au serveur
-  fetch("index.php?action=audits&method=prendrePhoto", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => {
-      console.log("Réponse reçue avec statut:", response.status);
-      return response.json();
+    // Vérifier que l'image a bien le format attendu
+    if (!imageData.startsWith("data:image/jpeg;base64,")) {
+      alert("Erreur: format d'image incorrect");
+      return;
+    }
+
+    // Préparer les données à envoyer
+    const formData = new FormData();
+    formData.append("audit_id", String(auditId));
+    formData.append("point_vigilance_id", String(pointId));
+    formData.append("image_base64", imageData);
+
+    // Désactiver les boutons pendant l'envoi
+    const saveBtn = document.getElementById("save-btn-" + pointId);
+    const retakeBtn = document.getElementById("retake-btn-" + pointId);
+
+    // Vérifier que les boutons sont bien des éléments HTML
+    if (saveBtn instanceof HTMLButtonElement) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML =
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Envoi en cours...';
+    }
+
+    if (retakeBtn instanceof HTMLButtonElement) {
+      retakeBtn.disabled = true;
+    }
+
+    // Arrêter le flux vidéo avant d'envoyer la photo
+    if (videoStreams[pointId]) {
+      videoStreams[pointId].getTracks().forEach((track) => track.stop());
+      videoStreams[pointId] = null;
+    }
+
+    // Envoyer l'image au serveur
+    fetch("index.php?action=audits&method=prendrePhoto", {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
     })
-    .then((data) => {
-      console.log("Données reçues:", data);
-      if (data.success) {
-        console.log(
-          "Photo enregistrée avec succès, ID:",
-          data.photo ? data.photo.id : "inconnu"
-        );
+      .then((response) => {
+        console.log("Status:", response.status);
+        console.log("Headers:", [...response.headers.entries()]);
 
-        // Fermer la modal
-        const modal = document.getElementById("photoModal-" + pointId);
-        const bsModal = bootstrap.Modal.getInstance(modal);
-        if (bsModal) {
-          bsModal.hide();
-        } else {
-          console.warn("Impossible de trouver l'instance bootstrap modal");
-          modal.style.display = "none";
-          // Supprimer manuellement le backdrop si nécessaire
-          const backdrops = document.querySelectorAll(".modal-backdrop");
-          backdrops.forEach((backdrop) => backdrop.remove());
+        if (!response.ok) {
+          throw new Error("Erreur réseau: " + response.status);
         }
 
-        // Attendre que le traitement soit terminé avant de rafraîchir la page
-        setTimeout(() => {
-          window.location.reload();
-        }, 300);
-      } else {
-        console.error("Erreur retournée par le serveur:", data.message);
+        // Vérifier le type de contenu retourné
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("text/html")) {
+          // Le serveur a renvoyé du HTML au lieu de JSON
+          return response.text().then((html) => {
+            console.error(
+              "Le serveur a renvoyé du HTML au lieu de JSON:",
+              html.substring(0, 500)
+            );
+            throw new Error(
+              "Réponse invalide du serveur (HTML au lieu de JSON)"
+            );
+          });
+        }
+
+        return response.text().then((text) => {
+          if (!text) {
+            throw new Error("Réponse vide");
+          }
+
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            console.error("Texte non JSON reçu:", text.substring(0, 500));
+            throw new Error("La réponse n'est pas au format JSON");
+          }
+        });
+      })
+      .then((data) => {
+        if (data.success) {
+          // Méthode simplifiée pour fermer la modal sans causer de boucles infinies
+          const modal = document.getElementById("photoModal-" + pointId);
+          if (modal) {
+            try {
+              // Tenter de nettoyer le focusTrap avant de fermer manuellement la modal
+              if (window.bootstrap && window.bootstrap.Modal) {
+                // Tenter d'utiliser l'API bootstrap si disponible
+                const bsModal = bootstrap.Modal.getInstance(modal);
+                if (bsModal) {
+                  bsModal.hide();
+                }
+              } else {
+                // Méthode manuelle si bootstrap n'est pas disponible
+                modal.style.display = "none";
+                modal.classList.remove("show");
+
+                // Supprimer les backdrops
+                document
+                  .querySelectorAll(".modal-backdrop")
+                  .forEach((el) => el.remove());
+
+                // Réinitialiser le body
+                document.body.classList.remove("modal-open");
+                document.body.style.paddingRight = "";
+              }
+            } catch (modalError) {
+              console.log(
+                "Erreur lors de la fermeture de la modal:",
+                modalError
+              );
+            }
+          }
+
+          // Rafraîchir la page avec un timestamp pour éviter le cache
+          setTimeout(() => {
+            window.location.href =
+              window.location.href.split("?")[0] +
+              `?action=audits&method=view&id=${auditId}&nocache=${Date.now()}`;
+          }, 500);
+        } else {
+          alert(
+            data.message ||
+              "Une erreur est survenue lors de l'enregistrement de la photo"
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Erreur:", error);
         alert(
-          data.message ||
-            "Une erreur est survenue lors de l'enregistrement de la photo"
+          "Une erreur est survenue lors de la communication avec le serveur"
+        );
+      })
+      .finally(() => {
+        // Réactiver les boutons
+        if (saveBtn instanceof HTMLButtonElement) {
+          saveBtn.disabled = false;
+          saveBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        }
+
+        if (retakeBtn instanceof HTMLButtonElement) {
+          retakeBtn.disabled = false;
+        }
+      });
+  } catch (error) {
+    console.error("Erreur lors de la capture de la photo:", error);
+    alert("Une erreur est survenue lors de la capture de la photo");
+  }
+}
+
+/**
+ * Affiche une modal de manière universelle (fonctionne avec ou sans Bootstrap)
+ * @param {HTMLElement} modalElement - L'élément modal à afficher
+ */
+function openModal(modalElement) {
+  if (!modalElement) return;
+
+  // Supprimer l'attribut inert s'il existe
+  if (modalElement.hasAttribute("inert")) {
+    modalElement.removeAttribute("inert");
+  }
+
+  try {
+    // Vérification plus rigoureuse de l'existence de bootstrap et de ses méthodes
+    if (
+      typeof bootstrap !== "undefined" &&
+      bootstrap !== null &&
+      typeof bootstrap.Modal !== "undefined" &&
+      bootstrap.Modal !== null
+    ) {
+      // Essayer de récupérer l'instance en toute sécurité
+      let bsModal = null;
+      try {
+        if (typeof bootstrap.Modal.getInstance === "function") {
+          bsModal = bootstrap.Modal.getInstance(modalElement);
+        }
+      } catch (instanceError) {
+        console.log(
+          "Information: Erreur lors de la récupération de l'instance de modal"
         );
       }
-    })
-    .catch((error) => {
-      console.error("Erreur lors de la communication:", error);
-      alert("Une erreur est survenue lors de la communication avec le serveur");
-    })
-    .finally(() => {
-      // Réactiver les boutons
-      document.getElementById("save-btn-" + pointId).disabled = false;
-      document.getElementById("retake-btn-" + pointId).disabled = false;
-      document.getElementById("save-btn-" + pointId).innerHTML =
-        '<i class="fas fa-save"></i> Enregistrer';
+
+      // Si aucune instance n'existe, en créer une nouvelle
+      if (!bsModal) {
+        try {
+          bsModal = new bootstrap.Modal(modalElement);
+        } catch (createError) {
+          console.log(
+            "Information: Impossible de créer une nouvelle instance de modal"
+          );
+          // Si échec de création, on passera à la méthode manuelle
+          throw createError;
+        }
+      }
+
+      // Afficher la modal si l'instance existe
+      if (bsModal) {
+        bsModal.show();
+        return; // Si tout s'est bien passé, on retourne
+      }
+    }
+
+    // Si nous arrivons ici, c'est que la méthode Bootstrap n'a pas fonctionné
+    // Méthode manuelle sans Bootstrap
+    modalElement.style.display = "block";
+    modalElement.classList.add("show");
+    modalElement.setAttribute("aria-modal", "true");
+    modalElement.removeAttribute("aria-hidden");
+
+    // Ajouter un backdrop manuel si nécessaire
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop fade show";
+    document.body.appendChild(backdrop);
+
+    // Ajouter la classe au body pour empêcher le défilement
+    document.body.classList.add("modal-open");
+
+    // Gérer la fermeture de la modal
+    const closeButtons = modalElement.querySelectorAll(
+      '[data-bs-dismiss="modal"]'
+    );
+    closeButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        closeModal(modalElement);
+      });
     });
+  } catch (error) {
+    console.log("Ouverture manuelle de la modal suite à une erreur:", error);
+    // Fallback en cas d'erreur
+    modalElement.style.display = "block";
+  }
+}
+
+/**
+ * Ferme une modale de manière cohérente en utilisant Bootstrap si disponible ou manuellement
+ * @param {HTMLElement} modal Élément modal à fermer
+ */
+function closeModal(modal) {
+  if (!modal) return;
+
+  // Essayer d'utiliser Bootstrap si disponible
+  if (window.bootstrap && window.bootstrap.Modal) {
+    try {
+      const bsModal = window.bootstrap.Modal.getInstance(modal);
+      if (bsModal) {
+        bsModal.hide();
+      }
+    } catch (error) {
+      // Fallback en cas d'erreur avec l'API Bootstrap
+      closeModalManually(modal);
+    }
+  } else {
+    // Fermeture manuelle si Bootstrap n'est pas disponible
+    closeModalManually(modal);
+  }
+}
+
+/**
+ * Implémentation manuelle de fermeture de modale
+ * @param {HTMLElement} modal Élément modal à fermer
+ */
+function closeModalManually(modal) {
+  // Cacher la modale
+  modal.style.display = "none";
+  modal.classList.remove("show");
+
+  // Gérer l'accessibilité sans utiliser aria-hidden qui cause des problèmes
+  modal.removeAttribute("aria-modal");
+  modal.setAttribute("inert", "");
+
+  // Supprimer les backdrops
+  document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
+
+  // Réinitialiser le body
+  document.body.classList.remove("modal-open");
+  document.body.style.paddingRight = "";
 }

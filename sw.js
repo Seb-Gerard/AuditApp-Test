@@ -2,22 +2,114 @@
 
 /* global self */
 
-const PREFIX = "V1.4";
+const PREFIX = "V1.5";
 const urlsToCache = [
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
   "https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.woff2",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.ttf",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-regular-400.woff2",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-regular-400.ttf",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-brands-400.woff2",
+  "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-brands-400.ttf",
+];
+
+// Fonction pour transformer les chemins relatifs en URLs absolues
+function getAbsoluteUrl(relativeUrl) {
+  // Obtenir l'origine de l'emplacement du service worker
+  const baseUrl = self.location.origin;
+
+  // Si l'URL est déjà absolue, la retourner telle quelle
+  if (relativeUrl.startsWith("http://") || relativeUrl.startsWith("https://")) {
+    return relativeUrl;
+  }
+
+  // S'assurer que l'URL relative commence par /
+  const normalizedPath = relativeUrl.startsWith("/")
+    ? relativeUrl
+    : "/" + relativeUrl;
+
+  return baseUrl + normalizedPath;
+}
+
+// Ressources locales de base à mettre en cache
+const localResources = [
   "/Audit/offline.php",
   "/Audit/index.php?action=articles",
   "/Audit/index.php?action=audits",
   "/Audit/public/assets/css/style.css",
   "/Audit/public/assets/img/Logo_CNPP_250.jpg",
+  "/Audit/public/assets/img/Logo_CNPP_192.png",
+  "/Audit/public/assets/img/screenshot-wide.png",
+  "/Audit/public/assets/img/CNPP_logotype_blanc.png",
   "/Audit/public/assets/js/db.js",
   "/Audit/public/assets/js/auditdb.js",
+  "/Audit/public/assets/js/offline-manager.js",
+  "/Audit/public/assets/js/script.js",
+  "/Audit/includes/header.php",
+  "/Audit/includes/footer.php",
+  "/Audit/manifest.json",
 ];
 
-// Note: Nous n'importons PAS db.js car il utilise window qui n'est pas disponible dans le SW
-// mais nous le mettons en cache pour que la page offline.php puisse y accéder
+// Cache dynamique pour stocker les URLs visitées
+const DYNAMIC_CACHE = "dynamic-v1";
+
+// Fonction pour mettre en cache une URL dynamiquement
+async function cacheUrl(url, cache) {
+  // Ignorer les URLs null/undefined ou les extensions de navigateur
+  if (!url || url.includes("extension://")) return null;
+
+  try {
+    console.log("[Service Worker] Tentative de mise en cache dynamique:", url);
+    let response;
+
+    // Vérifier si l'URL est valide pour la mise en cache
+    try {
+      const urlObj = new URL(url);
+
+      // Ne pas mettre en cache les extensions de navigateur ou les URLs non-HTTP(S)
+      if (!urlObj.protocol.startsWith("http")) {
+        console.log("[Service Worker] URL ignorée (non HTTP/HTTPS):", url);
+        return null;
+      }
+    } catch (urlError) {
+      console.error("[Service Worker] URL invalide:", url);
+      return null;
+    }
+
+    // Utiliser fetch avec les paramètres appropriés
+    if (
+      url.includes("cdn.jsdelivr.net") ||
+      url.includes("cdnjs.cloudflare.com")
+    ) {
+      response = await fetch(url, {
+        mode: "cors",
+        credentials: "omit",
+      });
+    } else {
+      response = await fetch(url, {
+        mode: "same-origin",
+        credentials: "same-origin",
+      });
+    }
+
+    if (response && response.ok) {
+      const clonedResponse = response.clone();
+      await cache.put(url, clonedResponse);
+      console.log("[Service Worker] URL mise en cache dynamique:", url);
+      return response;
+    }
+    return null;
+  } catch (error) {
+    console.error(
+      "[Service Worker] Erreur de mise en cache dynamique:",
+      url,
+      error
+    );
+    return null;
+  }
+}
 
 self.addEventListener("install", (event) => {
   // @ts-ignore
@@ -26,23 +118,96 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(PREFIX);
-      try {
-        for (const url of urlsToCache) {
-          try {
-            const response = await fetch(url, {
-              cache: "no-cache",
-              credentials: "same-origin",
-            });
+      console.log("[Service Worker] Mise en cache des ressources");
 
-            if (response.ok) {
-              await cache.put(url, response);
-            }
-          } catch (fileError) {
-            // Échec silencieux pour la mise en cache
+      // D'abord mettre en cache les ressources CDN
+      for (const url of urlsToCache) {
+        try {
+          console.log("[Service Worker] Tentative de mise en cache CDN:", url);
+
+          const response = await fetch(url, {
+            mode: "cors",
+            credentials: "omit",
+          });
+
+          if (response.ok) {
+            await cache.put(url, response);
+            console.log(
+              "[Service Worker] Ressource CDN mise en cache avec succès:",
+              url
+            );
+          } else {
+            console.warn(
+              "[Service Worker] Échec de mise en cache CDN:",
+              url,
+              response.status
+            );
           }
+        } catch (error) {
+          console.error(
+            "[Service Worker] Erreur lors de la mise en cache CDN:",
+            url,
+            error
+          );
         }
-      } catch (error) {
-        // Ignorer les erreurs de mise en cache
+      }
+
+      // Ensuite mettre en cache les ressources locales avec des URLs absolues
+      const failedResources = [];
+
+      for (const relativeUrl of localResources) {
+        try {
+          const absoluteUrl = getAbsoluteUrl(relativeUrl);
+          console.log(
+            "[Service Worker] Tentative de mise en cache locale:",
+            absoluteUrl
+          );
+
+          const response = await fetch(absoluteUrl, {
+            mode: "same-origin",
+            credentials: "same-origin",
+            headers: {
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+            },
+          });
+
+          if (response.ok) {
+            await cache.put(relativeUrl, response);
+            console.log(
+              "[Service Worker] Ressource locale mise en cache avec succès:",
+              relativeUrl
+            );
+          } else {
+            console.warn(
+              "[Service Worker] Échec de mise en cache locale:",
+              relativeUrl,
+              response.status
+            );
+            failedResources.push({ url: relativeUrl, status: response.status });
+          }
+        } catch (error) {
+          console.error(
+            "[Service Worker] Erreur lors de la mise en cache locale:",
+            relativeUrl,
+            error
+          );
+          failedResources.push({ url: relativeUrl, error: error.message });
+        }
+      }
+
+      // Créer ou ouvrir le cache dynamique
+      await caches.open(DYNAMIC_CACHE);
+
+      if (failedResources.length > 0) {
+        console.warn(
+          "[Service Worker] Ressources non mises en cache:",
+          failedResources
+        );
+      } else {
+        console.log(
+          "[Service Worker] Toutes les ressources ont été mises en cache avec succès"
+        );
       }
     })()
   );
@@ -57,7 +222,9 @@ self.addEventListener("activate", (event) => {
       const keys = await caches.keys();
       await Promise.all(
         keys.map((key) => {
-          if (!key.includes(PREFIX)) {
+          // Ne pas supprimer le cache dynamique
+          if (!key.includes(PREFIX) && key !== DYNAMIC_CACHE) {
+            console.log("[Service Worker] Suppression de l'ancien cache:", key);
             return caches.delete(key);
           }
         })
@@ -68,9 +235,25 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
+  console.log(
+    "[Service Worker] Intercepting request:",
+    url.pathname + url.search
+  );
 
-  // Ne pas intercepter les requêtes AJAX
-  if (event.request.headers.get("X-Requested-With") === "XMLHttpRequest") {
+  // Ne pas intercepter les requêtes POST (notamment pour les formulaires)
+  if (event.request.method === "POST") {
+    console.log("[Service Worker] Ignoring POST request:", url.pathname);
+    return;
+  }
+
+  // Ne pas intercepter les requêtes AJAX ou JSON
+  if (
+    event.request.headers.get("X-Requested-With") === "XMLHttpRequest" ||
+    event.request.headers.get("Accept")?.includes("application/json") ||
+    (url.searchParams.has("format") &&
+      url.searchParams.get("format") === "json")
+  ) {
+    console.log("[Service Worker] Ignoring AJAX/JSON request:", url.pathname);
     return;
   }
 
@@ -79,110 +262,450 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (event.request.mode === "navigate") {
+  // Détecter les requêtes d'audit avec ID qui doivent être cachées
+  const isAuditWithId =
+    url.pathname.includes("/index.php") &&
+    url.searchParams.has("action") &&
+    url.searchParams.get("action") === "audits" &&
+    url.searchParams.has("id");
+
+  if (isAuditWithId) {
+    console.log(
+      `[Service Worker] Détection d'une requête d'audit avec ID:`,
+      url.href
+    );
     event.respondWith(
       (async () => {
         try {
-          return await fetch(event.request);
+          // Essayer d'abord le réseau
+          console.log(
+            "[Service Worker] Tentative réseau pour l'audit:",
+            url.href
+          );
+
+          try {
+            const response = await fetch(event.request);
+            if (response.ok) {
+              // Mettre à jour le cache avec la nouvelle version
+              const cache = await caches.open(PREFIX);
+              const clonedResponse = response.clone();
+              await cache.put(event.request, clonedResponse);
+              console.log(
+                "[Service Worker] Audit mis à jour dans le cache:",
+                url.href
+              );
+              return response;
+            }
+            throw new Error(`Echec de récupération: ${response.status}`);
+          } catch (networkError) {
+            console.log(
+              "[Service Worker] Réseau indisponible, utilisation du cache"
+            );
+            // Si le réseau échoue, utiliser le cache
+            const cacheResponse = await caches.match(event.request);
+            if (cacheResponse) {
+              return cacheResponse;
+            }
+            // Si pas en cache non plus, retourner une erreur
+            return new Response(
+              JSON.stringify({ error: "Donnée d'audit non disponible" }),
+              { headers: { "Content-Type": "application/json" } }
+            );
+          }
         } catch (error) {
-          const cache = await caches.open(PREFIX);
-          const cached = await cache.match("/Audit/offline.php");
-          if (cached) {
-            return cached;
+          console.error("[Service Worker] Erreur:", error);
+          return new Response(JSON.stringify({ error: "Erreur interne" }), {
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+      })()
+    );
+    return;
+  }
+
+  // Gérer les polices web en particulier
+  if (url.pathname.match(/\.(woff|woff2|ttf|eot)$/)) {
+    event.respondWith(
+      (async () => {
+        try {
+          // Traiter les polices Font Awesome spécifiquement
+          if (url.pathname.includes("font-awesome")) {
+            const fixedUrl = `https://cdnjs.cloudflare.com${url.pathname}`;
+            console.log(
+              "[Service Worker] Traitement spécial pour Font Awesome:",
+              fixedUrl
+            );
+
+            // Vérifier d'abord le cache
+            const cache = await caches.open(PREFIX);
+            let cachedResponse = await cache.match(fixedUrl);
+
+            if (cachedResponse) {
+              console.log(
+                "[Service Worker] Police Font Awesome servie depuis le cache:",
+                fixedUrl
+              );
+              return cachedResponse;
+            }
+
+            // Si non trouvée, essayer de la récupérer et la mettre en cache
+            try {
+              const fontResponse = await fetch(fixedUrl, {
+                credentials: "omit",
+                mode: "cors",
+              });
+
+              if (fontResponse.ok) {
+                const clonedResponse = fontResponse.clone();
+                cache.put(fixedUrl, clonedResponse);
+                console.log(
+                  "[Service Worker] Police Font Awesome mise en cache:",
+                  fixedUrl
+                );
+                return fontResponse;
+              }
+            } catch (fontError) {
+              console.error(
+                "[Service Worker] Erreur lors de la récupération de la police Font Awesome:",
+                fontError
+              );
+            }
           }
 
-          // Fallback basique si la page offline.php n'est pas dans le cache
+          // Continuer avec le traitement normal pour les autres polices
+          const cache = await caches.open(PREFIX);
+          const cachedResponse = await cache.match(event.request);
+
+          if (cachedResponse) {
+            console.log(
+              "[Service Worker] Police servie depuis le cache:",
+              url.pathname
+            );
+            return cachedResponse;
+          }
+
+          try {
+            const networkResponse = await fetch(event.request, {
+              credentials: "same-origin",
+              mode: "cors",
+            });
+
+            if (networkResponse.ok) {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            }
+          } catch (fontNetworkError) {
+            console.error(
+              "[Service Worker] Erreur réseau pour la police:",
+              url.pathname,
+              fontNetworkError
+            );
+          }
+
+          // Renvoyer une réponse vide mais valide pour éviter les erreurs dans la console
+          return new Response("", {
+            status: 200,
+            headers: { "Content-Type": "font/woff2" },
+          });
+        } catch (error) {
+          console.error(
+            "[Service Worker] Erreur lors du traitement des polices:",
+            error
+          );
+          return new Response("", { status: 200 });
+        }
+      })()
+    );
+    return;
+  }
+
+  // Gérer toutes les autres ressources statiques (images, CSS, JS)
+  if (url.pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js|json)$/)) {
+    event.respondWith(
+      (async () => {
+        try {
+          // Essayer d'abord le cache
+          const cache = await caches.open(PREFIX);
+          const cachedResponse = await cache.match(event.request);
+          if (cachedResponse) {
+            console.log(
+              "[Service Worker] Ressource servie depuis le cache:",
+              url.pathname
+            );
+            return cachedResponse;
+          }
+
+          // Si pas en cache, essayer le réseau
+          try {
+            console.log(
+              "[Service Worker] Ressource non trouvée en cache, tentative réseau:",
+              url.pathname
+            );
+            const networkResponse = await fetch(event.request, {
+              credentials: "same-origin",
+            });
+
+            if (networkResponse.ok) {
+              // Mettre en cache une copie de la réponse
+              const clonedResponse = networkResponse.clone();
+              cache
+                .put(event.request, clonedResponse)
+                .catch((error) =>
+                  console.error(
+                    "[Service Worker] Erreur lors de la mise en cache:",
+                    url.pathname,
+                    error
+                  )
+                );
+
+              console.log(
+                "[Service Worker] Ressource récupérée du réseau et mise en cache:",
+                url.pathname
+              );
+              return networkResponse;
+            } else {
+              console.warn(
+                "[Service Worker] Ressource non disponible (réseau):",
+                url.pathname,
+                networkResponse.status
+              );
+              throw new Error(
+                `Ressource non disponible: ${networkResponse.status}`
+              );
+            }
+          } catch (networkError) {
+            console.error(
+              "[Service Worker] Erreur réseau pour:",
+              url.pathname,
+              networkError
+            );
+
+            if (url.pathname.match(/\.(css|js)$/)) {
+              // Pour CSS et JS, essayer de retourner une version vide mais valide
+              if (url.pathname.endsWith(".css")) {
+                return new Response("/* Ressource CSS non disponible */", {
+                  status: 200,
+                  headers: { "Content-Type": "text/css" },
+                });
+              } else if (url.pathname.endsWith(".js")) {
+                return new Response("// Ressource JavaScript non disponible", {
+                  status: 200,
+                  headers: { "Content-Type": "application/javascript" },
+                });
+              }
+            }
+
+            // Pour les images, retourner une erreur
+            return new Response("Ressource non disponible", { status: 503 });
+          }
+        } catch (error) {
+          console.error(
+            "[Service Worker] Erreur lors de la récupération de la ressource:",
+            url.pathname,
+            error
+          );
           return new Response(
-            `<!DOCTYPE html>
-          <html lang="fr">
-          <head>
-            <meta charset="UTF-8">
-            <title>Hors ligne</title>
-            <style>
-              body { font-family: Arial; padding: 20px; }
-              .alert { padding: 15px; background-color: #fff3cd; border: 1px solid #ffeeba; }
-            </style>
-          </head>
-          <body>
-            <div class="alert">
-              <h4>Mode hors ligne</h4>
-              <p>Vous êtes actuellement hors ligne. Reconnectez-vous pour accéder à toutes les fonctionnalités.</p>
-            </div>
-          </body>
-          </html>`,
+            "Erreur lors de la récupération de la ressource",
             {
-              status: 200,
-              headers: { "Content-Type": "text/html; charset=utf-8" },
+              status: 503,
             }
           );
         }
       })()
     );
-  } else {
-    event.respondWith(
-      (async () => {
-        const cache = await caches.open(PREFIX);
-        const cachedResponse = await cache.match(event.request);
-        if (cachedResponse) {
-          return cachedResponse;
-        }
-        try {
-          const response = await fetch(event.request);
-          // Ne mettre en cache que les ressources statiques
-          if (url.pathname.match(/\.(css|js|jpg|png|svg|ico)$/)) {
-            await cache.put(event.request, response.clone());
-          }
-          return response;
-        } catch (error) {
-          return new Response("", { status: 503 });
-        }
-      })()
-    );
+    return;
   }
 
-  // Améliorer la mise en cache des API
+  // Gérer les requêtes API (y compris les audits)
   if (
     event.request.method === "GET" &&
     url.searchParams.has("action") &&
     (url.searchParams.get("action") === "audits" ||
       url.searchParams.get("action") === "articles")
   ) {
-    console.log("[Service Worker] Intercepting API request for:", url.href);
-
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          // Cloner la réponse car elle ne peut être utilisée qu'une fois
-          const responseToCache = response.clone();
+      (async () => {
+        try {
+          // Vérifier d'abord dans le cache
+          const cacheResponse = await caches.match(event.request);
+          if (cacheResponse) {
+            console.log(
+              "[Service Worker] Réponse API trouvée dans le cache:",
+              url.href
+            );
+            return cacheResponse;
+          }
 
-          // Déterminer quel cache utiliser
-          const cacheName =
-            url.searchParams.get("action") === "audits"
-              ? "v1-audits"
-              : "v1-articles";
+          // Sinon, essayer de récupérer depuis le réseau
+          try {
+            console.log(
+              "[Service Worker] Tentative de récupération API depuis le réseau:",
+              url.href
+            );
+            const networkResponse = await fetch(event.request);
 
-          caches.open(cacheName).then((cache) => {
-            console.log("[Service Worker] Caching API response in", cacheName);
-            cache.put(event.request, responseToCache);
-          });
-
-          return response;
-        })
-        .catch((err) => {
-          console.log("[Service Worker] Fetch failed, trying cache", err);
-          return caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-              console.log("[Service Worker] Returning cached response");
-              return cachedResponse;
+            if (networkResponse.ok) {
+              // Stocker dans le cache dynamique
+              const dynamicCache = await caches.open(DYNAMIC_CACHE);
+              const clonedResponse = networkResponse.clone();
+              await dynamicCache.put(event.request, clonedResponse);
+              console.log(
+                "[Service Worker] Réponse API mise en cache dynamique:",
+                url.href
+              );
+              return networkResponse;
             }
-            console.log("[Service Worker] No cached response available");
+
+            throw new Error(
+              `Echec de récupération API: ${networkResponse.status}`
+            );
+          } catch (networkError) {
+            console.error(
+              "[Service Worker] Erreur réseau pour l'API:",
+              url.href,
+              networkError
+            );
+
+            // Renvoyer une réponse vide mais valide si offline
             return new Response(JSON.stringify([]), {
               headers: { "Content-Type": "application/json" },
             });
+          }
+        } catch (error) {
+          console.error(
+            "[Service Worker] Erreur lors du traitement de la requête API:",
+            error
+          );
+          return new Response(JSON.stringify({ error: "Erreur interne" }), {
+            headers: { "Content-Type": "application/json" },
           });
-        })
+        }
+      })()
     );
+    return;
   }
+
+  // Gérer les requêtes de navigation (les pages)
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      (async () => {
+        try {
+          // Vérifier d'abord dans le cache
+          const cachedResponse = await caches.match(event.request);
+          if (cachedResponse) {
+            console.log(
+              "[Service Worker] Page trouvée dans le cache:",
+              url.href
+            );
+            return cachedResponse;
+          }
+
+          // Sinon, essayer de récupérer depuis le réseau
+          try {
+            console.log(
+              "[Service Worker] Tentative de navigation réseau:",
+              url.href
+            );
+            const response = await fetch(event.request);
+
+            if (response.ok) {
+              // Mettre en cache dynamique les pages visitées
+              const dynamicCache = await caches.open(DYNAMIC_CACHE);
+              const clonedResponse = response.clone();
+              await dynamicCache.put(event.request, clonedResponse);
+              console.log(
+                "[Service Worker] Page mise en cache dynamique:",
+                url.href
+              );
+              return response;
+            }
+          } catch (error) {
+            console.log(
+              "[Service Worker] Navigation fetch failed, serving offline page",
+              error
+            );
+          }
+
+          // Essayer de servir offline.php depuis le cache
+          const cache = await caches.open(PREFIX);
+          const offlineResponse = await cache.match("/Audit/offline.php");
+
+          if (offlineResponse) {
+            console.log("[Service Worker] Serving offline.php from cache");
+            return offlineResponse;
+          }
+
+          // Si offline.php n'est pas dans le cache, essayer de le récupérer
+          try {
+            console.log("[Service Worker] Attempting to fetch offline.php");
+            const response = await fetch("/Audit/offline.php");
+            if (response.ok) {
+              await cache.put("/Audit/offline.php", response.clone());
+              console.log("[Service Worker] Successfully cached offline.php");
+              return response;
+            }
+          } catch (offlineError) {
+            console.error(
+              "[Service Worker] Failed to fetch offline.php",
+              offlineError
+            );
+          }
+
+          // Fallback basique si tout échoue
+          return new Response(
+            `<!DOCTYPE html>
+            <html lang="fr">
+            <head>
+              <meta charset="UTF-8">
+              <title>Hors ligne</title>
+              <style>
+                body { font-family: Arial; padding: 20px; }
+                .alert { padding: 15px; background-color: #fff3cd; border: 1px solid #ffeeba; }
+              </style>
+            </head>
+            <body>
+              <div class="alert">
+                <h4>Mode hors ligne</h4>
+                <p>Vous êtes actuellement hors ligne. Reconnectez-vous pour accéder à toutes les fonctionnalités.</p>
+              </div>
+            </body>
+            </html>`,
+            {
+              status: 200,
+              headers: { "Content-Type": "text/html; charset=utf-8" },
+            }
+          );
+        } catch (error) {
+          console.error("[Service Worker] Erreur de navigation:", error);
+          return new Response("Erreur de chargement de la page", {
+            status: 500,
+          });
+        }
+      })()
+    );
+    return;
+  }
+
+  // Gérer les autres requêtes (ressources statiques)
+  event.respondWith(
+    (async () => {
+      const cache = await caches.open(PREFIX);
+      const cachedResponse = await cache.match(event.request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      try {
+        const response = await fetch(event.request);
+        // Ne mettre en cache que les ressources statiques
+        if (url.pathname.match(/\.(css|js|jpg|png|svg|ico|json|php)$/)) {
+          await cache.put(event.request, response.clone());
+        }
+        return response;
+      } catch (error) {
+        return new Response("", { status: 503 });
+      }
+    })()
+  );
 });
 
 // Fonctionnalité minimale de messages

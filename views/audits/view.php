@@ -11,17 +11,17 @@ include_once __DIR__ . '/../../includes/header.php';
         <div class="col-md-6 text-end">
             <?php if (!isset($audit['statut']) || $audit['statut'] === 'en_cours'): ?>
                             <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine&redirect=resume" 
-                               class="btn btn-primary" title="Terminer l'audit et afficher le résumé">
+                               class="btn btn-danger text-white" title="Terminer l'audit">
                                 <i class="fas fa-check"></i> Terminer
                             </a>
                         <?php else: ?>
                             <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
-                               class="btn btn-primary" title="Marquer comme en cours">
+                               class="btn btn-info text-white" title="Marquer comme en cours">
                                 <i class="fas fa-sync"></i> Reprendre
                             </a>
                         <?php endif; ?>
             <a href="index.php?action=audits&method=resume&id=<?php echo $audit['id']; ?>" 
-               class="btn btn-info text-white" title="Voir le résumé de l'audit">
+               class="btn btn-primary text-white" title="Voir le résumé de l'audit">
                 <i class="fas fa-chart-pie"></i> Voir le résumé
             </a>
             <a href="index.php?action=audits" class="btn btn-secondary">
@@ -45,27 +45,41 @@ include_once __DIR__ . '/../../includes/header.php';
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-4">
-                    <p><strong>Numéro du site:</strong> <?php echo htmlspecialchars($audit['numero_site']); ?></p>
+                <?php if (!empty($audit['logo'])): ?>
+                <div class="col-md-3 text-center mb-3">
+                    <img src="public/uploads/logos/<?php echo htmlspecialchars($audit['logo']); ?>" 
+                         alt="Logo de l'entreprise"
+                         class="img-fluid"
+                         style="max-height: 150px; max-width: 100%;">
                 </div>
-                <div class="col-md-4">
-                    <p><strong>Nom de l'entreprise:</strong> <?php echo htmlspecialchars($audit['nom_entreprise']); ?></p>
-                </div>
-                <div class="col-md-4">
-                    <p><strong>Créé le:</strong> <?php echo htmlspecialchars(date('d/m/Y H:i', strtotime($audit['created_at']))); ?></p>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8">
-                    <p><strong>Dernière mise à jour:</strong> <?php echo htmlspecialchars(date('d/m/Y H:i', strtotime($audit['updated_at']))); ?></p>
-                </div>
-                <div class="col-md-4">
-                    <p>
-                        <strong>Statut:</strong>
-                        <span class="badge <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'bg-warning' : 'bg-success'; ?> p-2">
-                            <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'En cours' : 'Terminé'; ?>
-                        </span>
-                    </p>
+                <div class="col-md-9">
+                <?php else: ?>
+                <div class="col-12">
+                <?php endif; ?>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Numéro du site:</strong><br> <?php echo htmlspecialchars($audit['numero_site']); ?></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Nom de l'entreprise:</strong><br> <?php echo htmlspecialchars($audit['nom_entreprise']); ?></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Date de création:</strong><br> <?php echo date('d/m/Y', strtotime($audit['date_creation'])); ?></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Dernière mise à jour:</strong><br> <?php echo date('d/m/Y H:i', strtotime($audit['updated_at'])); ?></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                <strong>Statut:</strong><br>
+                                <span class="badge <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'bg-info' : 'bg-danger'; ?> p-2">
+                                    <?php echo (isset($audit['statut']) && $audit['statut'] === 'en_cours') ? 'En cours' : 'Terminé'; ?>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -329,12 +343,13 @@ include_once __DIR__ . '/../../includes/header.php';
                                 </div>
                             <?php endif; ?>
                             
-                            <form id="evaluation-form-<?php echo $point['point_vigilance_id']; ?>" 
-                                  class="evaluation-form" 
+                            <form class="evaluation-form" 
                                   data-audit-id="<?php echo $audit['id']; ?>" 
                                   data-point-id="<?php echo $point['point_vigilance_id']; ?>"
+                                  method="post"
                                   <?php echo (isset($audit['statut']) && $audit['statut'] === 'termine') ? 'disabled' : ''; ?>>
                                 
+                                <!-- Champs cachés pour les identifiants - s'assurer qu'ils sont correctement définis -->
                                 <input type="hidden" name="audit_id" value="<?php echo $audit['id']; ?>">
                                 <input type="hidden" name="point_vigilance_id" value="<?php echo $point['point_vigilance_id']; ?>">
                                 
@@ -651,11 +666,11 @@ include_once __DIR__ . '/../../includes/header.php';
     <div class="row mt-4">
         <div class="col-12 text-end">
             <?php if (!isset($audit['statut']) || $audit['statut'] !== 'termine'): ?>
-                <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" class="btn btn-warning">
+                <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" class="btn btn-warning text-white">
                     <i class="fas fa-edit"></i> Modifier l'audit
                 </a>
             <?php else: ?>
-                <button class="btn btn-warning" disabled title="L'audit terminé ne peut pas être modifié">
+                <button class="btn btn-warning text-white" disabled title="L'audit terminé ne peut pas être modifié">
                     <i class="fas fa-edit"></i> Modifier l'audit
                 </button>
                 <div class="mt-2 text-muted">

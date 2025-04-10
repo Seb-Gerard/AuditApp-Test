@@ -65,9 +65,9 @@ include_once __DIR__ . '/../../includes/header.php';
                     <thead>
                         <tr>
                             <th>N° du site</th>
+                            <th>Logo</th>
                             <th>Nom de l'entreprise</th>
                             <th>Date de création</th>
-                            <th>Date de modification</th>
                             <th>Statut</th>
                             <th>Actions</th>
                         </tr>
@@ -77,20 +77,25 @@ include_once __DIR__ . '/../../includes/header.php';
                             <tr>
                                 <td><?php echo htmlspecialchars($audit['numero_site']); ?></td>
                                 <td>
-                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
-                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                        <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
-                                    </a>
+                                    <?php if (!empty($audit['logo'])): ?>
+                                        <img src="public/uploads/logos/<?php echo htmlspecialchars($audit['logo']); ?>" 
+                                             alt="Logo" class="img-thumbnail" style="max-height: 40px;">
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
                                 </td>
                                 <td><?php echo date('d/m/Y', strtotime($audit['date_creation'])); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($audit['updated_at'])); ?></td>
                                 <td>
-                                    <span class="badge bg-warning p-2 text-light">
+                                    <span class="badge bg-info p-2 text-light">
                                         En cours
                                     </span>
                                 </td>
                                 <td>
+                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" 
                                        class="btn btn-sm btn-warning" title="Modifier">
                                         <i class="fas fa-edit"></i>
@@ -99,9 +104,9 @@ include_once __DIR__ . '/../../includes/header.php';
                                        class="btn btn-sm btn-danger" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine" 
-                                       class="btn btn-sm btn-success" title="Marquer comme terminé">
-                                        <i class="fas fa-check"></i>
+                                    <a href="index.php?action=audits&method=resume&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-primary text-light" title="Voir le résumé">
+                                        <i class="fas fa-chart-pie"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -123,9 +128,9 @@ include_once __DIR__ . '/../../includes/header.php';
                     <thead>
                         <tr>
                             <th>N° du site</th>
+                            <th>Logo</th>
                             <th>Nom de l'entreprise</th>
                             <th>Date de création</th>
-                            <th>Date de modification</th>
                             <th>Statut</th>
                             <th>Actions</th>
                         </tr>
@@ -135,20 +140,25 @@ include_once __DIR__ . '/../../includes/header.php';
                             <tr>
                                 <td><?php echo htmlspecialchars($audit['numero_site']); ?></td>
                                 <td>
-                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
-                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
-                                        <i class="fas fa-eye"></i>
-                                        <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
-                                    </a>
+                                    <?php if (!empty($audit['logo'])): ?>
+                                        <img src="public/uploads/logos/<?php echo htmlspecialchars($audit['logo']); ?>" 
+                                             alt="Logo" class="img-thumbnail" style="max-height: 40px;">
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
                                 </td>
                                 <td><?php echo date('d/m/Y', strtotime($audit['date_creation'])); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($audit['updated_at'])); ?></td>
                                 <td>
-                                    <span class="badge bg-success p-2">
+                                    <span class="badge bg-danger p-2">
                                         Terminé
                                     </span>
                                 </td>
                                 <td>
+                                    <a href="index.php?action=audits&method=view&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-info text-light" title="Voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
                                     <a href="index.php?action=audits&method=edit&id=<?php echo $audit['id']; ?>" 
                                        class="btn btn-sm btn-warning" title="Modifier">
                                         <i class="fas fa-edit"></i>
@@ -157,9 +167,9 @@ include_once __DIR__ . '/../../includes/header.php';
                                        class="btn btn-sm btn-danger" title="Supprimer">
                                         <i class="fas fa-trash"></i>
                                     </a>
-                                    <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
-                                       class="btn btn-sm btn-warning" title="Marquer comme en cours">
-                                        <i class="fas fa-sync"></i>
+                                    <a href="index.php?action=audits&method=resume&id=<?php echo $audit['id']; ?>" 
+                                       class="btn btn-sm btn-primary text-light" title="Voir le résumé">
+                                        <i class="fas fa-chart-pie"></i>
                                     </a>
                                 </td>
                             </tr>

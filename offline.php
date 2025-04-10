@@ -7,11 +7,7 @@ $pageTitle = "Mode Hors Ligne";
 $additionalStyles = [];
 
 // Scripts supplémentaires spécifiques à offline.php
-$additionalScripts = [
-    'public/assets/js/db.js',
-    'public/assets/js/auditdb.js',
-    'public/assets/js/offline-manager.js'
-];
+$additionalScripts = [];
 
 // Vérification si l'utilisateur est en ligne
 if (isset($_SERVER['HTTP_USER_AGENT']) && !isset($_GET['force_offline'])) {
@@ -54,8 +50,36 @@ include_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
+    <!-- Formulaire pour ajouter un article -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Rédiger un nouvel article</h5>
+        </div>
+        <div class="card-body">
+            <form id="offlineArticleForm">
+                <div class="mb-3">
+                    <label for="articleTitle" class="form-label">Titre</label>
+                    <input type="text" class="form-control" id="articleTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label for="articleContent" class="form-label">Contenu</label>
+                    <textarea class="form-control" id="articleContent" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enregistrer localement</button>
+            </form>
+        </div>
+    </div>
+
     <div id="articlesContainer" class="row">
         <!-- Les articles seront chargés ici -->
+        <div class="col-12">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
+                <p>Chargement des articles...</p>
+            </div>
+        </div>
     </div>
 
     <!-- Section des audits -->
@@ -94,56 +118,61 @@ if (navigator.onLine && !window.location.search.includes('force_offline')) {
     window.location.href = 'index.php';
 }
 
-// Attendre que le DOM soit chargé
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser le gestionnaire de mode hors ligne
-    if (typeof OfflineManager !== 'undefined') {
-        OfflineManager.init();
-    } else {
-        console.error("Le module OfflineManager n'est pas disponible");
-        
-        // Fallback pour les scripts de base
-        const dbScriptUrl = 'public/assets/js/db.js';
-        const auditdbScriptUrl = 'public/assets/js/auditdb.js';
-        const offlineManagerUrl = 'public/assets/js/offline-manager.js';
-        
-        // Fonction pour charger dynamiquement un script
-        function loadScript(url) {
-            console.log(`Tentative de chargement du script: ${url}`);
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = url;
-                script.onload = () => {
-                    console.log(`Script ${url} chargé avec succès`);
-                    resolve();
-                };
-                script.onerror = (error) => {
-                    console.error(`Erreur lors du chargement de ${url}:`, error);
-                    reject(error);
-                };
-                document.head.appendChild(script);
-            });
+// Fonction pour charger dynamiquement un script
+function loadScript(url) {
+    console.log(`Tentative de chargement du script: ${url}`);
+    return new Promise((resolve, reject) => {
+        // Vérifier si le script est déjà chargé
+        if (document.querySelector(`script[src="${url}"]`)) {
+            console.log(`Script ${url} déjà chargé`);
+            resolve();
+            return;
         }
-        
+
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = () => {
+            console.log(`Script ${url} chargé avec succès`);
+            resolve();
+        };
+        script.onerror = (error) => {
+            console.error(`Erreur lors du chargement de ${url}:`, error);
+            reject(error);
+        };
+        document.head.appendChild(script);
+    });
+}
+
+// Attendre que le DOM soit chargé
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
         // Charger les scripts dans l'ordre
-        loadScript(dbScriptUrl)
-            .then(() => loadScript(auditdbScriptUrl))
-            .then(() => loadScript(offlineManagerUrl))
-            .then(() => {
-                if (typeof OfflineManager !== 'undefined') {
-                    OfflineManager.init();
-                } else {
-                    console.error("Impossible de charger le gestionnaire hors ligne");
-                    alert("Une erreur est survenue lors du chargement des modules nécessaires. Veuillez recharger la page.");
-                }
-            })
-            .catch(error => {
-                console.error("Erreur lors du chargement des scripts:", error);
-                document.getElementById('articlesContainer').innerHTML = 
-                    '<div class="alert alert-danger">Une erreur est survenue lors du chargement des scripts nécessaires. Veuillez recharger la page.</div>';
-                document.getElementById('offlineAuditsContainer').innerHTML =
-                    '<div class="alert alert-danger">Une erreur est survenue lors du chargement des scripts nécessaires. Veuillez recharger la page.</div>';
-            });
+        await loadScript('/Audit/public/assets/js/db.js');
+        console.log('db.js chargé');
+        
+        await loadScript('/Audit/public/assets/js/auditdb.js');
+        console.log('auditdb.js chargé');
+        
+        await loadScript('/Audit/public/assets/js/offline-manager.js');
+        console.log('offline-manager.js chargé');
+
+        // Vérifier que les objets nécessaires sont disponibles
+        if (typeof window.ArticleDB === 'undefined') {
+            throw new Error("ArticleDB n'est pas disponible après le chargement");
+        }
+
+        // Initialiser le gestionnaire de mode hors ligne
+        if (typeof OfflineManager !== 'undefined') {
+            await OfflineManager.init();
+        } else {
+            throw new Error("Le module OfflineManager n'est pas disponible");
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement des scripts:", error);
+        document.getElementById('articlesContainer').innerHTML = 
+            '<div class="alert alert-danger">Une erreur est survenue lors du chargement des modules nécessaires. Veuillez recharger la page.</div>';
+        document.getElementById('offlineAuditsContainer').innerHTML =
+            '<div class="alert alert-danger">Une erreur est survenue lors du chargement des modules nécessaires. Veuillez recharger la page.</div>';
     }
 });
 </script>

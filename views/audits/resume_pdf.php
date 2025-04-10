@@ -3,7 +3,8 @@
 // Basé sur resume.php mais optimisé pour TCPDF
 
 // Fonction pour obtenir la classe de couleur en fonction du pourcentage
-function getColorClass($percentage, $inverse = false) {
+function getColorClass($percentage, $inverse = false)
+{
     if ($inverse) {
         if ($percentage >= 80) return 'danger';
         if ($percentage >= 50) return 'warning';
@@ -22,266 +23,345 @@ $css = '
         font-family: Arial, sans-serif;
         font-size: 12pt;
         line-height: 1.5;
+        margin: 0;
+        padding: 20px;
     }
     .container {
         width: 100%;
     }
+    h2 {
+        font-size: 24px;
+        margin: 0;
+    }
+    .header-section {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+    .header-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .header-table td {
+        vertical-align: middle;
+        border: none;
+    }
+    .header-title {
+        text-align: left;
+        width: 70%;
+    }
+    .header-logo {
+        text-align: right;
+        width: 30%;
+    }
     .card {
-        border: 1px solid #ddd;
+        border: 1px solid #dee2e6;
         border-radius: 4px;
         margin-bottom: 20px;
         background-color: #fff;
+        overflow: hidden;
     }
     .card-header {
-        padding: 10px 15px;
-        border-bottom: 1px solid #ddd;
+        background-color: #1a237e;
+        color: #fff;
+        padding: 12px 15px;
+        border-radius: 15px;
         font-weight: bold;
+        font-size: 16px;
     }
     .card-body {
         padding: 15px;
     }
-    .bg-primary {
-        background-color: #007bff;
-        color: #fff;
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
     }
-    .bg-info {
-        background-color: #17a2b8;
-        color: #fff;
-    }
-    .text-center {
-        text-align: center;
-    }
-    .text-end {
-        text-align: right;
+    .info-label {
+        font-weight: bold;
     }
     .table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 1rem;
-    }
-    .table th, .table td {
-        padding: 8px;
-        border: 1px solid #ddd;
-        text-align: left;
+        background-color: #fff;
     }
     .table th {
         background-color: #17a2b8;
         color: #fff;
+        padding: 12px;
+        text-align: left;
+        font-weight: normal;
+        border: 1px solid #dee2e6;
     }
-    .progress {
+    .table td {
+        padding: 12px;
+        border: 1px solid #dee2e6;
+        vertical-align: middle;
+    }
+    .progress-container {
+        width: 100%;
         background-color: #e9ecef;
         border-radius: 4px;
-        height: 20px;
-        margin-bottom: 5px;
-        position: relative;
         overflow: hidden;
+        position: relative;
     }
     .progress-bar {
-        background-color: #007bff;
-        color: #fff;
+        height: 24px;
+        line-height: 24px;
+        color: white;
         text-align: center;
-        line-height: 20px;
         font-weight: bold;
-        height: 100%;
+        transition: width .6s ease;
+    }
+    .progress-bar-audit {
+        background-color: #17a2b8;
+        width: 0;
+    }
+    .progress-bar-conformite {
+        background-color: #dc3545;
+        width: 0;
+    }
+    .progress-legend {
+        display: flex;
+        justify-content: space-between;
+        font-size: 6px;
+        margin-top: 4px;
+        color: #666;
+    }
+    .priority-badge {
+        padding: 6px 12px;
+        border-radius: 4px;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        width: fit-content;
+        margin: 0 auto;
     }
     .priority-faible {
         background-color: #28a745;
-        color: white;
-        font-weight: bold;
-        border-radius: 4px;
-        padding: 5px;
-        text-align: center;
     }
-    .priority-moyen {
-        background-color: #fd7e14;
-        color: white;
-        font-weight: bold;
-        border-radius: 4px;
-        padding: 5px;
-        text-align: center;
+    .priority-non-definie {
+        color: #6c757d;
+        font-style: italic;
     }
-    .priority-grande {
-        background-color: #dc3545;
+    .section-title {
+        background-color: #1a237e;
         color: white;
-        font-weight: bold;
-        border-radius: 4px;
-        padding: 5px;
-        text-align: center;
-    }
-    .alert-info {
-        background-color: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
         padding: 12px;
-        border-radius: 4px;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 20px;
     }
-    .progress-legend {
-        font-size: 9pt;
-        margin-top: 2px;
-        display: flex;
-        justify-content: space-between;
-    }
-    .conformite-satisfait {
-        background-color: #28a745;
-    }
-    .conformite-partiel-text {
+    .text-center {
         text-align: center;
     }
-    .conformite-satisfait-text {
+    .logo-header {
+        width: 100px;
+        height: auto;
+    }
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .info-table td {
+        vertical-align: middle;
+        border: none;
+        padding: 5px 0;
+    }
+    .info-left {
+        text-align: left;
+        width: 70%;
+    }
+    .info-right {
         text-align: right;
+        width: 30%;
     }
 </style>
 ';
 
-// En-tête du document PDF
 echo $css;
 ?>
 
 <div class="container">
-    <h1 style="text-align: center; color: #007bff;">Résumé de l'Audit</h1>
-    
+    <div class="header-section">
+        <table class="header-table">
+            <tr>
+                <td class="header-title">
+                    <h2>Résumé de l'Audit</h2>
+                </td>
+                <td class="header-logo">
+                    <?php
+                    // Vérifier si l'image existe avant de l'afficher
+                    $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/Audit/public/assets/img/logo_CNPP_512.png';
+                    if (file_exists($logoPath)) {
+                        echo '<img src="' . $logoPath . '" alt="Logo CNPP" class="logo-header">';
+                    } else {
+                        echo '<div class="logo-header">Logo CNPP</div>';
+                    }
+                    ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+
     <!-- Informations générales -->
     <div class="card">
-        <div class="card-header bg-primary">
-            <h3>Informations générales</h3>
+        <div class="card-header">
+            Informations générales
         </div>
         <div class="card-body">
-            <div style="display: flex; justify-content: space-between;">
-                <div>
-                    <p><strong>SITE :</strong> <?php echo htmlspecialchars($audit['numero_site'] . ' - ' . $audit['nom_entreprise']); ?></p>
-                </div>
-                <div>
-                    <p><strong>DATE :</strong> <?php echo date('d/m/Y', strtotime($audit['updated_at'])); ?></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Statistiques par catégorie -->
-    <div class="card">
-        <div class="card-header bg-primary text-center">
-            <h3>RÉCAPITULATIF DE L'ÉVALUATION DES MESURES DE SÛRETÉ EXISTANTES</h3>
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <thead class="bg-info text-center">
-                    <tr>
-                        <th style="width: 40%;">Thème</th>
-                        <th style="width: 20%;">% Audité</th>
-                        <th style="width: 40%;">% Conformité</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach($categoriesStats as $categorie): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($categorie['nom']); ?></td>
-                        <td>
-                            <div class="progress">
-                                <div class="progress-bar" style="width: <?php echo isset($categorie['pct_audite']) ? $categorie['pct_audite'] : 0; ?>%;">
-                                    <?php if(isset($categorie['pct_audite']) && $categorie['pct_audite'] > 10): ?>
-                                        <?php echo $categorie['pct_audite']; ?>%
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <?php if(!isset($categorie['pct_audite']) || $categorie['pct_audite'] <= 10): ?>
-                                <span><?php echo isset($categorie['pct_audite']) ? $categorie['pct_audite'] : 0; ?>%</span>
-                            <?php endif; ?>
-                        </td>
-                        <td>
-                            <?php 
-                            // Calculer le score de satisfaction
-                            $satisfait = isset($categorie['pct_satisfait']) ? $categorie['pct_satisfait'] : 0;
-                            $partiellement = isset($categorie['pct_partiellement']) ? $categorie['pct_partiellement'] : 0;
-                            $nonSatisfait = isset($categorie['pct_non_satisfait']) ? $categorie['pct_non_satisfait'] : 0;
-                            
-                            $totalPoints = $satisfait + $partiellement + $nonSatisfait;
-                        
-                            if ($totalPoints > 0) {
-                                $scoreConformite = ($satisfait / $totalPoints) * 100;
+            <table class="info-table">
+                <tr>
+                    <td class="info-left">
+                        <?php if (!empty($audit['logo'])):
+                            // Vérifier si l'image existe avant de l'afficher
+                            $companyLogoPath = $_SERVER['DOCUMENT_ROOT'] . '/Audit/public/uploads/logos/' . htmlspecialchars($audit['logo']);
+                            if (file_exists($companyLogoPath)) {
+                                // Utiliser une image JPG si possible, sinon utiliser l'image existante
+                                $imageInfo = getimagesize($companyLogoPath);
+                                if ($imageInfo && $imageInfo[2] == IMAGETYPE_PNG) {
+                                    // Si c'est un PNG, créer une copie en JPG
+                                    $jpgPath = str_replace('.png', '.jpg', $companyLogoPath);
+                                    if (!file_exists($jpgPath)) {
+                                        $image = imagecreatefrompng($companyLogoPath);
+                                        if ($image) {
+                                            // Créer un fond blanc
+                                            $bg = imagecreatetruecolor(imagesx($image), imagesy($image));
+                                            imagefill($bg, 0, 0, imagecolorallocate($bg, 255, 255, 255));
+                                            // Fusionner l'image avec le fond blanc
+                                            imagecopy($bg, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+                                            // Sauvegarder en JPG
+                                            imagejpeg($bg, $jpgPath, 90);
+                                            imagedestroy($image);
+                                            imagedestroy($bg);
+                                        }
+                                    }
+                                    if (file_exists($jpgPath)) {
+                                        echo '<img src="' . $jpgPath . '" alt="Logo de l\'entreprise" class="company-logo" width="100">';
+                                    } else {
+                                        echo '<div class="company-logo">Logo</div>';
+                                    }
+                                } else {
+                                    echo '<img src="' . $companyLogoPath . '" alt="Logo de l\'entreprise" class="company-logo" width="100">';
+                                }
                             } else {
-                                $scoreConformite = 0;
+                                echo '<div class="company-logo">Logo</div>';
                             }
-                            
-                            $scoreConformite = round($scoreConformite);
-                            ?>
-                            
-                            <div class="progress">
-                                <div class="progress-bar conformite-satisfait" style="width: <?php echo $scoreConformite; ?>%;">
-                                    <?php if($scoreConformite > 10): ?>
-                                        <?php echo $scoreConformite; ?>%
-                                    <?php endif; ?>
-                                </div>
-                            </div>
-                            <?php if(!isset($scoreConformite) || $scoreConformite <= 10): ?>
-                                <span><?php echo $scoreConformite; ?>%</span>
-                            <?php endif; ?>
-                            <div class="progress-legend">
-                                <small>Non satisfait (0%)</small>
-                                <small class="conformite-partiel-text">Partiellement</small>
-                                <small class="conformite-satisfait-text">Satisfait (100%)</small>
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
+                        endif; ?>
+                        <div>
+                            <span class="info-label">SITE : </span>
+                            <?php echo htmlspecialchars($audit['numero_site']); ?>
+                        </div>
+                        <div>
+                            <span class="info-label">ENTREPRISE : </span>
+                            <?php echo htmlspecialchars($audit['nom_entreprise']); ?>
+                        </div>
+                    </td>
+                    <td class="info-right">
+                        <span class="info-label">DATE : </span>
+                        <?php echo date('d/m/Y', strtotime($audit['updated_at'])); ?>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
-    
+
+    <!-- Statistiques par catégorie -->
+    <div class="section-title">
+        RÉCAPITULATIF DE L'ÉVALUATION DES MESURES DE SÛRETÉ EXISTANTES
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Thème</th>
+                <th>% Audité</th>
+                <th>% Conformité</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($categoriesStats as $categorie): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($categorie['nom']); ?></td>
+                    <td>
+                        <?php
+                        // Calcul du pourcentage audité
+                        $pctAudite = isset($categorie['pct_audite']) ? intval($categorie['pct_audite']) : 0;
+                        ?>
+                        <div class="progress-container" style="background-color: #e9ecef;">
+                            <?php if ($pctAudite > 0): ?>
+                                <div class="progress-bar progress-bar-audit"
+                                    style="width: <?php echo $pctAudite; ?>%">
+                                    <?php echo $pctAudite; ?>%
+                                </div>
+                            <?php else: ?>
+                                <div style="text-align: center; line-height: 24px;">0%</div>
+                            <?php endif; ?>
+                        </div>
+                    </td>
+                    <td>
+                        <?php
+                        // Calcul du score de conformité
+                        $satisfait = isset($categorie['pct_satisfait']) ? intval($categorie['pct_satisfait']) : 0;
+                        $partiellement = isset($categorie['pct_partiellement']) ? intval($categorie['pct_partiellement']) : 0;
+                        $nonSatisfait = isset($categorie['pct_non_satisfait']) ? intval($categorie['pct_non_satisfait']) : 0;
+
+                        $totalPoints = $satisfait + $partiellement + $nonSatisfait;
+                        $scoreConformite = ($totalPoints > 0) ? round(($satisfait / $totalPoints) * 100) : 0;
+                        ?>
+
+                        <div class="progress-container" style="background-color: #e9ecef;">
+                            <?php if ($scoreConformite > 0): ?>
+                                <div class="progress-bar progress-bar-conformite"
+                                    style="width: <?php echo $scoreConformite; ?>%">
+                                    <?php echo $scoreConformite; ?>%
+                                </div>
+                            <?php else: ?>
+                                <div style="text-align: center; line-height: 24px;">0%</div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="progress-legend">
+                            <span>Non satisfait (0%)</span>
+                            <span>Satisfait (100%)</span>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
     <!-- Plans d'action -->
-    <div class="card">
-        <div class="card-header bg-primary text-center">
-            <h3>PLAN D'ACTIONS</h3>
-        </div>
-        <div class="card-body">
-            <?php if(empty($plansAction)): ?>
-                <div class="alert-info">
-                    Aucun plan d'action n'a été défini pour cet audit.
-                </div>
-            <?php else: ?>
-                <table class="table">
-                    <thead class="bg-info">
-                        <tr>
-                            <th style="width: 10%;">N°</th>
-                            <th style="width: 70%;">Libellé</th>
-                            <th style="width: 20%;">Priorité</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($plansAction as $index => $action): ?>
-                        <tr>
-                            <td class="text-center"><?php echo !empty($action['numero']) ? $action['numero'] : ($index + 1); ?></td>
-                            <td>
-                                <div>
-                                    <strong><?php echo htmlspecialchars($action['point_vigilance_nom']); ?></strong>
-                                </div>
-                                <div>
-                                    <?php echo nl2br(htmlspecialchars($action['description'])); ?>
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <?php if(!empty($action['priorite'])): ?>
-                                    <?php if($action['priorite'] === 'faible'): ?>
-                                        <div class="priority-faible">Faible</div>
-                                    <?php elseif($action['priorite'] === 'moyen'): ?>
-                                        <div class="priority-moyen">Moyen</div>
-                                    <?php elseif($action['priorite'] === 'grande'): ?>
-                                        <div class="priority-grande">Grande</div>
-                                    <?php endif; ?>
-                                <?php else: ?>
-                                    <span>Non définie</span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php endif; ?>
-        </div>
+    <div class="section-title">
+        PLAN D'ACTIONS
     </div>
-    
-    <!-- Pied de page -->
-    <div style="text-align: center; margin-top: 20px; font-size: 10pt; color: #6c757d;">
-        <p>Document généré le <?php echo date('d/m/Y H:i'); ?></p>
-    </div>
-</div> 
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>N°</th>
+                <th>Libellé</th>
+                <th>Priorité</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($plansAction as $action): ?>
+                <tr>
+                    <td class="text-center"><?php echo !empty($action['numero']) ? $action['numero'] : '1'; ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($action['point_vigilance_nom']); ?></strong><br>
+                        <?php echo nl2br(htmlspecialchars($action['description'])); ?>
+                    </td>
+                    <td class="text-center">
+                        <?php if (!empty($action['priorite'])): ?>
+                            <div class="priority-badge priority-<?php echo $action['priorite']; ?>">
+                                <?php echo ucfirst($action['priorite']); ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="priority-non-definie">Non définie</div>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
