@@ -1,36 +1,37 @@
-[2025-04-10 12:33:47] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 14:53:09] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"871","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryqZUfJ5Nwd34Vog7h","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&nocache=1744375741526","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
+    [audit_id] => 3
+    [point_vigilance_id] => 1
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => ZZZZZZZ
     [justification] => 
     [plan_action_numero] => 
     [plan_action_priorite] => 
     [plan_action_description] => 
 )
 
-[2025-04-10 12:33:47] Audit trouvé: Array
+[2025-04-11 14:53:09] Audit trouvé: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
+    [id] => 3
+    [numero_site] => 007
+    [nom_entreprise] => CIE
+    [logo] => logo_67f3c2472e256.jpg
+    [date_creation] => 2025-04-01
     [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
+    [created_at] => 2025-04-04 16:19:27
+    [updated_at] => 2025-04-10 16:30:11
 )
 
-[2025-04-10 12:33:47] Données traitées pour updateEvaluation: Array
+[2025-04-11 14:53:09] Données traitées pour updateEvaluation: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 1
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => ZZZZZZZ
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -38,143 +39,48 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 12:33:47] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 12:33:47] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 12:34:17] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 14:53:09] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 14:53:09] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":1,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"ZZZZZZZ","resultat":null,"justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 14:55:12] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"67","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&t=1744375990036","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
 )
 
-[2025-04-10 12:34:17] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 12:34:17] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 12:34:17] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 12:34:17] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 12:36:29] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 14:55:12] ERREUR: Paramètres manquants
+[2025-04-11 15:03:35] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"67","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
 )
 
-[2025-04-10 12:36:29] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 12:36:29] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 12:36:29] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 12:36:29] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:25:35] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:03:35] ERREUR: Paramètres manquants
+[2025-04-11 15:07:19] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"67","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&nocache=1744376617444","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
 )
 
-[2025-04-10 13:25:35] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:25:35] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 13:25:35] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:25:35] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:25:43] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:07:19] ERREUR: Paramètres manquants
+[2025-04-11 15:17:47] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"67","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"application\/json","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&nocache=1744376841682","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+)
+
+[2025-04-11 15:17:47] Type requête: AJAX
+[2025-04-11 15:17:47] Données JSON reçues: {"audit_id":"3","point_vigilance_id":"5","plan_action_priorite":""}
+[2025-04-11 15:17:47] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 15:17:47] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
-    [non_audite] => 1
+    [non_audite] => 0
     [mode_preuve] => 
     [resultat] => 
     [justification] => 
@@ -183,42 +89,32 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:25:43] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:25:43] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 13:25:43] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:25:43] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:26:18] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:17:47] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 15:17:47] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":0,"mode_preuve":null,"resultat":null,"justification":null,"plan_action_numero":null,"plan_action_priorite":"","plan_action_description":null}}
+[2025-04-11 15:21:40] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"865","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary4E3CYyjAAZAuHdfU","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&nocache=1744377469594","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mode_preuve] => A
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 15:21:40] Type requête: AJAX
+[2025-04-11 15:21:40] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 15:21:40] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => A
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -226,42 +122,18 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:26:18] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:26:18] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 13:26:18] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:26:18] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:27:50] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:21:40] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 15:21:40] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"A","resultat":null,"justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 15:22:53] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1069","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryXAEFmGKsjpjTRSLN","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&t=1744377701392","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [non_audite] => 1
-    [mode_preuve] => 
+    [mesure_reglementaire] => 0
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -269,25 +141,15 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:27:50] Audit trouvé: Array
+[2025-04-11 15:22:53] Type requête: Standard
+[2025-04-11 15:22:53] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 15:22:53] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:27:50] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -295,16 +157,18 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:27:50] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:27:50] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:28:02] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:22:53] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 15:22:53] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"CV","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 15:59:47] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1069","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary8AUtBDzz1g8e9eh4","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&t=1744377701392","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [non_audite] => 1
-    [mode_preuve] => 
+    [mesure_reglementaire] => 0
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -312,25 +176,15 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:28:02] Audit trouvé: Array
+[2025-04-11 15:59:47] Type requête: Standard
+[2025-04-11 15:59:47] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 15:59:47] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:28:02] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -338,59 +192,53 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:28:02] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:28:02] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:33:14] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:59:47] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 15:59:47] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"CV","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 15:59:47] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1075","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary0SbiT0UjtslcevkV","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&t=1744377701392","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [non_audite] => 1
-    [mode_preuve] => 
+    [mesure_reglementaire] => 0
+    [mode_preuve] => CV
     [resultat] => 
-    [justification] => 
+    [justification] => AZERTY
     [plan_action_numero] => 
     [plan_action_priorite] => 
     [plan_action_description] => 
 )
 
-[2025-04-10 13:33:14] Audit trouvé: Array
+[2025-04-11 15:59:47] Type requête: Standard
+[2025-04-11 15:59:47] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 15:59:47] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:33:14] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => CV
     [resultat] => 
-    [justification] => 
+    [justification] => AZERTY
     [plan_action_numero] => 
     [plan_action_priorite] => 
     [plan_action_description] => 
 )
 
-[2025-04-10 13:33:14] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:33:14] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:33:31] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 15:59:47] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 15:59:47] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"CV","resultat":"","justification":"AZERTY","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:03:05] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1069","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryONYkdlZqJdxn7Aox","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 0
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [non_audite] => 1
-    [mode_preuve] => 
+    [mesure_reglementaire] => 0
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -398,25 +246,15 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:33:31] Audit trouvé: Array
+[2025-04-11 16:03:05] Type requête: Standard
+[2025-04-11 16:03:05] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 16:03:05] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:33:31] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => CV
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -424,102 +262,349 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:33:31] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:33:31] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:33:37] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:03:05] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:03:05] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"CV","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:03:05] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1075","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryQLOwEsBOMFGRf2kl","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:03:05] Type requête: Standard
+[2025-04-11 16:03:05] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 16:03:05] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:03:05] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:03:05] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"CV","resultat":"","justification":"AZERTY","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:03:05] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1079","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary9MAU33KrDyAMJ8r8","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => QWERTY
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:03:05] Type requête: Standard
+[2025-04-11 16:03:05] Valeurs après conversion: audit_id=3, point_vigilance_id=5
+[2025-04-11 16:03:05] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:03:05] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:03:05] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"QWERTY","resultat":"","justification":"AZERTY","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:09:13] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1072","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryG35DMxbZ0JTDH979","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=3&nocache=1744380187605","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:09:13] Type requête: Standard
+[2025-04-11 16:09:13] Valeurs après conversion: audit_id=3, point_vigilance_id=6
+[2025-04-11 16:09:13] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:09:13] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:09:13] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":6,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"Kikoo","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:28:20] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1072","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryV6CDOWFcREksAtaz","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:28:20] Type requête: Standard
+[2025-04-11 16:28:20] Valeurs après conversion: audit_id=3, point_vigilance_id=6
+[2025-04-11 16:28:20] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:28:20] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:28:20] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":6,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"Kikoo","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:28:20] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1074","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundarytEAMGpzHPURLSR1w","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:28:20] Type requête: Standard
+[2025-04-11 16:28:20] Valeurs après conversion: audit_id=10, point_vigilance_id=5
+[2025-04-11 16:28:20] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:28:20] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:28:20] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"AZERTY","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:28:20] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1115","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryVHTX7BxTOiiOaGgq","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 001
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:28:20] Type requête: Standard
+[2025-04-11 16:28:20] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:28:20] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 13:33:37] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:33:37] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
-    [mesure_reglementaire] => 1
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 13:33:37] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:33:37] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:34:07] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:28:20] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:28:20] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:28:44] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryI4rwz3GnODB00knC","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&nocache=1744381702444","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
 )
 
-[2025-04-10 13:34:07] Audit trouvé: Array
+[2025-04-11 16:28:44] Type requête: AJAX
+[2025-04-11 16:28:44] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:28:44] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:34:07] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 13:34:07] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:34:07] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:34:17] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:28:44] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:28:44] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:28:52] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1120","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryOBTBjtvUOlb7aoK6","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744381724700","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 001
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+[2025-04-11 16:28:52] Type requête: AJAX
+[2025-04-11 16:28:52] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:28:52] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+[2025-04-11 16:28:52] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:28:52] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&amp;#039;action"}}
+[2025-04-11 16:30:55] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1125","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryW2ye4gUILn8dXKAn","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&nocache=1744381830914","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire '''
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+[2025-04-11 16:30:55] Type requête: AJAX
+[2025-04-11 16:30:55] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:30:55] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire &#039;&#039;&#039;
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
+)
+
+[2025-04-11 16:30:55] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:30:55] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire &#039;&#039;&#039;","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&amp;amp;#039;action"}}
+[2025-04-11 16:33:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1072","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryfAA4KDSNGAatxWcM","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744381856343","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:33:27] Type requête: Standard
+[2025-04-11 16:33:27] Valeurs après conversion: audit_id=3, point_vigilance_id=6
+[2025-04-11 16:33:27] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => fkjopjifezipojfeozijfmeofhnlzek
+    [mode_preuve] => Kikoo
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -527,25 +612,34 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:34:17] Audit trouvé: Array
+[2025-04-11 16:33:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:33:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":6,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"Kikoo","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:33:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1074","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundarybZPf4hc8ZxzDJgkD","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744381856343","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
 )
 
-[2025-04-10 13:34:17] Données traitées pour updateEvaluation: Array
+[2025-04-11 16:33:27] Type requête: Standard
+[2025-04-11 16:33:27] Valeurs après conversion: audit_id=10, point_vigilance_id=5
+[2025-04-11 16:33:27] Données traitées pour updateEvaluation: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 7
+    [audit_id] => 10
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => fkjopjifezipojfeozijfmeofhnlzek
+    [mode_preuve] => AZERTY
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -553,16 +647,69 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:34:17] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:34:17] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:36:23] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:33:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:33:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"AZERTY","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:33:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1115","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryKzaULMDAM8ICQLun","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744381856343","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 001
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:33:27] Type requête: Standard
+[2025-04-11 16:33:27] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:33:27] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+[2025-04-11 16:33:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:33:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:34:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1072","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary16qXLVgbAR74AkzR","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&nocache=1744382009115","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+[2025-04-11 16:34:27] Type requête: Standard
+[2025-04-11 16:34:27] Valeurs après conversion: audit_id=3, point_vigilance_id=6
+[2025-04-11 16:34:27] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => Kikoo
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -570,25 +717,34 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:36:23] Audit trouvé: Array
+[2025-04-11 16:34:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:34:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":3,"point_vigilance_id":6,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"Kikoo","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:34:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1074","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryjFdbTqVQpf1ATy1X","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&nocache=1744382009115","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
+POST: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [non_audite] => 1
+    [mesure_reglementaire] => 0
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
 )
 
-[2025-04-10 13:36:23] Données traitées pour updateEvaluation: Array
+[2025-04-11 16:34:27] Type requête: Standard
+[2025-04-11 16:34:27] Valeurs après conversion: audit_id=10, point_vigilance_id=5
+[2025-04-11 16:34:27] Données traitées pour updateEvaluation: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 5
     [mesure_reglementaire] => 0
     [non_audite] => 1
-    [mode_preuve] => 
+    [mode_preuve] => AZERTY
     [resultat] => 
     [justification] => 
     [plan_action_numero] => 
@@ -596,220 +752,285 @@ POST: Array
     [plan_action_description] => 
 )
 
-[2025-04-10 13:36:23] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:36:23] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:36:36] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:34:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:34:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":5,"mesure_reglementaire":0,"non_audite":1,"mode_preuve":"AZERTY","resultat":"","justification":"","plan_action_numero":null,"plan_action_priorite":"","plan_action_description":""}}
+[2025-04-11 16:34:27] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1115","sec-ch-ua-platform":"\"Windows\"","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryACeyzSf24BST638K","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&nocache=1744382009115","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr","Cookie":"PHPSESSID=pppnknnah09r7d5d42b2flnptl"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [non_audite] => 1
+    [mesure_reglementaire] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 001
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:34:27] Type requête: Standard
+[2025-04-11 16:34:27] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:34:27] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 13:36:36] Audit trouvé: Array
-(
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:36:36] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 8
-    [mesure_reglementaire] => 1
-    [non_audite] => 1
-    [mode_preuve] => 
-    [resultat] => 
-    [justification] => 
-    [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
-)
-
-[2025-04-10 13:36:36] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:36:36] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:36:49] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:34:27] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:34:27] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:43:58] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryQHtaYjFOkvXINLkh","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
 )
 
-[2025-04-10 13:36:49] Audit trouvé: Array
+[2025-04-11 16:43:58] Type requête: AJAX
+[2025-04-11 16:43:58] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:43:58] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:36:49] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 13:36:49] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:36:49] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:37:21] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:43:58] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:43:58] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:44:07] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1117","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary2npPBIcRu8MWMp1s","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744382639110","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 13:37:21] Audit trouvé: Array
+[2025-04-11 16:44:07] Type requête: AJAX
+[2025-04-11 16:44:07] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:44:07] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:37:21] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
 )
 
-[2025-04-10 13:37:21] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:37:21] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 13:40:00] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:44:07] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:44:07] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&amp;#039;action"}}
+[2025-04-11 16:44:17] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1121","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryBrVBmrDkifz11STJ","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744382647668","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
 )
 
-[2025-04-10 13:40:00] Audit trouvé: Array
+[2025-04-11 16:44:17] Type requête: AJAX
+[2025-04-11 16:44:17] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:44:17] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 13:40:00] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => 
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
 )
 
-[2025-04-10 13:40:00] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 13:40:00] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
-[2025-04-10 14:11:31] DÉBUT REQUÊTE EVALUER POINT
+[2025-04-11 16:44:17] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:44:17] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&amp;amp;#039;action"}}
+[2025-04-11 16:54:59] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundary4h1dP4DoJvRYVrp4","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
 POST: Array
 (
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => hyiuloyhoiu
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
 )
 
-[2025-04-10 14:11:31] Audit trouvé: Array
+[2025-04-11 16:54:59] Type requête: AJAX
+[2025-04-11 16:54:59] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:54:59] Données traitées pour updateEvaluation: Array
 (
-    [id] => 9
-    [numero_site] => 001
-    [nom_entreprise] => Jimmy
-    [logo] => 
-    [date_creation] => 2025-04-09
-    [statut] => en_cours
-    [created_at] => 2025-04-09 00:17:56
-    [updated_at] => 2025-04-09 00:17:56
-)
-
-[2025-04-10 14:11:31] Données traitées pour updateEvaluation: Array
-(
-    [audit_id] => 9
-    [point_vigilance_id] => 8
+    [audit_id] => 10
+    [point_vigilance_id] => 6
     [mesure_reglementaire] => 1
     [non_audite] => 1
-    [mode_preuve] => fjkezpjfpzejf
-    [resultat] => 
-    [justification] => hyiuloyhoiu
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
     [plan_action_numero] => 
-    [plan_action_priorite] => 
-    [plan_action_description] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
 )
 
-[2025-04-10 14:11:31] Résultat updateEvaluation: SUCCÈS
-[2025-04-10 14:11:31] Réponse finale: {"success":true,"message":"\u00c9valuation enregistr\u00e9e avec succ\u00e8s"}
+[2025-04-11 16:54:59] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:54:59] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:55:11] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryCQ5I6329gBgJ49f4","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744383299830","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:55:11] Type requête: AJAX
+[2025-04-11 16:55:11] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:55:11] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+[2025-04-11 16:55:11] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:55:11] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:56:08] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryIDbOBfBMOt7Bw5Qr","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744383312479","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:56:08] Type requête: AJAX
+[2025-04-11 16:56:08] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:56:08] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+[2025-04-11 16:56:08] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:56:08] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}
+[2025-04-11 16:56:24] DÉBUT REQUÊTE EVALUER POINT
+Méthode: POST
+Headers: {"Host":"localhost","Connection":"keep-alive","Content-Length":"1112","sec-ch-ua-platform":"\"Windows\"","X-Requested-With":"XMLHttpRequest","User-Agent":"Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/135.0.0.0 Safari\/537.36 Edg\/135.0.0.0","sec-ch-ua":"\"Microsoft Edge\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"","Content-Type":"multipart\/form-data; boundary=----WebKitFormBoundaryDdcdVoApoUBtYBy1","sec-ch-ua-mobile":"?0","Accept":"*\/*","Origin":"http:\/\/localhost","Sec-Fetch-Site":"same-origin","Sec-Fetch-Mode":"cors","Sec-Fetch-Dest":"empty","Referer":"http:\/\/localhost\/Audit\/index.php?action=audits&method=view&id=10&t=1744383368719","Accept-Encoding":"gzip, deflate, br, zstd","Accept-Language":"fr,fr-FR;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6","Cookie":"PHPSESSID=v7fpj7aca8q0os09kvj3fm1a9n"}
+POST: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d'action
+)
+
+[2025-04-11 16:56:24] Type requête: AJAX
+[2025-04-11 16:56:24] Valeurs après conversion: audit_id=10, point_vigilance_id=6
+[2025-04-11 16:56:24] Données traitées pour updateEvaluation: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+[2025-04-11 16:56:24] Résultat updateEvaluation: SUCCÈS
+[2025-04-11 16:56:24] RÉPONSE: {"success":true,"message":"\u00c9valuation mise \u00e0 jour avec succ\u00e8s","data":{"audit_id":10,"point_vigilance_id":6,"mesure_reglementaire":1,"non_audite":1,"mode_preuve":"QWERTY","resultat":"satisfait","justification":"Commentaire","plan_action_numero":null,"plan_action_priorite":"moyen","plan_action_description":"plan d&#039;action"}}

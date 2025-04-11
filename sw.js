@@ -47,10 +47,41 @@ const localResources = [
   "/Audit/public/assets/js/auditdb.js",
   "/Audit/public/assets/js/offline-manager.js",
   "/Audit/public/assets/js/script.js",
-  "/Audit/includes/header.php",
-  "/Audit/includes/footer.php",
   "/Audit/manifest.json",
 ];
+
+// Ajout d'une fonction pour vérifier si une URL est un fichier PHP direct
+function isDirectPhpFile(url) {
+  try {
+    let urlObj;
+
+    // Traiter différemment les URLs relatives et absolues
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      // URL absolue, on peut la construire directement
+      urlObj = new URL(url);
+    } else {
+      // URL relative, on doit la combiner avec l'origine du service worker
+      const baseUrl = self.location.origin;
+      urlObj = new URL(url, baseUrl);
+    }
+
+    const path = urlObj.pathname;
+    return (
+      path.endsWith(".php") &&
+      (path.includes("/includes/") ||
+        path.includes("/config/") ||
+        path.includes("/controllers/"))
+    );
+  } catch (e) {
+    console.error(
+      "[Service Worker] Erreur lors de l'analyse de l'URL:",
+      url,
+      e
+    );
+    // En cas d'erreur, on suppose que ce n'est pas un fichier PHP direct
+    return false;
+  }
+}
 
 // Cache dynamique pour stocker les URLs visitées
 const DYNAMIC_CACHE = "dynamic-v1";
@@ -157,6 +188,15 @@ self.addEventListener("install", (event) => {
 
       for (const relativeUrl of localResources) {
         try {
+          // Vérifier si c'est un fichier PHP direct qu'on ne devrait pas mettre en cache
+          if (isDirectPhpFile(relativeUrl)) {
+            console.log(
+              "[Service Worker] Ignoring direct PHP file from cache list:",
+              relativeUrl
+            );
+            continue;
+          }
+
           const absoluteUrl = getAbsoluteUrl(relativeUrl);
           console.log(
             "[Service Worker] Tentative de mise en cache locale:",
@@ -240,8 +280,35 @@ self.addEventListener("fetch", (event) => {
     url.pathname + url.search
   );
 
-  // Ne pas intercepter les requêtes POST (notamment pour les formulaires)
+  // Gérer les requêtes POST de synchronisation spécifiques
   if (event.request.method === "POST") {
+    // Vérifier si c'est une requête de synchronisation d'audit
+    const isSyncRequest =
+      url.pathname.includes("/index.php") &&
+      url.searchParams.has("action") &&
+      (url.searchParams.get("action") === "audits" ||
+        url.searchParams.get("action") === "articles") &&
+      url.searchParams.has("method") &&
+      (url.searchParams.get("method") === "evaluerPoint" ||
+        url.searchParams.get("method") === "create");
+
+    if (isSyncRequest) {
+      console.log(
+        "[Service Worker] Autorisation de requête POST de synchronisation:",
+        url.pathname
+      );
+      return; // Laisser passer la requête au réseau sans interception
+    }
+
+    // Vérifier si c'est une requête avec un paramètre de synchronisation
+    if (url.searchParams.has("_t")) {
+      console.log(
+        "[Service Worker] Autorisation de requête POST avec timestamp:",
+        url.pathname
+      );
+      return; // Laisser passer les requêtes avec timestamp (probablement des synchronisations)
+    }
+
     console.log("[Service Worker] Ignoring POST request:", url.pathname);
     return;
   }
@@ -254,6 +321,12 @@ self.addEventListener("fetch", (event) => {
       url.searchParams.get("format") === "json")
   ) {
     console.log("[Service Worker] Ignoring AJAX/JSON request:", url.pathname);
+    return;
+  }
+
+  // Ne pas intercepter les fichiers PHP directs (header.php, footer.php, etc.)
+  if (isDirectPhpFile(url.href)) {
+    console.log("[Service Worker] Ignoring direct PHP file:", url.pathname);
     return;
   }
 
@@ -523,9 +596,54 @@ self.addEventListener("fetch", (event) => {
     (url.searchParams.get("action") === "audits" ||
       url.searchParams.get("action") === "articles")
   ) {
+    // Vérifier si c'est une requête de données dynamiques (getSous*, get*)
+    const methodParam = url.searchParams.get("method");
+    const isDynamicDataRequest =
+      methodParam !== null &&
+      (methodParam.startsWith("getSous") || methodParam.startsWith("get"));
+
     event.respondWith(
       (async () => {
         try {
+          // Pour les requêtes de données dynamiques, essayer d'abord le réseau
+          if (isDynamicDataRequest) {
+            console.log(
+              "[Service Worker] Requête de données dynamiques, priorité au réseau:",
+              url.href
+            );
+            try {
+              const networkResponse = await fetch(event.request);
+              if (networkResponse.ok) {
+                // Mettre à jour le cache avec la nouvelle réponse
+                const dynamicCache = await caches.open(DYNAMIC_CACHE);
+                const clonedResponse = networkResponse.clone();
+                await dynamicCache.put(event.request, clonedResponse);
+                console.log(
+                  "[Service Worker] Données dynamiques récupérées du réseau et mises en cache:",
+                  url.href
+                );
+                return networkResponse;
+              }
+              throw new Error(
+                `Échec de récupération depuis le réseau: ${networkResponse.status}`
+              );
+            } catch (networkError) {
+              console.log(
+                "[Service Worker] Réseau indisponible pour les données dynamiques, utilisation du cache"
+              );
+              // Si le réseau échoue, essayer le cache comme solution de secours
+              const cacheResponse = await caches.match(event.request);
+              if (cacheResponse) {
+                return cacheResponse;
+              }
+              // Si non trouvé dans le cache, renvoyer un tableau vide
+              return new Response(JSON.stringify([]), {
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+          }
+
+          // Pour les autres requêtes API, continuer avec la stratégie "Cache First"
           // Vérifier d'abord dans le cache
           const cacheResponse = await caches.match(event.request);
           if (cacheResponse) {
@@ -654,22 +772,22 @@ self.addEventListener("fetch", (event) => {
           // Fallback basique si tout échoue
           return new Response(
             `<!DOCTYPE html>
-            <html lang="fr">
-            <head>
-              <meta charset="UTF-8">
-              <title>Hors ligne</title>
-              <style>
-                body { font-family: Arial; padding: 20px; }
-                .alert { padding: 15px; background-color: #fff3cd; border: 1px solid #ffeeba; }
-              </style>
-            </head>
-            <body>
-              <div class="alert">
-                <h4>Mode hors ligne</h4>
-                <p>Vous êtes actuellement hors ligne. Reconnectez-vous pour accéder à toutes les fonctionnalités.</p>
-              </div>
-            </body>
-            </html>`,
+          <html lang="fr">
+          <head>
+            <meta charset="UTF-8">
+            <title>Hors ligne</title>
+            <style>
+              body { font-family: Arial; padding: 20px; }
+              .alert { padding: 15px; background-color: #fff3cd; border: 1px solid #ffeeba; }
+            </style>
+          </head>
+          <body>
+            <div class="alert">
+              <h4>Mode hors ligne</h4>
+              <p>Vous êtes actuellement hors ligne. Reconnectez-vous pour accéder à toutes les fonctionnalités.</p>
+            </div>
+          </body>
+          </html>`,
             {
               status: 200,
               headers: { "Content-Type": "text/html; charset=utf-8" },

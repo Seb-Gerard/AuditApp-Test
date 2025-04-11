@@ -8,48 +8,150 @@ class SousCategorie {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    /**
+     * Récupère toutes les sous-catégories
+     * 
+     * @return array Liste de toutes les sous-catégories
+     */
     public function getAll() {
-        $stmt = $this->db->prepare("
-            SELECT sc.*, 
-                   c.nom as categorie_nom,
-                   (SELECT COUNT(*) FROM points_vigilance pv WHERE pv.sous_categorie_id = sc.id) as nb_points_vigilance
-            FROM sous_categories sc 
-            JOIN categories c ON sc.categorie_id = c.id
-            ORDER BY c.nom, sc.nom
-        ");
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            error_log("Exécution de getAll() pour les sous-catégories");
+            
+            $stmt = $this->db->query("
+                SELECT sc.*, 
+                       c.nom as categorie_nom,
+                       c.id as categorie_id,
+                       (SELECT COUNT(*) FROM points_vigilance pv WHERE pv.sous_categorie_id = sc.id) as nb_points_vigilance
+                FROM sous_categories sc 
+                JOIN categories c ON sc.categorie_id = c.id 
+                ORDER BY c.nom, sc.nom
+            ");
+            
+            if (!$stmt) {
+                error_log("Erreur lors de l'exécution de la requête getAll() pour les sous-catégories: " . implode(", ", $this->db->errorInfo()));
+                return [];
+            }
+            
+            $sousCategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Nombre de sous-catégories récupérées: " . count($sousCategories));
+            
+            return $sousCategories;
+        } catch (PDOException $e) {
+            error_log("Erreur SQL dans getAll() des sous-catégories: " . $e->getMessage());
+            return [];
+        }
     }
 
+    /**
+     * Récupère une sous-catégorie par son ID
+     * 
+     * @param int $id ID de la sous-catégorie
+     * @return array|null Les données de la sous-catégorie ou null si non trouvée
+     */
     public function getById($id) {
-        $stmt = $this->db->prepare("
-            SELECT sc.*, 
-                   c.nom as categorie_nom,
-                   (SELECT COUNT(*) FROM points_vigilance pv WHERE pv.sous_categorie_id = sc.id) as nb_points_vigilance
-            FROM sous_categories sc 
-            JOIN categories c ON sc.categorie_id = c.id
-            WHERE sc.id = ?
-        ");
-        $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            // Valider l'ID
+            $id = intval($id);
+            if ($id <= 0) {
+                error_log("ID de sous-catégorie invalide: " . $id);
+                return null;
+            }
+            
+            error_log("Récupération de la sous-catégorie avec ID: " . $id);
+            
+            $stmt = $this->db->prepare("
+                SELECT sc.*, 
+                       c.nom as categorie_nom,
+                       c.id as categorie_id,
+                       (SELECT COUNT(*) FROM points_vigilance pv WHERE pv.sous_categorie_id = sc.id) as nb_points_vigilance
+                FROM sous_categories sc 
+                JOIN categories c ON sc.categorie_id = c.id 
+                WHERE sc.id = ?
+            ");
+            
+            if (!$stmt) {
+                error_log("Erreur de préparation de la requête SQL dans getById: " . implode(", ", $this->db->errorInfo()));
+                return null;
+            }
+            
+            $result = $stmt->execute([$id]);
+            
+            if ($result === false) {
+                error_log("Erreur d'exécution de la requête SQL dans getById: " . implode(", ", $stmt->errorInfo()));
+                return null;
+            }
+            
+            $sousCategorie = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$sousCategorie) {
+                error_log("Aucune sous-catégorie trouvée avec l'ID: " . $id);
+                return null;
+            }
+            
+            error_log("Sous-catégorie récupérée: " . $sousCategorie['nom']);
+            return $sousCategorie;
+        } catch (PDOException $e) {
+            error_log("Erreur SQL dans getById: " . $e->getMessage());
+            return null;
+        } catch (Exception $e) {
+            error_log("Exception dans getById: " . $e->getMessage());
+            return null;
+        }
     }
 
+    /**
+     * Récupère les points de vigilance associés à une sous-catégorie
+     * 
+     * @param int $sousCategorieId ID de la sous-catégorie
+     * @return array Liste des points de vigilance
+     */
     public function getPointsVigilance($sousCategorieId) {
-        $stmt = $this->db->prepare("
-            SELECT pv.*, 
-                   sc.nom as sous_categorie_nom,
-                   c.id as categorie_id,
-                   c.nom as categorie_nom,
-                   (SELECT COUNT(*) FROM criteres cr WHERE cr.point_vigilance_id = pv.id) as nb_criteres,
-                   (SELECT COUNT(*) FROM audit_points ap WHERE ap.point_vigilance_id = pv.id) as nb_audits
-            FROM points_vigilance pv
-            JOIN sous_categories sc ON pv.sous_categorie_id = sc.id
-            JOIN categories c ON sc.categorie_id = c.id
-            WHERE pv.sous_categorie_id = ?
-            ORDER BY pv.nom
-        ");
-        $stmt->execute([$sousCategorieId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            // Valider l'ID
+            $sousCategorieId = intval($sousCategorieId);
+            if ($sousCategorieId <= 0) {
+                error_log("ID de sous-catégorie invalide pour getPointsVigilance: " . $sousCategorieId);
+                return [];
+            }
+            
+            error_log("Récupération des points de vigilance pour la sous-catégorie " . $sousCategorieId);
+            
+            $stmt = $this->db->prepare("
+                SELECT pv.*, 
+                       sc.id as sous_categorie_id, 
+                       sc.nom as sous_categorie_nom,
+                       c.id as categorie_id,
+                       c.nom as categorie_nom
+                FROM points_vigilance pv
+                JOIN sous_categories sc ON pv.sous_categorie_id = sc.id
+                JOIN categories c ON sc.categorie_id = c.id
+                WHERE pv.sous_categorie_id = ?
+                ORDER BY pv.id
+            ");
+            
+            if (!$stmt) {
+                error_log("Erreur de préparation de la requête SQL dans getPointsVigilance: " . implode(", ", $this->db->errorInfo()));
+                return [];
+            }
+            
+            $result = $stmt->execute([$sousCategorieId]);
+            
+            if ($result === false) {
+                error_log("Erreur d'exécution de la requête SQL dans getPointsVigilance: " . implode(", ", $stmt->errorInfo()));
+                return [];
+            }
+            
+            $pointsVigilance = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("Nombre de points de vigilance trouvés: " . count($pointsVigilance));
+            
+            return $pointsVigilance;
+        } catch (PDOException $e) {
+            error_log("Erreur SQL dans getPointsVigilance: " . $e->getMessage());
+            return [];
+        } catch (Exception $e) {
+            error_log("Exception dans getPointsVigilance: " . $e->getMessage());
+            return [];
+        }
     }
 
     public function create($data) {

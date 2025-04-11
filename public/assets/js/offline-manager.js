@@ -7,6 +7,9 @@ const OfflineManager = {
   init: async function () {
     console.log("[OfflineManager] Initialisation");
 
+    // Vérifier immédiatement l'état de la connexion et mettre à jour l'UI
+    this.updateConnectionStatus();
+
     // Attendre que ArticleDB soit disponible
     if (!window.ArticleDB) {
       console.error(
@@ -40,33 +43,63 @@ const OfflineManager = {
         console.log(
           "[OfflineManager] Connexion rétablie, synchronisation en cours..."
         );
-        document.getElementById("onlineAlert").style.display = "block";
-        document.getElementById("offlineAlert").style.display = "none";
+        this.updateConnectionStatus();
+
+        // Afficher une notification de reconnexion
+        if (typeof showToast === "function") {
+          showToast(
+            "Connexion internet rétablie. Synchronisation en cours...",
+            "success"
+          );
+        }
+
+        // Petite pause pour laisser le temps au réseau de se stabiliser
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
         try {
-          // Synchroniser les articles
-          await window.ArticleDB.syncWithServer();
-          // Recharger les articles après la synchronisation
-          await this.loadOfflineArticles();
-
-          // Synchroniser les audits
+          // Synchroniser les données
           if (window.AuditDB) {
-            await window.AuditDB.syncWithServer();
-            // Recharger les audits après la synchronisation
-            await this.loadOfflineAudits();
+            const syncResult = await window.AuditDB.syncPendingData();
+            console.log(
+              "[OfflineManager] Résultat de la synchronisation:",
+              syncResult
+            );
+
+            // Afficher un message de résultat
+            const totalSync =
+              syncResult.evaluations.success + syncResult.documents.success;
+            if (totalSync > 0 && typeof showToast === "function") {
+              showToast(
+                `${totalSync} élément(s) synchronisé(s) avec succès`,
+                "success"
+              );
+            }
           }
         } catch (error) {
           console.error(
             "[OfflineManager] Erreur lors de la synchronisation:",
             error
           );
+          if (typeof showToast === "function") {
+            showToast(
+              "Erreur lors de la synchronisation: " + error.message,
+              "error"
+            );
+          }
         }
       });
 
       window.addEventListener("offline", () => {
         console.log("[OfflineManager] Connexion perdue");
-        document.getElementById("onlineAlert").style.display = "none";
-        document.getElementById("offlineAlert").style.display = "block";
+        this.updateConnectionStatus();
+
+        // Afficher une notification de perte de connexion
+        if (typeof showToast === "function") {
+          showToast(
+            "Connexion internet perdue. Les données seront enregistrées localement.",
+            "warning"
+          );
+        }
       });
     } catch (error) {
       console.error(
@@ -283,5 +316,34 @@ const OfflineManager = {
         );
         alert("Erreur lors de la création de l'audit de test");
       });
+  },
+
+  // Mettre à jour les indicateurs visuels d'état de connexion
+  updateConnectionStatus: function () {
+    const isConnected = this.isOnline();
+
+    // Mettre à jour les éléments d'UI si disponibles
+    const onlineAlert = document.getElementById("onlineAlert");
+    const offlineAlert = document.getElementById("offlineAlert");
+
+    if (onlineAlert) onlineAlert.style.display = isConnected ? "block" : "none";
+    if (offlineAlert)
+      offlineAlert.style.display = isConnected ? "none" : "block";
+
+    console.log(
+      `[OfflineManager] État de connexion mis à jour: ${
+        isConnected ? "En ligne" : "Hors ligne"
+      }`
+    );
+  },
+
+  // Vérifier si l'appareil est actuellement en ligne
+  isOnline: function () {
+    // Vérifier navigator.onLine (API standard)
+    if (typeof navigator !== "undefined" && "onLine" in navigator) {
+      return navigator.onLine;
+    }
+    // Par défaut, supposer en ligne
+    return true;
   },
 };

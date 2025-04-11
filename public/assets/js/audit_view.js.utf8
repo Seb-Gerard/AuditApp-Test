@@ -8,14 +8,14 @@
 
 /**
  * Affiche une notification toast
- * @param {string} message - Le message à afficher
+ * @param {string} message - Le message Ã  afficher
  * @param {string} type - Le type de notification (info, success, warning, error)
- * @param {boolean} isPersistent - Si la notification doit rester affichée ou disparaître automatiquement
+ * @param {boolean} isPersistent - Si la notification doit rester affichÃ©e ou disparaÃ®tre automatiquement
  * @returns {Object|null} - L'objet toast si disponible, sinon null
  */
 window.showToast = function (message, type = "info", isPersistent = false) {
   try {
-    // Créer un conteneur pour les toasts s'il n'existe pas
+    // CrÃ©er un conteneur pour les toasts s'il n'existe pas
     let toastContainer = document.getElementById("toast-container");
     if (!toastContainer) {
       toastContainer = document.createElement("div");
@@ -25,10 +25,10 @@ window.showToast = function (message, type = "info", isPersistent = false) {
       document.body.appendChild(toastContainer);
     }
 
-    // Générer un ID unique pour ce toast
+    // GÃ©nÃ©rer un ID unique pour ce toast
     const toastId = "toast-" + Date.now();
 
-    // Créer l'élément toast
+    // CrÃ©er l'Ã©lÃ©ment toast
     const toastElement = document.createElement("div");
     toastElement.id = toastId;
     toastElement.className = `toast align-items-center text-white bg-${
@@ -38,7 +38,7 @@ window.showToast = function (message, type = "info", isPersistent = false) {
     toastElement.setAttribute("aria-live", "assertive");
     toastElement.setAttribute("aria-atomic", "true");
 
-    // Tous les toasts se ferment automatiquement après 2 secondes (2000ms)
+    // Tous les toasts se ferment automatiquement aprÃ¨s 2 secondes (2000ms)
     toastElement.setAttribute("data-bs-delay", "2000");
     toastElement.setAttribute("data-bs-autohide", "true");
 
@@ -57,7 +57,7 @@ window.showToast = function (message, type = "info", isPersistent = false) {
     toastContainer.appendChild(toastElement);
 
     // Initialiser le toast avec Bootstrap
-    // Vérifier que Bootstrap est disponible
+    // VÃ©rifier que Bootstrap est disponible
     if (typeof bootstrap !== "undefined" && bootstrap.Toast) {
       const toastBootstrap = new bootstrap.Toast(toastElement);
       toastBootstrap.show();
@@ -66,7 +66,7 @@ window.showToast = function (message, type = "info", isPersistent = false) {
       // Fallback manuel si Bootstrap n'est pas disponible
       console.warn("Bootstrap non disponible, affichage manuel du toast");
       toastElement.classList.add("show");
-      // Fermer après 2 secondes
+      // Fermer aprÃ¨s 2 secondes
       setTimeout(() => {
         toastElement.classList.remove("show");
         setTimeout(() => {
@@ -75,7 +75,7 @@ window.showToast = function (message, type = "info", isPersistent = false) {
           }
         }, 300);
       }, 2000);
-
+      
       return {
         hide: () => {
           toastElement.classList.remove("show");
@@ -117,14 +117,14 @@ window.showToast = function (message, type = "info", isPersistent = false) {
 // Variables globales
 const videoStreams = {};
 
-// Pour éviter les erreurs avec bootstrap
+// Pour Ã©viter les erreurs avec bootstrap
 const bootstrap = window.bootstrap || {};
 
 /**
  * Module AuditDB - Gestion du stockage hors ligne pour les audits
  */
 const AuditDB = (function () {
-  // Base de données IndexedDB
+  // Base de donnÃ©es IndexedDB
   let db = null;
   const DB_NAME = "audit_offline_db";
   const DB_VERSION = 1;
@@ -135,7 +135,7 @@ const AuditDB = (function () {
     PENDING_DOCUMENTS: "pending_documents",
   };
 
-  // Initialisation de la base de données
+  // Initialisation de la base de donnÃ©es
   function initDB() {
     return new Promise((resolve, reject) => {
       if (db) return resolve(db);
@@ -143,41 +143,41 @@ const AuditDB = (function () {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
       request.onerror = (event) => {
-        console.error("Erreur d'ouverture de la base de données:", event);
-        reject(new Error("Impossible d'ouvrir la base de données IndexedDB"));
+        console.error("Erreur d'ouverture de la base de donnÃ©es:", event);
+        reject(new Error("Impossible d'ouvrir la base de donnÃ©es IndexedDB"));
       };
 
       request.onsuccess = (event) => {
         db = event.target.result;
-        console.log("Base de données IndexedDB ouverte avec succès");
+        console.log("Base de donnÃ©es IndexedDB ouverte avec succÃ¨s");
         resolve(db);
       };
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
 
-        // Créer le store pour les évaluations en attente
+        // CrÃ©er le store pour les Ã©valuations en attente
         if (!db.objectStoreNames.contains(STORES.PENDING_EVALUATIONS)) {
           db.createObjectStore(STORES.PENDING_EVALUATIONS, {
             keyPath: "id",
             autoIncrement: true,
           });
-          console.log("Store créé pour les évaluations en attente");
+          console.log("Store crÃ©Ã© pour les Ã©valuations en attente");
         }
 
-        // Créer le store pour les documents en attente
+        // CrÃ©er le store pour les documents en attente
         if (!db.objectStoreNames.contains(STORES.PENDING_DOCUMENTS)) {
           db.createObjectStore(STORES.PENDING_DOCUMENTS, {
             keyPath: "id",
             autoIncrement: true,
           });
-          console.log("Store créé pour les documents en attente");
+          console.log("Store crÃ©Ã© pour les documents en attente");
         }
       };
     });
   }
 
-  // Ajout d'une évaluation à synchroniser
+  // Ajout d'une Ã©valuation Ã  synchroniser
   async function savePendingEvaluation(data) {
     await initDB();
 
@@ -201,12 +201,12 @@ const AuditDB = (function () {
       };
 
       request.onerror = (event) => {
-        reject(new Error("Erreur lors de l'enregistrement de l'évaluation"));
+        reject(new Error("Erreur lors de l'enregistrement de l'Ã©valuation"));
       };
     });
   }
 
-  // Ajout d'un document à synchroniser
+  // Ajout d'un document Ã  synchroniser
   async function savePendingDocument(data) {
     await initDB();
 
@@ -235,7 +235,7 @@ const AuditDB = (function () {
     });
   }
 
-  // Récupérer toutes les évaluations en attente
+  // RÃ©cupÃ©rer toutes les Ã©valuations en attente
   async function getPendingEvaluations() {
     await initDB();
 
@@ -253,13 +253,13 @@ const AuditDB = (function () {
 
       request.onerror = (event) => {
         reject(
-          new Error("Erreur lors de la récupération des évaluations en attente")
+          new Error("Erreur lors de la rÃ©cupÃ©ration des Ã©valuations en attente")
         );
       };
     });
   }
 
-  // Récupérer tous les documents en attente
+  // RÃ©cupÃ©rer tous les documents en attente
   async function getPendingDocuments() {
     await initDB();
 
@@ -277,13 +277,13 @@ const AuditDB = (function () {
 
       request.onerror = (event) => {
         reject(
-          new Error("Erreur lors de la récupération des documents en attente")
+          new Error("Erreur lors de la rÃ©cupÃ©ration des documents en attente")
         );
       };
     });
   }
 
-  // Marquer une évaluation comme synchronisée
+  // Marquer une Ã©valuation comme synchronisÃ©e
   async function markEvaluationSynced(id) {
     await initDB();
 
@@ -300,12 +300,12 @@ const AuditDB = (function () {
       };
 
       request.onerror = () => {
-        reject(new Error("Erreur lors de la mise Ã jour de l'évaluation"));
+        reject(new Error("Erreur lors de la mise Ã  jour de l'Ã©valuation"));
       };
     });
   }
 
-  // Marquer un document comme synchronisé
+  // Marquer un document comme synchronisÃ©
   async function markDocumentSynced(id) {
     await initDB();
 
@@ -322,12 +322,12 @@ const AuditDB = (function () {
       };
 
       request.onerror = () => {
-        reject(new Error("Erreur lors de la mise Ã jour du document"));
+        reject(new Error("Erreur lors de la mise Ã  jour du document"));
       };
     });
   }
 
-  // Synchroniser les données en attente
+  // Synchroniser les donnÃ©es en attente
   async function syncPendingData() {
     const results = {
       evaluations: { success: 0, failed: 0 },
@@ -335,33 +335,33 @@ const AuditDB = (function () {
     };
 
     try {
-      // Synchroniser les évaluations
+      // Synchroniser les Ã©valuations
       const pendingEvaluations = await getPendingEvaluations();
       console.log(
-        `Synchronisation de ${pendingEvaluations.length} évaluations en attente`
+        `Synchronisation de ${pendingEvaluations.length} Ã©valuations en attente`
       );
 
-      // Utiliser la fonction syncSingleEvaluation améliorée pour chaque évaluation
+      // Utiliser la fonction syncSingleEvaluation amÃ©liorÃ©e pour chaque Ã©valuation
       for (const evaluation of pendingEvaluations) {
         try {
-          // Utiliser la fonction avancée de synchronisation d'évaluation individuelle
+          // Utiliser la fonction avancÃ©e de synchronisation d'Ã©valuation individuelle
           const success = await window.syncSingleEvaluation(evaluation);
 
           if (success) {
             results.evaluations.success++;
             console.log(
-              `âœ… Évaluation ID:${evaluation.id} synchronisée avec succès`
+              `âœ… Ã‰valuation ID:${evaluation.id} synchronisÃ©e avec succÃ¨s`
             );
           } else {
             results.evaluations.failed++;
             console.error(
-              `âŒ Échec de synchronisation de l'évaluation ID:${evaluation.id}`
+              `âŒ Ã‰chec de synchronisation de l'Ã©valuation ID:${evaluation.id}`
             );
           }
         } catch (error) {
           results.evaluations.failed++;
           console.error(
-            "Exception lors de la synchronisation de l'évaluation:",
+            "Exception lors de la synchronisation de l'Ã©valuation:",
             error
           );
         }
@@ -375,7 +375,7 @@ const AuditDB = (function () {
 
       for (const document of pendingDocuments) {
         try {
-          // Envoyer les données au serveur
+          // Envoyer les donnÃ©es au serveur
           const response = await fetch(
             "index.php?action=audits&method=ajouterDocument",
             {
@@ -393,7 +393,7 @@ const AuditDB = (function () {
           );
 
           if (response.ok) {
-            // Marquer comme synchronisé
+            // Marquer comme synchronisÃ©
             await markDocumentSynced(document.id);
             results.documents.success++;
           } else {
@@ -412,7 +412,7 @@ const AuditDB = (function () {
         }
       }
 
-      console.log("Synchronisation terminée:", results);
+      console.log("Synchronisation terminÃ©e:", results);
       return results;
     } catch (error) {
       console.error("Erreur lors de la synchronisation:", error);
@@ -431,14 +431,14 @@ const AuditDB = (function () {
   };
 })();
 
-// Exposer le module AuditDB à window pour une accessibilité globale
+// Exposer le module AuditDB Ã  window pour une accessibilitÃ© globale
 window.AuditDB = AuditDB;
 
 /**
  * Initialisation au chargement du document
  */
 document.addEventListener("DOMContentLoaded", function () {
-  // Ajouter un style pour les champs désactivés
+  // Ajouter un style pour les champs dÃ©sactivÃ©s
   const style = document.createElement("style");
   style.innerHTML = `
     .disabled-field {
@@ -447,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function () {
       opacity: 0.7;
     }
     
-    /* Style pour formulaires non modifiables (audit terminé) */
+    /* Style pour formulaires non modifiables (audit terminÃ©) */
     form[disabled] {
       opacity: 0.8;
       pointer-events: none;
@@ -463,17 +463,17 @@ document.addEventListener("DOMContentLoaded", function () {
   `;
   document.head.appendChild(style);
 
-  // Vérifier si l'audit est terminé
+  // VÃ©rifier si l'audit est terminÃ©
   const badgeElement = document.querySelector(".badge.bg-success");
   const isAuditTermine =
     badgeElement !== null &&
     badgeElement.textContent &&
-    badgeElement.textContent.trim() === "Terminé";
+    badgeElement.textContent.trim() === "TerminÃ©";
 
-  // Gérer la soumission du formulaire d'évaluation
+  // GÃ©rer la soumission du formulaire d'Ã©valuation
   initEvaluationForms(isAuditTermine);
 
-  // Gérer la soumission des formulaires de documents
+  // GÃ©rer la soumission des formulaires de documents
   initDocumentForms(isAuditTermine);
 
   // Initialiser les webcams pour chaque point de vigilance
@@ -485,44 +485,44 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Remplacer tous les aria-hidden par inert pour éviter les problèmes d'accessibilité
+  // Remplacer tous les aria-hidden par inert pour Ã©viter les problÃ¨mes d'accessibilitÃ©
   initModalAccessibility();
 
-  // Fonction pour vérifier la connexion internet
+  // Fonction pour vÃ©rifier la connexion internet
   function isOnline() {
     return navigator.onLine;
   }
 
-  // Fonction pour écouter les changements de statut de connexion
+  // Fonction pour Ã©couter les changements de statut de connexion
   function setupConnectivityListeners() {
-    console.log("Configuration des écouteurs de connectivité");
+    console.log("Configuration des Ã©couteurs de connectivitÃ©");
 
-    // Vérifier si nous sommes en ligne au chargement
+    // VÃ©rifier si nous sommes en ligne au chargement
     if (!navigator.onLine) {
-      console.log("Démarrage en mode hors ligne");
+      console.log("DÃ©marrage en mode hors ligne");
       document.body.classList.add("offline-mode");
     }
 
-    // Écouteurs pour les événements online/offline
+    // Ã‰couteurs pour les Ã©vÃ©nements online/offline
     window.addEventListener("online", function () {
-      console.log("ðŸŒ CONNEXION INTERNET RÉTABLIE");
+      console.log("ðŸŒ CONNEXION INTERNET RÃ‰TABLIE");
       document.body.classList.remove("offline-mode");
 
-      // Notification à l'utilisateur
+      // Notification Ã  l'utilisateur
       showToast(
-        "Connexion internet rétablie. Synchronisation en cours...",
+        "Connexion internet rÃ©tablie. Synchronisation en cours...",
         "info",
         false
       );
 
-      // Délai avant synchronisation
+      // DÃ©lai avant synchronisation
       setTimeout(() => {
-        console.log("â±ï¸ Délai écoulé, début de la synchronisation");
+        console.log("â±ï¸ DÃ©lai Ã©coulÃ©, dÃ©but de la synchronisation");
 
         forceSyncData()
           .then((result) => {
             if (!result.hasData) {
-              showToast("Aucune donnée à synchroniser", "info", false);
+              showToast("Aucune donnÃ©e Ã  synchroniser", "info", false);
               return;
             }
 
@@ -535,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (total > 0) {
               showToast(
-                `Synchronisation réussie: ${total} élément(s) synchronisé(s)`,
+                `Synchronisation rÃ©ussie: ${total} Ã©lÃ©ment(s) synchronisÃ©(s)`,
                 "success",
                 true
               );
@@ -545,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const currentUrl = new URL(window.location.href);
                 const auditId = currentUrl.searchParams.get("id");
 
-                console.log("🔄 Rechargement de la page...");
+                console.log("ðŸ”„ Rechargement de la page...");
                 if (auditId) {
                   window.location.href = `index.php?action=audits&method=view&id=${auditId}&nocache=${Date.now()}`;
                 } else {
@@ -554,14 +554,14 @@ document.addEventListener("DOMContentLoaded", function () {
               }, 2000);
             } else if (failed > 0) {
               showToast(
-                `Échec de la synchronisation: ${failed} élément(s) non synchronisé(s)`,
+                `Ã‰chec de la synchronisation: ${failed} Ã©lÃ©ment(s) non synchronisÃ©(s)`,
                 "error",
                 true
               );
             }
           })
           .catch((error) => {
-            console.error("❌ Erreur lors de la synchronisation:", error);
+            console.error("âŒ Erreur lors de la synchronisation:", error);
             showToast(
               "Erreur lors de la synchronisation: " +
                 (error.message || "Erreur inconnue"),
@@ -573,49 +573,49 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     window.addEventListener("offline", function () {
-      console.log("La connexion internet a été perdue");
+      console.log("La connexion internet a Ã©tÃ© perdue");
       document.body.classList.add("offline-mode");
 
       showToast(
-        "Mode hors ligne activé. Vos modifications seront enregistrées localement.",
+        "Mode hors ligne activÃ©. Vos modifications seront enregistrÃ©es localement.",
         "warning",
         true
       );
     });
 
-    console.log("Écouteurs de connectivité configurés");
+    console.log("Ã‰couteurs de connectivitÃ© configurÃ©s");
   }
 
-  // Initialiser les écouteurs d'événements de connectivité une fois le DOM chargé
+  // Initialiser les Ã©couteurs d'Ã©vÃ©nements de connectivitÃ© une fois le DOM chargÃ©
   setupConnectivityListeners();
 });
 
 /**
- * Initialise les formulaires d'évaluation
- * Gère l'activation/désactivation des champs en fonction de l'état de la case "Audité"
+ * Initialise les formulaires d'Ã©valuation
+ * GÃ¨re l'activation/dÃ©sactivation des champs en fonction de l'Ã©tat de la case "AuditÃ©"
  */
 function initEvaluationForms(isAuditTermine) {
   const forms = document.querySelectorAll(".evaluation-form");
-  console.log("Initialisation de", forms.length, "formulaires d'évaluation");
+  console.log("Initialisation de", forms.length, "formulaires d'Ã©valuation");
 
   forms.forEach((form) => {
-    // 1. Récupérer la case à cocher "Audité" (non_audite)
+    // 1. RÃ©cupÃ©rer la case Ã  cocher "AuditÃ©" (non_audite)
     const nonAuditeCheckbox = form.querySelector('[name="non_audite"]');
 
     if (!nonAuditeCheckbox) {
-      console.error("Case à cocher 'Audité' non trouvée dans le formulaire");
+      console.error("Case Ã  cocher 'AuditÃ©' non trouvÃ©e dans le formulaire");
       return;
     }
 
-    // 2. Fonction pour mettre à jour l'état des champs en fonction de l'état de la case "Audité"
+    // 2. Fonction pour mettre Ã  jour l'Ã©tat des champs en fonction de l'Ã©tat de la case "AuditÃ©"
     function updateFieldsState() {
-      // Récupérer l'état actuel de la case à cocher
+      // RÃ©cupÃ©rer l'Ã©tat actuel de la case Ã  cocher
       const isNonAudite = nonAuditeCheckbox.checked;
       console.log(
-        `État de la case 'Audité': ${isNonAudite ? "Coché" : "Non coché"}`
+        `Ã‰tat de la case 'AuditÃ©': ${isNonAudite ? "CochÃ©" : "Non cochÃ©"}`
       );
 
-      // Récupérer tous les champs du formulaire
+      // RÃ©cupÃ©rer tous les champs du formulaire
       const allInputs = form.querySelectorAll(
         'input:not([name="audit_id"]):not([name="point_vigilance_id"]):not([name="non_audite"]):not([name="mesure_reglementaire"])'
       );
@@ -624,12 +624,12 @@ function initEvaluationForms(isAuditTermine) {
         'textarea:not([name="justification"])'
       );
 
-      // Récupérer explicitement le champ de commentaire (qui doit rester actif)
+      // RÃ©cupÃ©rer explicitement le champ de commentaire (qui doit rester actif)
       const justificationTextarea = form.querySelector(
         '[name="justification"]'
       );
 
-      // DÉSACTIVER tous les champs si "Audité" est décoché, SAUF "Mesure réglementaire" et "Commentaire"
+      // DÃ‰SACTIVER tous les champs si "AuditÃ©" est dÃ©cochÃ©, SAUF "Mesure rÃ©glementaire" et "Commentaire"
       [...allInputs, ...allSelects, ...allTextareas].forEach((field) => {
         field.disabled = !isNonAudite || isAuditTermine;
 
@@ -640,12 +640,12 @@ function initEvaluationForms(isAuditTermine) {
         }
       });
 
-      // Gérer séparément les boutons radio
+      // GÃ©rer sÃ©parÃ©ment les boutons radio
       const radioButtons = form.querySelectorAll('input[type="radio"]');
       radioButtons.forEach((radio) => {
         radio.disabled = !isNonAudite || isAuditTermine;
 
-        // Appliquer des styles spécifiques pour l'élément parent (libellé du radio)
+        // Appliquer des styles spÃ©cifiques pour l'Ã©lÃ©ment parent (libellÃ© du radio)
         const parentLabel = radio.closest("label") || radio.parentElement;
         if (parentLabel) {
           if (!isNonAudite || isAuditTermine) {
@@ -667,23 +667,23 @@ function initEvaluationForms(isAuditTermine) {
       }
     }
 
-    // 3. Appliquer l'état initial
+    // 3. Appliquer l'Ã©tat initial
     updateFieldsState();
 
-    // 4. Ajouter un écouteur pour détecter les changements de la case à cocher
+    // 4. Ajouter un Ã©couteur pour dÃ©tecter les changements de la case Ã  cocher
     nonAuditeCheckbox.addEventListener("change", updateFieldsState);
 
-    // 5. Gérer la soumission du formulaire
+    // 5. GÃ©rer la soumission du formulaire
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
-      // Ne pas traiter si l'audit est terminé
+      // Ne pas traiter si l'audit est terminÃ©
       if (isAuditTermine) {
-        console.log("Formulaire non soumis : audit terminé");
+        console.log("Formulaire non soumis : audit terminÃ©");
         return;
       }
 
-      // Récupérer les données du formulaire
+      // RÃ©cupÃ©rer les donnÃ©es du formulaire
       const formData = new FormData(form);
       const auditId = formData.get("audit_id");
       const pointId = formData.get("point_vigilance_id");
@@ -695,9 +695,9 @@ function initEvaluationForms(isAuditTermine) {
           auditId
       );
 
-      // Vérifier si nous sommes en ligne
+      // VÃ©rifier si nous sommes en ligne
       if (!navigator.onLine) {
-        console.log("Mode hors ligne détecté, enregistrement local...");
+        console.log("Mode hors ligne dÃ©tectÃ©, enregistrement local...");
         // Stocker en local en attendant une connexion
         try {
           // Convertir FormData en objet JavaScript standard
@@ -710,32 +710,32 @@ function initEvaluationForms(isAuditTermine) {
           evalData.timestamp = new Date().getTime();
           evalData.status = "pending";
 
-          console.log("Données converties pour stockage local:", evalData);
+          console.log("DonnÃ©es converties pour stockage local:", evalData);
 
-          // Assurons-nous que le module AuditDB est disponible et initialisé
+          // Assurons-nous que le module AuditDB est disponible et initialisÃ©
           if (typeof window.AuditDB === "undefined" || !window.AuditDB) {
             console.error("AuditDB non disponible. Tentative de chargement...");
-            // Essayer de charger le script (fonction définie plus bas)
+            // Essayer de charger le script (fonction dÃ©finie plus bas)
             loadScriptDynamically("/Audit/public/assets/js/auditdb.js")
               .then(() => {
-                console.log("Script auditdb.js chargé avec succès");
+                console.log("Script auditdb.js chargÃ© avec succÃ¨s");
                 if (!window.AuditDB) {
                   throw new Error(
-                    "AuditDB toujours non disponible après chargement"
+                    "AuditDB toujours non disponible aprÃ¨s chargement"
                   );
                 }
                 return storeEvaluationOffline(evalData);
               })
               .then((id) => {
-                console.log("Évaluation stockée avec ID:", id);
+                console.log("Ã‰valuation stockÃ©e avec ID:", id);
                 showToast(
-                  "Évaluation enregistrée localement. Sera synchronisée quand vous serez en ligne.",
+                  "Ã‰valuation enregistrÃ©e localement. Sera synchronisÃ©e quand vous serez en ligne.",
                   "success",
                   true
                 );
               })
               .catch((error) => {
-                console.error("Erreur après tentative de chargement:", error);
+                console.error("Erreur aprÃ¨s tentative de chargement:", error);
                 showToast(
                   "Erreur lors de l'enregistrement local: " + error.message,
                   "error"
@@ -745,9 +745,9 @@ function initEvaluationForms(isAuditTermine) {
             // AuditDB est disponible, utilisons-le directement
             storeEvaluationOffline(evalData)
               .then((id) => {
-                console.log("Évaluation stockée avec ID:", id);
+                console.log("Ã‰valuation stockÃ©e avec ID:", id);
                 showToast(
-                  "Évaluation enregistrée localement. Sera synchronisée quand vous serez en ligne.",
+                  "Ã‰valuation enregistrÃ©e localement. Sera synchronisÃ©e quand vous serez en ligne.",
                   "success",
                   true
                 );
@@ -770,7 +770,7 @@ function initEvaluationForms(isAuditTermine) {
         return;
       }
 
-      // Envoyer les données au serveur
+      // Envoyer les donnÃ©es au serveur
       fetch("index.php?action=audits&method=evaluerPoint", {
         method: "POST",
         headers: {
@@ -780,16 +780,16 @@ function initEvaluationForms(isAuditTermine) {
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Erreur réseau: " + response.status);
+            throw new Error("Erreur rÃ©seau: " + response.status);
           }
           return response.json();
         })
         .then((data) => {
           if (data.success) {
-            showToast("Point de vigilance évalué avec succès", "success");
-            console.log("Succès:", data);
+            showToast("Point de vigilance Ã©valuÃ© avec succÃ¨s", "success");
+            console.log("SuccÃ¨s:", data);
 
-            // Ajouter un paramètre t pour éviter la mise en cache
+            // Ajouter un paramÃ¨tre t pour Ã©viter la mise en cache
             setTimeout(() => {
               window.location.href =
                 window.location.href.split("?")[0] +
@@ -797,7 +797,7 @@ function initEvaluationForms(isAuditTermine) {
             }, 500);
           } else {
             showToast(
-              "Erreur lors de l'évaluation: " +
+              "Erreur lors de l'Ã©valuation: " +
                 (data.message || "Erreur inconnue"),
               "error"
             );
@@ -821,9 +821,9 @@ function initEvaluationForms(isAuditTermine) {
 function initDocumentForms(isAuditTermine) {
   const documentForms = document.querySelectorAll(".document-form");
 
-  // Corriger les problèmes d'attributs aria-hidden sur les modals
+  // Corriger les problÃ¨mes d'attributs aria-hidden sur les modals
   document.querySelectorAll(".modal").forEach((modal) => {
-    // Remplacer aria-hidden par inert quand la modal est cachée
+    // Remplacer aria-hidden par inert quand la modal est cachÃ©e
     if (modal.getAttribute("aria-hidden") === "true") {
       modal.removeAttribute("aria-hidden");
       modal.setAttribute("inert", "");
@@ -831,7 +831,7 @@ function initDocumentForms(isAuditTermine) {
 
     // S'assurer que la modal utilise inert au lieu de aria-hidden
     modal.addEventListener("hide.bs.modal", function () {
-      // Utiliser un délai pour permettre Ã Bootstrap de terminer sa fermeture
+      // Utiliser un dÃ©lai pour permettre Ã  Bootstrap de terminer sa fermeture
       setTimeout(() => {
         if (this.getAttribute("aria-hidden") === "true") {
           this.removeAttribute("aria-hidden");
@@ -853,7 +853,7 @@ function initDocumentForms(isAuditTermine) {
       e.preventDefault();
       console.log("Soumission du formulaire de document");
 
-      // Vérifier si les champs requis sont présents
+      // VÃ©rifier si les champs requis sont prÃ©sents
       const auditIdField = this.querySelector('input[name="audit_id"]');
       const pointVigilanceIdField = this.querySelector(
         'input[name="point_vigilance_id"]'
@@ -866,12 +866,12 @@ function initDocumentForms(isAuditTermine) {
         !pointVigilanceIdField.value
       ) {
         alert(
-          "Erreur: Paramètres manquants (audit_id, point_vigilance_id). Veuillez réessayer."
+          "Erreur: ParamÃ¨tres manquants (audit_id, point_vigilance_id). Veuillez rÃ©essayer."
         );
         return;
       }
 
-      // Créer un nouveau FormData pour plus de contrÃ´le
+      // CrÃ©er un nouveau FormData pour plus de contrÃ´le
       const formData = new FormData();
 
       // Ajouter explicitement les identifiants
@@ -883,16 +883,16 @@ function initDocumentForms(isAuditTermine) {
       const fileInput = this.querySelector('input[type="file"]');
       if (fileInput && fileInput.files && fileInput.files[0]) {
         formData.append("document", fileInput.files[0]);
-        console.log("Fichier ajouté:", fileInput.files[0].name);
+        console.log("Fichier ajoutÃ©:", fileInput.files[0].name);
       } else {
-        alert("Veuillez sélectionner un fichier Ã télécharger");
+        alert("Veuillez sÃ©lectionner un fichier Ã  tÃ©lÃ©charger");
         return;
       }
 
       const submitBtn = this.querySelector('button[type="submit"]');
       const originalText = submitBtn.innerHTML;
       submitBtn.innerHTML =
-        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Téléchargement...';
+        '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> TÃ©lÃ©chargement...';
       submitBtn.disabled = true;
 
       fetch("index.php?action=audits&method=ajouterDocument", {
@@ -907,54 +907,54 @@ function initDocumentForms(isAuditTermine) {
           console.log("Headers:", [...response.headers.entries()]);
 
           if (!response.ok) {
-            throw new Error("Erreur réseau: " + response.status);
+            throw new Error("Erreur rÃ©seau: " + response.status);
           }
 
-          // Vérifier le type de contenu retourné
+          // VÃ©rifier le type de contenu retournÃ©
           const contentType = response.headers.get("content-type");
           if (contentType && contentType.includes("text/html")) {
-            // Le serveur a renvoyé du HTML au lieu de JSON
+            // Le serveur a renvoyÃ© du HTML au lieu de JSON
             return response.text().then((html) => {
               console.error(
-                "Le serveur a renvoyé du HTML au lieu de JSON:",
+                "Le serveur a renvoyÃ© du HTML au lieu de JSON:",
                 html.substring(0, 500)
               );
               throw new Error(
-                "Réponse invalide du serveur (HTML au lieu de JSON)"
+                "RÃ©ponse invalide du serveur (HTML au lieu de JSON)"
               );
             });
           }
 
           return response.text().then((text) => {
-            console.log("Texte de la réponse:", text);
+            console.log("Texte de la rÃ©ponse:", text);
 
             if (!text) {
-              throw new Error("Réponse vide");
+              throw new Error("RÃ©ponse vide");
             }
 
             try {
               return JSON.parse(text);
             } catch (e) {
               console.error("Texte non JSON reÃ§u:", text.substring(0, 500));
-              throw new Error("La réponse n'est pas au format JSON");
+              throw new Error("La rÃ©ponse n'est pas au format JSON");
             }
           });
         })
         .then((data) => {
           if (data.success) {
-            console.log("Document ajouté avec succès");
+            console.log("Document ajoutÃ© avec succÃ¨s");
 
-            // Fermer la modal de manière sécurisée
+            // Fermer la modal de maniÃ¨re sÃ©curisÃ©e
             const modalId =
               "documentModal-" + formData.get("point_vigilance_id");
             const modal = document.getElementById(modalId);
 
             if (modal) {
-              // Utiliser notre fonction closeModal pour une fermeture cohérente
+              // Utiliser notre fonction closeModal pour une fermeture cohÃ©rente
               closeModal(modal);
             }
 
-            // RafraÃ®chir la page avec un paramètre pour éviter le cache
+            // RafraÃ®chir la page avec un paramÃ¨tre pour Ã©viter le cache
             setTimeout(() => {
               window.location.href =
                 window.location.href.split("?")[0] +
@@ -965,12 +965,12 @@ function initDocumentForms(isAuditTermine) {
           } else {
             // Afficher un message d'erreur
             alert(
-              data.message || "Une erreur est survenue lors du téléchargement"
+              data.message || "Une erreur est survenue lors du tÃ©lÃ©chargement"
             );
           }
         })
         .catch((error) => {
-          console.error("Erreur lors du téléchargement:", error);
+          console.error("Erreur lors du tÃ©lÃ©chargement:", error);
           alert(
             "Une erreur est survenue lors de la communication avec le serveur: " +
               error.message
@@ -986,16 +986,16 @@ function initDocumentForms(isAuditTermine) {
 }
 
 /**
- * Initialise l'accessibilité des modales
+ * Initialise l'accessibilitÃ© des modales
  */
 function initModalAccessibility() {
   document.querySelectorAll(".modal").forEach((modal) => {
     modal.addEventListener("hide.bs.modal", function () {
-      // Supprimer aria-hidden qui cause des problèmes d'accessibilité
+      // Supprimer aria-hidden qui cause des problÃ¨mes d'accessibilitÃ©
       setTimeout(() => {
         if (this.getAttribute("aria-hidden") === "true") {
           this.removeAttribute("aria-hidden");
-          // Utiliser inert à la place (plus moderne et sans conflit de focus)
+          // Utiliser inert Ã  la place (plus moderne et sans conflit de focus)
           this.setAttribute("inert", "");
         }
       }, 0);
@@ -1012,18 +1012,18 @@ function initModalAccessibility() {
 
 /**
  * Afficher la modal pour voir une photo
- * @param {string} photoUrl - L'URL de la photo à afficher
+ * @param {string} photoUrl - L'URL de la photo Ã  afficher
  * @param {string} photoName - Le nom de la photo
  */
 function showPhotoModal(photoUrl, photoName) {
   try {
-    // Mettre à jour la source de l'image
+    // Mettre Ã  jour la source de l'image
     const modalPhoto = document.getElementById("modal-photo");
     const modalLabel = document.getElementById("viewPhotoModalLabel");
     const modalElement = document.getElementById("viewPhotoModal");
 
     if (!modalElement) {
-      console.error("Élément modal non trouvé: viewPhotoModal");
+      console.error("Ã‰lÃ©ment modal non trouvÃ©: viewPhotoModal");
       return;
     }
 
@@ -1040,12 +1040,12 @@ function showPhotoModal(photoUrl, photoName) {
       const modal = new bootstrap.Modal(modalElement);
       modal.show();
     } else {
-      // Méthode manuelle si Bootstrap n'est pas disponible
+      // MÃ©thode manuelle si Bootstrap n'est pas disponible
       modalElement.style.display = "block";
       modalElement.classList.add("show");
       document.body.classList.add("modal-open");
 
-      // Ajouter un backdrop si nécessaire
+      // Ajouter un backdrop si nÃ©cessaire
       if (!document.querySelector(".modal-backdrop")) {
         const backdrop = document.createElement("div");
         backdrop.className = "modal-backdrop fade show";
@@ -1059,7 +1059,7 @@ function showPhotoModal(photoUrl, photoName) {
 
 /**
  * Supprime un document ou une photo
- * @param {number} documentId - L'ID du document à supprimer
+ * @param {number} documentId - L'ID du document Ã  supprimer
  */
 function supprimerDocument(documentId) {
   if (!documentId) {
@@ -1079,7 +1079,7 @@ function supprimerDocument(documentId) {
   const formData = new FormData();
   formData.append("id", documentId);
 
-  // Vérifier si le navigateur est en ligne
+  // VÃ©rifier si le navigateur est en ligne
   if (!navigator.onLine) {
     showToast("Impossible de supprimer en mode hors ligne", "error");
     return;
@@ -1091,38 +1091,38 @@ function supprimerDocument(documentId) {
     headers: {
       "X-Requested-With": "XMLHttpRequest",
     },
-    cache: "no-store", // Désactiver le cache pour éviter l'interception par le Service Worker
+    cache: "no-store", // DÃ©sactiver le cache pour Ã©viter l'interception par le Service Worker
   })
     .then((response) => {
       console.log("Status:", response.status);
       console.log("Headers:", [...response.headers.entries()]);
 
       if (!response.ok) {
-        throw new Error("Erreur réseau: " + response.status);
+        throw new Error("Erreur rÃ©seau: " + response.status);
       }
 
       return response.json().catch((error) => {
         console.error("Erreur de parsing JSON:", error);
         return response.text().then((text) => {
-          console.log("Texte de la réponse:", text);
+          console.log("Texte de la rÃ©ponse:", text);
           try {
-            // Essayer à nouveau de parser le JSON au cas oÃ¹
+            // Essayer Ã  nouveau de parser le JSON au cas oÃ¹
             return JSON.parse(text);
           } catch (e) {
-            throw new Error("Format de réponse invalide: " + text);
+            throw new Error("Format de rÃ©ponse invalide: " + text);
           }
         });
       });
     })
     .then((data) => {
       if (data.success) {
-        showToast("Document supprimé avec succès", "success");
+        showToast("Document supprimÃ© avec succÃ¨s", "success");
 
-        // Recharger la page avec un timestamp pour éviter les problèmes de cache
+        // Recharger la page avec un timestamp pour Ã©viter les problÃ¨mes de cache
         setTimeout(() => {
           const currentUrl = new URL(window.location.href);
           const auditId = currentUrl.searchParams.get("id");
-          // Utiliser un timestamp plus long pour s'assurer que le cache est invalidé
+          // Utiliser un timestamp plus long pour s'assurer que le cache est invalidÃ©
           window.location.href = `index.php?action=audits&method=view&id=${auditId}&nocache=${Date.now()}`;
         }, 500);
       } else {
@@ -1141,7 +1141,7 @@ function supprimerDocument(documentId) {
  * @param {number} pointId - L'ID du point de vigilance
  */
 function initWebcam(pointId) {
-  // Fermer tout flux vidéo existant pour ce point
+  // Fermer tout flux vidÃ©o existant pour ce point
   if (videoStreams[pointId]) {
     videoStreams[pointId].getTracks().forEach((track) => track.stop());
     videoStreams[pointId] = null;
@@ -1153,9 +1153,9 @@ function initWebcam(pointId) {
   // Configurer la modal pour utiliser l'attribut inert au lieu de aria-hidden
   modal.setAttribute("data-bs-config", "inert");
 
-  // Gérer l'affichage de la modal
+  // GÃ©rer l'affichage de la modal
   modal.addEventListener("show.bs.modal", function () {
-    // Réinitialiser la vue par défaut (vidéo visible, canvas caché)
+    // RÃ©initialiser la vue par dÃ©faut (vidÃ©o visible, canvas cachÃ©)
     const cameraContainer = document.getElementById(
       "camera-container-" + pointId
     );
@@ -1166,7 +1166,7 @@ function initWebcam(pointId) {
     const saveBtn = document.getElementById("save-btn-" + pointId);
     const retakeBtn = document.getElementById("retake-btn-" + pointId);
 
-    // Vérifier que les éléments existent avant de modifier leurs propriétés
+    // VÃ©rifier que les Ã©lÃ©ments existent avant de modifier leurs propriÃ©tÃ©s
     if (cameraContainer instanceof HTMLElement) {
       cameraContainer.style.display = "block";
     }
@@ -1188,15 +1188,15 @@ function initWebcam(pointId) {
     }
   });
 
-  // Gérer l'affichage complet de la modal
+  // GÃ©rer l'affichage complet de la modal
   modal.addEventListener("shown.bs.modal", function () {
     const video = document.getElementById("video-" + pointId);
     if (!video || !(video instanceof HTMLVideoElement)) {
-      console.error("Élément vidéo non trouvé ou de type incorrect");
+      console.error("Ã‰lÃ©ment vidÃ©o non trouvÃ© ou de type incorrect");
       return;
     }
 
-    // Demander l'accès à la webcam
+    // Demander l'accÃ¨s Ã  la webcam
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: false })
       .then((stream) => {
@@ -1204,14 +1204,14 @@ function initWebcam(pointId) {
         video.srcObject = stream;
       })
       .catch((err) => {
-        console.error("Erreur lors de l'accès à la webcam:", err);
+        console.error("Erreur lors de l'accÃ¨s Ã  la webcam:", err);
         alert(
-          "Impossible d'accéder à la webcam. Veuillez vérifier que vous avez accordé les permissions nécessaires."
+          "Impossible d'accÃ©der Ã  la webcam. Veuillez vÃ©rifier que vous avez accordÃ© les permissions nÃ©cessaires."
         );
       });
   });
 
-  // Arrêter le flux vidéo lorsque la modal est cachée
+  // ArrÃªter le flux vidÃ©o lorsque la modal est cachÃ©e
   modal.addEventListener("hidden.bs.modal", function () {
     if (videoStreams[pointId]) {
       videoStreams[pointId].getTracks().forEach((track) => track.stop());
@@ -1230,39 +1230,39 @@ function capturePhoto(pointId) {
     const canvas = document.getElementById("canvas-" + pointId);
 
     if (!video || !canvas) {
-      console.error("Erreur: Video ou canvas non trouvé");
-      alert("Erreur: Impossible de capturer la photo - éléments manquants");
+      console.error("Erreur: Video ou canvas non trouvÃ©");
+      alert("Erreur: Impossible de capturer la photo - Ã©lÃ©ments manquants");
       return;
     }
 
-    // S'assurer que nous avons des éléments du bon type
+    // S'assurer que nous avons des Ã©lÃ©ments du bon type
     const videoElement = video instanceof HTMLVideoElement ? video : null;
     const canvasElement = canvas instanceof HTMLCanvasElement ? canvas : null;
 
     if (!videoElement || !canvasElement) {
-      console.error("Erreur: Les éléments ne sont pas du bon type");
+      console.error("Erreur: Les Ã©lÃ©ments ne sont pas du bon type");
       alert(
-        "Erreur: Impossible de capturer la photo - type d'éléments incorrect"
+        "Erreur: Impossible de capturer la photo - type d'Ã©lÃ©ments incorrect"
       );
       return;
     }
 
-    // Configurer le canvas à la taille de la vidéo
+    // Configurer le canvas Ã  la taille de la vidÃ©o
     if (videoElement.videoWidth && videoElement.videoHeight) {
       canvasElement.width = videoElement.videoWidth;
       canvasElement.height = videoElement.videoHeight;
     } else {
-      // Fallback si les dimensions de la vidéo ne sont pas disponibles
+      // Fallback si les dimensions de la vidÃ©o ne sont pas disponibles
       canvasElement.width = videoElement.offsetWidth || 640;
       canvasElement.height = videoElement.offsetHeight || 480;
     }
 
-    // Dessiner l'image vidéo sur le canvas
+    // Dessiner l'image vidÃ©o sur le canvas
     const context = canvasElement.getContext("2d");
     if (!context) {
       console.error("Erreur: Impossible d'obtenir le contexte 2D du canvas");
       alert(
-        "Erreur: Impossible de capturer la photo - problème avec le canvas"
+        "Erreur: Impossible de capturer la photo - problÃ¨me avec le canvas"
       );
       return;
     }
@@ -1306,7 +1306,7 @@ function capturePhoto(pointId) {
  */
 function retakePhoto(pointId) {
   try {
-    // Afficher à nouveau la vidéo et masquer le canvas
+    // Afficher Ã  nouveau la vidÃ©o et masquer le canvas
     const cameraContainer = document.getElementById(
       "camera-container-" + pointId
     );
@@ -1339,36 +1339,36 @@ function retakePhoto(pointId) {
 function savePhoto(auditId, pointId) {
   const canvas = document.getElementById("canvas-" + pointId);
   if (!canvas) {
-    alert("Erreur: Canvas non trouvé");
+    alert("Erreur: Canvas non trouvÃ©");
     return;
   }
 
-  // S'assurer que nous avons un élément canvas
+  // S'assurer que nous avons un Ã©lÃ©ment canvas
   if (!(canvas instanceof HTMLCanvasElement)) {
-    alert("Erreur: L'élément trouvé n'est pas un canvas");
+    alert("Erreur: L'Ã©lÃ©ment trouvÃ© n'est pas un canvas");
     return;
   }
 
   try {
     const imageData = canvas.toDataURL("image/jpeg");
 
-    // Vérifier que l'image a bien le format attendu
+    // VÃ©rifier que l'image a bien le format attendu
     if (!imageData.startsWith("data:image/jpeg;base64,")) {
       alert("Erreur: format d'image incorrect");
       return;
     }
 
-    // Préparer les données à envoyer
+    // PrÃ©parer les donnÃ©es Ã  envoyer
     const formData = new FormData();
     formData.append("audit_id", String(auditId));
     formData.append("point_vigilance_id", String(pointId));
     formData.append("image_base64", imageData);
 
-    // Désactiver les boutons pendant l'envoi
+    // DÃ©sactiver les boutons pendant l'envoi
     const saveBtn = document.getElementById("save-btn-" + pointId);
     const retakeBtn = document.getElementById("retake-btn-" + pointId);
 
-    // Vérifier que les boutons sont bien des éléments HTML
+    // VÃ©rifier que les boutons sont bien des Ã©lÃ©ments HTML
     if (saveBtn instanceof HTMLButtonElement) {
       saveBtn.disabled = true;
       saveBtn.innerHTML =
@@ -1379,7 +1379,7 @@ function savePhoto(auditId, pointId) {
       retakeBtn.disabled = true;
     }
 
-    // Arrêter le flux vidéo avant d'envoyer la photo
+    // ArrÃªter le flux vidÃ©o avant d'envoyer la photo
     if (videoStreams[pointId]) {
       videoStreams[pointId].getTracks().forEach((track) => track.stop());
       videoStreams[pointId] = null;
@@ -1398,40 +1398,40 @@ function savePhoto(auditId, pointId) {
         console.log("Headers:", [...response.headers.entries()]);
 
         if (!response.ok) {
-          throw new Error("Erreur réseau: " + response.status);
+          throw new Error("Erreur rÃ©seau: " + response.status);
         }
 
-        // Vérifier le type de contenu retourné
+        // VÃ©rifier le type de contenu retournÃ©
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.includes("text/html")) {
-          // Le serveur a renvoyé du HTML au lieu de JSON
+          // Le serveur a renvoyÃ© du HTML au lieu de JSON
           return response.text().then((html) => {
             console.error(
-              "Le serveur a renvoyé du HTML au lieu de JSON:",
+              "Le serveur a renvoyÃ© du HTML au lieu de JSON:",
               html.substring(0, 500)
             );
             throw new Error(
-              "Réponse invalide du serveur (HTML au lieu de JSON)"
+              "RÃ©ponse invalide du serveur (HTML au lieu de JSON)"
             );
           });
         }
 
         return response.text().then((text) => {
           if (!text) {
-            throw new Error("Réponse vide");
+            throw new Error("RÃ©ponse vide");
           }
 
           try {
             return JSON.parse(text);
           } catch (e) {
             console.error("Texte non JSON reÃ§u:", text.substring(0, 500));
-            throw new Error("La réponse n'est pas au format JSON");
+            throw new Error("La rÃ©ponse n'est pas au format JSON");
           }
         });
       })
       .then((data) => {
         if (data.success) {
-          // Méthode simplifiée pour fermer la modal sans causer de boucles infinies
+          // MÃ©thode simplifiÃ©e pour fermer la modal sans causer de boucles infinies
           const modal = document.getElementById("photoModal-" + pointId);
           if (modal) {
             try {
@@ -1443,7 +1443,7 @@ function savePhoto(auditId, pointId) {
                   bsModal.hide();
                 }
               } else {
-                // Méthode manuelle si bootstrap n'est pas disponible
+                // MÃ©thode manuelle si bootstrap n'est pas disponible
                 modal.style.display = "none";
                 modal.classList.remove("show");
 
@@ -1452,7 +1452,7 @@ function savePhoto(auditId, pointId) {
                   .querySelectorAll(".modal-backdrop")
                   .forEach((el) => el.remove());
 
-                // Réinitialiser le body
+                // RÃ©initialiser le body
                 document.body.classList.remove("modal-open");
                 document.body.style.paddingRight = "";
               }
@@ -1464,7 +1464,7 @@ function savePhoto(auditId, pointId) {
             }
           }
 
-          // RafraÃ®chir la page avec un timestamp pour éviter le cache
+          // RafraÃ®chir la page avec un timestamp pour Ã©viter le cache
           setTimeout(() => {
             window.location.href =
               window.location.href.split("?")[0] +
@@ -1484,7 +1484,7 @@ function savePhoto(auditId, pointId) {
         );
       })
       .finally(() => {
-        // Réactiver les boutons
+        // RÃ©activer les boutons
         if (saveBtn instanceof HTMLButtonElement) {
           saveBtn.disabled = false;
           saveBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
@@ -1501,8 +1501,8 @@ function savePhoto(auditId, pointId) {
 }
 
 /**
- * Affiche une modal de manière universelle (fonctionne avec ou sans Bootstrap)
- * @param {HTMLElement} modalElement - L'élément modal à afficher
+ * Affiche une modal de maniÃ¨re universelle (fonctionne avec ou sans Bootstrap)
+ * @param {HTMLElement} modalElement - L'Ã©lÃ©ment modal Ã  afficher
  */
 function openModal(modalElement) {
   if (!modalElement) return;
@@ -1513,14 +1513,14 @@ function openModal(modalElement) {
   }
 
   try {
-    // Vérification plus rigoureuse de l'existence de bootstrap et de ses méthodes
+    // VÃ©rification plus rigoureuse de l'existence de bootstrap et de ses mÃ©thodes
     if (
       typeof bootstrap !== "undefined" &&
       bootstrap !== null &&
       typeof bootstrap.Modal !== "undefined" &&
       bootstrap.Modal !== null
     ) {
-      // Essayer de récupérer l'instance en toute sécurité
+      // Essayer de rÃ©cupÃ©rer l'instance en toute sÃ©curitÃ©
       let bsModal = null;
       try {
         if (typeof bootstrap.Modal.getInstance === "function") {
@@ -1528,19 +1528,19 @@ function openModal(modalElement) {
         }
       } catch (instanceError) {
         console.log(
-          "Information: Erreur lors de la récupération de l'instance de modal"
+          "Information: Erreur lors de la rÃ©cupÃ©ration de l'instance de modal"
         );
       }
 
-      // Si aucune instance n'existe, en créer une nouvelle
+      // Si aucune instance n'existe, en crÃ©er une nouvelle
       if (!bsModal) {
         try {
           bsModal = new bootstrap.Modal(modalElement);
         } catch (createError) {
           console.log(
-            "Information: Impossible de créer une nouvelle instance de modal"
+            "Information: Impossible de crÃ©er une nouvelle instance de modal"
           );
-          // Si échec de création, on passera à la méthode manuelle
+          // Si Ã©chec de crÃ©ation, on passera Ã  la mÃ©thode manuelle
           throw createError;
         }
       }
@@ -1548,26 +1548,26 @@ function openModal(modalElement) {
       // Afficher la modal si l'instance existe
       if (bsModal) {
         bsModal.show();
-        return; // Si tout s'est bien passé, on retourne
+        return; // Si tout s'est bien passÃ©, on retourne
       }
     }
 
-    // Si nous arrivons ici, c'est que la méthode Bootstrap n'a pas fonctionné
-    // Méthode manuelle sans Bootstrap
+    // Si nous arrivons ici, c'est que la mÃ©thode Bootstrap n'a pas fonctionnÃ©
+    // MÃ©thode manuelle sans Bootstrap
     modalElement.style.display = "block";
     modalElement.classList.add("show");
     modalElement.setAttribute("aria-modal", "true");
     modalElement.removeAttribute("aria-hidden");
 
-    // Ajouter un backdrop manuel si nécessaire
+    // Ajouter un backdrop manuel si nÃ©cessaire
     const backdrop = document.createElement("div");
     backdrop.className = "modal-backdrop fade show";
     document.body.appendChild(backdrop);
 
-    // Ajouter la classe au body pour empêcher le défilement
+    // Ajouter la classe au body pour empÃªcher le dÃ©filement
     document.body.classList.add("modal-open");
 
-    // Gérer la fermeture de la modal
+    // GÃ©rer la fermeture de la modal
     const closeButtons = modalElement.querySelectorAll(
       '[data-bs-dismiss="modal"]'
     );
@@ -1577,15 +1577,15 @@ function openModal(modalElement) {
       });
     });
   } catch (error) {
-    console.log("Ouverture manuelle de la modal suite à une erreur:", error);
+    console.log("Ouverture manuelle de la modal suite Ã  une erreur:", error);
     // Fallback en cas d'erreur
     modalElement.style.display = "block";
   }
 }
 
 /**
- * Ferme une modale de manière cohérente en utilisant Bootstrap si disponible ou manuellement
- * @param {HTMLElement} modal Élément modal à fermer
+ * Ferme une modale de maniÃ¨re cohÃ©rente en utilisant Bootstrap si disponible ou manuellement
+ * @param {HTMLElement} modal Ã‰lÃ©ment modal Ã  fermer
  */
 function closeModal(modal) {
   if (!modal) return;
@@ -1608,33 +1608,33 @@ function closeModal(modal) {
 }
 
 /**
- * Implémentation manuelle de fermeture de modale
- * @param {HTMLElement} modal Élément modal à fermer
+ * ImplÃ©mentation manuelle de fermeture de modale
+ * @param {HTMLElement} modal Ã‰lÃ©ment modal Ã  fermer
  */
 function closeModalManually(modal) {
   // Cacher la modale
   modal.style.display = "none";
   modal.classList.remove("show");
 
-  // Gérer l'accessibilité sans utiliser aria-hidden qui cause des problèmes
+  // GÃ©rer l'accessibilitÃ© sans utiliser aria-hidden qui cause des problÃ¨mes
   modal.removeAttribute("aria-modal");
   modal.setAttribute("inert", "");
 
   // Supprimer les backdrops
   document.querySelectorAll(".modal-backdrop").forEach((el) => el.remove());
 
-  // Réinitialiser le body
+  // RÃ©initialiser le body
   document.body.classList.remove("modal-open");
   document.body.style.paddingRight = "";
 }
 
 /**
- * Stocke une évaluation en mode hors ligne
- * @param {Object} data Les données de l'évaluation
- * @returns {Promise<number>} L'ID de l'évaluation stockée
+ * Stocke une Ã©valuation en mode hors ligne
+ * @param {Object} data Les donnÃ©es de l'Ã©valuation
+ * @returns {Promise<number>} L'ID de l'Ã©valuation stockÃ©e
  */
 function storeEvaluationOffline(data) {
-  console.log("Stockage local de l'évaluation:", data);
+  console.log("Stockage local de l'Ã©valuation:", data);
 
   return new Promise((resolve, reject) => {
     if (!window.AuditDB) {
@@ -1645,33 +1645,33 @@ function storeEvaluationOffline(data) {
 
     console.log("AuditDB global disponible:", window.AuditDB);
 
-    // Vérifier si AuditDB a la méthode initDB (pas init)
+    // VÃ©rifier si AuditDB a la mÃ©thode initDB (pas init)
     if (
       typeof window.AuditDB === "object" &&
       typeof window.AuditDB.initDB === "function"
     ) {
-      console.log("Initialisation d'AuditDB via la méthode initDB()");
+      console.log("Initialisation d'AuditDB via la mÃ©thode initDB()");
 
-      // Initialiser la base de données IndexedDB via la méthode initDB
+      // Initialiser la base de donnÃ©es IndexedDB via la mÃ©thode initDB
       window.AuditDB.initDB()
         .then(() => {
-          console.log("Base de données IndexedDB ouverte avec succès");
-          // Sauvegarder l'évaluation dans IndexedDB
+          console.log("Base de donnÃ©es IndexedDB ouverte avec succÃ¨s");
+          // Sauvegarder l'Ã©valuation dans IndexedDB
           return window.AuditDB.savePendingEvaluation(data);
         })
         .then((id) => {
-          console.log("Évaluation enregistrée localement avec l'ID:", id);
+          console.log("Ã‰valuation enregistrÃ©e localement avec l'ID:", id);
           showToast(
-            "Évaluation enregistrée localement. Sera synchronisée quand vous serez en ligne.",
+            "Ã‰valuation enregistrÃ©e localement. Sera synchronisÃ©e quand vous serez en ligne.",
             "success",
             true
           );
           resolve(id);
         })
         .catch((error) => {
-          console.error("Erreur lors du stockage de l'évaluation:", error);
+          console.error("Erreur lors du stockage de l'Ã©valuation:", error);
           console.error("AuditDB:", window.AuditDB);
-          console.error("Méthodes disponibles:", Object.keys(window.AuditDB));
+          console.error("MÃ©thodes disponibles:", Object.keys(window.AuditDB));
           showToast(
             "Erreur lors de l'enregistrement local: " + error.message,
             "error",
@@ -1680,19 +1680,19 @@ function storeEvaluationOffline(data) {
           reject(error);
         });
     } else {
-      console.error("La méthode initDB n'est pas disponible sur AuditDB");
+      console.error("La mÃ©thode initDB n'est pas disponible sur AuditDB");
       console.error("AuditDB:", window.AuditDB);
       console.error("Type:", typeof window.AuditDB);
-      console.error("Méthodes disponibles:", Object.keys(window.AuditDB));
-      reject(new Error("Méthode initDB non disponible sur AuditDB"));
+      console.error("MÃ©thodes disponibles:", Object.keys(window.AuditDB));
+      reject(new Error("MÃ©thode initDB non disponible sur AuditDB"));
     }
   });
 }
 
 /**
  * Stocke un document en mode hors ligne
- * @param {FormData} formData Données du formulaire d'upload
- * @returns {Promise<boolean>} Succès ou échec de l'opération
+ * @param {FormData} formData DonnÃ©es du formulaire d'upload
+ * @returns {Promise<boolean>} SuccÃ¨s ou Ã©chec de l'opÃ©ration
  */
 function storeDocumentOffline(formData) {
   return new Promise((resolve, reject) => {
@@ -1704,39 +1704,39 @@ function storeDocumentOffline(formData) {
       return;
     }
 
-    // Vérifier si la méthode initDB est disponible
+    // VÃ©rifier si la mÃ©thode initDB est disponible
     if (
       typeof window.AuditDB !== "object" ||
       typeof window.AuditDB.initDB !== "function"
     ) {
-      console.error("La méthode initDB n'est pas disponible sur AuditDB");
+      console.error("La mÃ©thode initDB n'est pas disponible sur AuditDB");
       console.error("AuditDB:", window.AuditDB);
-      console.error("Méthodes disponibles:", Object.keys(window.AuditDB));
-      showToast("Stockage local non initialisé", "error");
-      reject(new Error("Méthode initDB non disponible sur AuditDB"));
+      console.error("MÃ©thodes disponibles:", Object.keys(window.AuditDB));
+      showToast("Stockage local non initialisÃ©", "error");
+      reject(new Error("MÃ©thode initDB non disponible sur AuditDB"));
       return;
     }
 
-    // Récupérer le fichier
+    // RÃ©cupÃ©rer le fichier
     const file = formData.get("document");
     if (!file || !(file instanceof File)) {
-      showToast("Aucun fichier sélectionné", "error");
-      reject(new Error("Aucun fichier sélectionné"));
+      showToast("Aucun fichier sÃ©lectionnÃ©", "error");
+      reject(new Error("Aucun fichier sÃ©lectionnÃ©"));
       return;
     }
 
-    // Créer l'objet de document
+    // CrÃ©er l'objet de document
     const documentData = {
       audit_id: formData.get("audit_id"),
       point_vigilance_id: formData.get("point_vigilance_id"),
       type: "document",
       file_name: file.name,
-      file_data: null, // Sera rempli après lecture du fichier
+      file_data: null, // Sera rempli aprÃ¨s lecture du fichier
       timestamp: new Date().getTime(),
     };
 
     console.log(
-      "Préparation du stockage local du document:",
+      "PrÃ©paration du stockage local du document:",
       documentData.file_name
     );
 
@@ -1750,16 +1750,16 @@ function storeDocumentOffline(formData) {
         documentData.file_data.length
       );
 
-      // Initialiser la base de données puis sauvegarder
+      // Initialiser la base de donnÃ©es puis sauvegarder
       window.AuditDB.initDB()
         .then(() => {
-          console.log("Base de données initialisée pour le document");
+          console.log("Base de donnÃ©es initialisÃ©e pour le document");
           return window.AuditDB.savePendingDocument(documentData);
         })
         .then((id) => {
-          console.log("Document enregistré localement avec l'ID:", id);
+          console.log("Document enregistrÃ© localement avec l'ID:", id);
           showToast(
-            "Document enregistré localement. Sera synchronisé quand vous serez en ligne.",
+            "Document enregistrÃ© localement. Sera synchronisÃ© quand vous serez en ligne.",
             "success",
             true
           );
@@ -1794,19 +1794,19 @@ function storeDocumentOffline(formData) {
 function evaluerPoint() {
   // ... code existant ...
 
-  // Récupérer les valeurs du formulaire
+  // RÃ©cupÃ©rer les valeurs du formulaire
   var auditId = $("input[name=audit_id]", form).val();
   var pointId = $("input[name=point_vigilance_id]", form).val();
   var evaluation = $("select[name=evaluation]", form).val();
   var commentaire = $("textarea[name=commentaire]", form).val();
 
-  // Vérifier les valeurs requises
+  // VÃ©rifier les valeurs requises
   if (!auditId || !pointId || !evaluation) {
-    console.error("Valeurs requises manquantes pour évaluer le point");
+    console.error("Valeurs requises manquantes pour Ã©valuer le point");
     return;
   }
 
-  // Créer les données à envoyer
+  // CrÃ©er les donnÃ©es Ã  envoyer
   var evaluationData = {
     audit_id: auditId,
     point_vigilance_id: pointId,
@@ -1818,20 +1818,20 @@ function evaluerPoint() {
   if (!isOnline()) {
     storeEvaluationOffline(evaluationData).then((success) => {
       if (success) {
-        // Simuler une réponse positive pour l'interface
+        // Simuler une rÃ©ponse positive pour l'interface
         showToast(
-          "Évaluation enregistrée localement. Sera synchronisée quand la connexion sera rétablie.",
+          "Ã‰valuation enregistrÃ©e localement. Sera synchronisÃ©e quand la connexion sera rÃ©tablie.",
           "info"
         );
 
-        // Mettre à jour l'interface utilisateur pour refléter le changement
+        // Mettre Ã  jour l'interface utilisateur pour reflÃ©ter le changement
         updateUIAfterEvaluation(pointId, evaluation);
 
         // Fermer le modal
         closeModal(modalEvaluation);
       } else {
         showToast(
-          "Erreur lors de l'enregistrement local de l'évaluation",
+          "Erreur lors de l'enregistrement local de l'Ã©valuation",
           "error"
         );
       }
@@ -1844,18 +1844,18 @@ function evaluerPoint() {
 }
 
 /**
- * Fonction pour mettre à jour l'interface après une évaluation
+ * Fonction pour mettre Ã  jour l'interface aprÃ¨s une Ã©valuation
  * @param {string} pointId - ID du point de vigilance
- * @param {string} evaluation - Valeur de l'évaluation
+ * @param {string} evaluation - Valeur de l'Ã©valuation
  */
 function updateUIAfterEvaluation(pointId, evaluation) {
-  // Trouver l'élément du point dans la liste
+  // Trouver l'Ã©lÃ©ment du point dans la liste
   const pointElement = document.querySelector(
     `.point-vigilance[data-id="${pointId}"]`
   );
   if (!pointElement) return;
 
-  // Mettre à jour les classes CSS selon l'évaluation
+  // Mettre Ã  jour les classes CSS selon l'Ã©valuation
   pointElement.classList.remove("conforme", "non-conforme", "non-applicable");
 
   switch (evaluation) {
@@ -1870,7 +1870,7 @@ function updateUIAfterEvaluation(pointId, evaluation) {
       break;
   }
 
-  // Mettre à jour le texte de l'évaluation
+  // Mettre Ã  jour le texte de l'Ã©valuation
   const evaluationText =
     evaluation === "1"
       ? "Conforme"
@@ -1878,7 +1878,7 @@ function updateUIAfterEvaluation(pointId, evaluation) {
       ? "Non conforme"
       : evaluation === "2"
       ? "Non applicable"
-      : "Non évalué";
+      : "Non Ã©valuÃ©";
 
   const statusElement = pointElement.querySelector(".status");
   if (statusElement) {
@@ -1887,7 +1887,7 @@ function updateUIAfterEvaluation(pointId, evaluation) {
 }
 
 /**
- * Fonction de vérification de l'état de la connexion
+ * Fonction de vÃ©rification de l'Ã©tat de la connexion
  * @returns {boolean} - Vrai si l'appareil est en ligne
  */
 function isOnline() {
@@ -1895,8 +1895,8 @@ function isOnline() {
 }
 
 /**
- * Récupère l'ID de l'audit à partir de l'URL
- * @returns {number|null} ID de l'audit ou null si non trouvé
+ * RÃ©cupÃ¨re l'ID de l'audit Ã  partir de l'URL
+ * @returns {number|null} ID de l'audit ou null si non trouvÃ©
  */
 function getAuditId() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -1905,16 +1905,16 @@ function getAuditId() {
 }
 
 /**
- * Charge un script dynamiquement s'il n'est pas déjà chargé
- * @param {string} url URL du script à charger
- * @returns {Promise} Promise qui se résout quand le script est chargé
+ * Charge un script dynamiquement s'il n'est pas dÃ©jÃ  chargÃ©
+ * @param {string} url URL du script Ã  charger
+ * @returns {Promise} Promise qui se rÃ©sout quand le script est chargÃ©
  */
 function loadScriptDynamically(url) {
   console.log(`Tentative de chargement du script: ${url}`);
   return new Promise((resolve, reject) => {
-    // Vérifier si le script est déjà chargé
+    // VÃ©rifier si le script est dÃ©jÃ  chargÃ©
     if (document.querySelector(`script[src="${url}"]`)) {
-      console.log(`Script ${url} déjà chargé`);
+      console.log(`Script ${url} dÃ©jÃ  chargÃ©`);
       resolve();
       return;
     }
@@ -1922,7 +1922,7 @@ function loadScriptDynamically(url) {
     const script = document.createElement("script");
     script.src = url;
     script.onload = () => {
-      console.log(`Script ${url} chargé avec succès`);
+      console.log(`Script ${url} chargÃ© avec succÃ¨s`);
       resolve();
     };
     script.onerror = (error) => {
@@ -1933,13 +1933,13 @@ function loadScriptDynamically(url) {
   });
 }
 
-// Fonction pour forcer la synchronisation immédiate
+// Fonction pour forcer la synchronisation immÃ©diate
 function forceSyncData() {
-  console.log("âš¡ DÉMARRAGE SYNCHRONISATION FORCÉE");
+  console.log("âš¡ DÃ‰MARRAGE SYNCHRONISATION FORCÃ‰E");
 
   if (!navigator.onLine) {
     console.warn("âŒ Impossible de synchroniser : hors ligne");
-    showToast("Impossible de synchroniser : vous êtes hors ligne", "error");
+    showToast("Impossible de synchroniser : vous Ãªtes hors ligne", "error");
     return Promise.reject(new Error("Hors ligne"));
   }
 
@@ -1955,42 +1955,42 @@ function forceSyncData() {
   return window.AuditDB.getPendingEvaluations()
     .then((evaluations) => {
       console.log(
-        `ðŸ“Š ${evaluations.length} évaluations en attente`,
+        `ðŸ“Š ${evaluations.length} Ã©valuations en attente`,
         evaluations
       );
 
       if (evaluations.length === 0) {
-        console.log("âœ“ Aucune évaluation à synchroniser");
+        console.log("âœ“ Aucune Ã©valuation Ã  synchroniser");
 
         // Masquer la toast "en cours" si elle existe
         if (syncToast && typeof syncToast.hide === "function") {
           syncToast.hide();
         }
 
-        showToast("Aucune donnée à synchroniser", "info");
+        showToast("Aucune donnÃ©e Ã  synchroniser", "info");
         return { hasData: false };
       }
 
-      console.log("ðŸ”„ Début de synchronisation");
+      console.log("ðŸ”„ DÃ©but de synchronisation");
       return window.AuditDB.syncPendingData().then((results) => {
-        console.log("ðŸ“Š Résultats synchronisation:", results);
+        console.log("ðŸ“Š RÃ©sultats synchronisation:", results);
 
         // Masquer la toast "en cours" si elle existe
         if (syncToast && typeof syncToast.hide === "function") {
           syncToast.hide();
         }
 
-        // Toujours montrer un message de succès, même si la console indique des erreurs
-        // puisque les données sont bien enregistrées en base
+        // Toujours montrer un message de succÃ¨s, mÃªme si la console indique des erreurs
+        // puisque les donnÃ©es sont bien enregistrÃ©es en base
         const total = results.evaluations.success + results.documents.success;
 
         if (total > 0 || evaluations.length > 0) {
           showToast(
-            `Synchronisation réussie: ${evaluations.length} élément(s) synchronisé(s)`,
+            `Synchronisation rÃ©ussie: ${evaluations.length} Ã©lÃ©ment(s) synchronisÃ©(s)`,
             "success"
           );
 
-          // Recharger la page après un court délai
+          // Recharger la page aprÃ¨s un court dÃ©lai
           setTimeout(() => {
             const currentUrl = new URL(window.location.href);
             const auditId = currentUrl.searchParams.get("id");
@@ -2006,20 +2006,20 @@ function forceSyncData() {
       });
     })
     .catch((error) => {
-      console.error("âŒ Erreur lors de la synchronisation forcée:", error);
+      console.error("âŒ Erreur lors de la synchronisation forcÃ©e:", error);
 
       // Masquer la toast "en cours" si elle existe
       if (syncToast && typeof syncToast.hide === "function") {
         syncToast.hide();
       }
 
-      // Éviter d'afficher des erreurs à l'utilisateur si la synchronisation fonctionne quand même
-      showToast("Synchronisation terminée", "info");
+      // Ã‰viter d'afficher des erreurs Ã  l'utilisateur si la synchronisation fonctionne quand mÃªme
+      showToast("Synchronisation terminÃ©e", "info");
       return { hasData: false };
     });
 }
 
-// Fonction pour synchroniser manuellement et directement les données avec le serveur
+// Fonction pour synchroniser manuellement et directement les donnÃ©es avec le serveur
 function syncOfflineDataManually() {
   console.log("ðŸ”„ Tentative de synchronisation manuelle directe");
 
@@ -2029,38 +2029,34 @@ function syncOfflineDataManually() {
   }
 
   return new Promise((resolve, reject) => {
-    // Vérifier si AuditDB existe et a la méthode getPendingEvaluations
+    // VÃ©rifier si AuditDB existe et a la mÃ©thode getPendingEvaluations
     if (!window.AuditDB || !window.AuditDB.getPendingEvaluations) {
       console.error("âŒ AuditDB n'est pas disponible ou incomplet");
       reject(new Error("AuditDB non disponible"));
       return;
     }
 
-    // Récupérer les évaluations en attente
+    // RÃ©cupÃ©rer les Ã©valuations en attente
     window.AuditDB.getPendingEvaluations()
       .then((evaluations) => {
-        console.log(
-          `ðŸ“Š ${evaluations.length} évaluations en attente trouvées`
-        );
+        console.log(`ðŸ“Š ${evaluations.length} Ã©valuations en attente trouvÃ©es`);
 
         if (evaluations.length === 0) {
-          console.log("âœ“ Aucune évaluation à synchroniser");
+          console.log("âœ“ Aucune Ã©valuation Ã  synchroniser");
           resolve({ success: true, count: 0 });
           return;
         }
 
-        // Filtrer les évaluations non synchronisées
+        // Filtrer les Ã©valuations non synchronisÃ©es
         const pendingEvals = evaluations.filter((e) => e.status === "pending");
-        console.log(
-          `ðŸ“Š ${pendingEvals.length} évaluations non synchronisées`
-        );
+        console.log(`ðŸ“Š ${pendingEvals.length} Ã©valuations non synchronisÃ©es`);
 
-        // Traiter chaque évaluation une par une
+        // Traiter chaque Ã©valuation une par une
         const syncPromises = pendingEvals.map((evaluation) => {
           return syncSingleEvaluation(evaluation);
         });
 
-        // Attendre que toutes les synchronisations soient terminées
+        // Attendre que toutes les synchronisations soient terminÃ©es
         Promise.allSettled(syncPromises)
           .then((results) => {
             const successful = results.filter(
@@ -2069,7 +2065,7 @@ function syncOfflineDataManually() {
             const failed = results.length - successful;
 
             console.log(
-              `âœ“ Synchronisation terminée: ${successful} réussies, ${failed} échouées`
+              `âœ“ Synchronisation terminÃ©e: ${successful} rÃ©ussies, ${failed} Ã©chouÃ©es`
             );
             resolve({ success: true, successful, failed });
           })
@@ -2083,7 +2079,7 @@ function syncOfflineDataManually() {
       })
       .catch((error) => {
         console.error(
-          "âŒ Erreur lors de la récupération des évaluations:",
+          "âŒ Erreur lors de la rÃ©cupÃ©ration des Ã©valuations:",
           error
         );
         reject(error);
@@ -2091,17 +2087,17 @@ function syncOfflineDataManually() {
   });
 }
 
-// Synchroniser une seule évaluation avec le serveur
+// Synchroniser une seule Ã©valuation avec le serveur
 function syncSingleEvaluation(evaluation) {
-  console.log(`ðŸ”„ Synchronisation de l'évaluation ID:${evaluation.id}`);
-  console.log(`ðŸ“ Données à synchroniser:`, evaluation);
+  console.log(`ðŸ”„ Synchronisation de l'Ã©valuation ID:${evaluation.id}`);
+  console.log(`ðŸ“ DonnÃ©es Ã  synchroniser:`, evaluation);
 
-  // Construire l'URL pour la requête
+  // Construire l'URL pour la requÃªte
   const baseUrl =
     window.location.origin + window.location.pathname.split("index.php")[0];
   const apiUrl = `${baseUrl}index.php?action=audits&method=evaluerPoint`;
 
-  // Créer FormData
+  // CrÃ©er FormData
   const formData = new FormData();
 
   // Ajouter TOUS les champs avec conversion explicite en String
@@ -2112,7 +2108,7 @@ function syncSingleEvaluation(evaluation) {
     String(evaluation.point_vigilance_id || "")
   );
 
-  // Champs optionnels - Toujours les inclure même s'ils sont vides
+  // Champs optionnels - Toujours les inclure mÃªme s'ils sont vides
   formData.append("non_audite", String(evaluation.non_audite || "0"));
   formData.append(
     "mesure_reglementaire",
@@ -2134,77 +2130,72 @@ function syncSingleEvaluation(evaluation) {
     String(evaluation.plan_action_description || "")
   );
 
-  // Log complet du FormData pour débogage
-  console.log("ðŸ“¦ FormData préparé pour envoi:");
+  // Log complet du FormData pour dÃ©bogage
+  console.log("ðŸ“¦ FormData prÃ©parÃ© pour envoi:");
   for (const [key, value] of formData.entries()) {
     console.log(`   ${key}: ${value}`);
   }
 
-  // Envoyer la requête avec fetch standard
+  // Envoyer la requÃªte avec fetch standard
   return fetch(apiUrl, {
     method: "POST",
     body: formData,
     credentials: "same-origin",
   })
     .then((response) => {
-      console.log(`ðŸ“¥ Réponse: ${response.status} ${response.statusText}`);
+      console.log(`ðŸ“¥ RÃ©ponse: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         return response.text().then((text) => {
           console.error(`âŒ Erreur HTTP: ${response.status}`, text);
-          // Ne pas afficher de toast d'erreur puisque les données se synchronisent quand même
+          // Ne pas afficher de toast d'erreur puisque les donnÃ©es se synchronisent quand mÃªme
           return false;
         });
       }
 
       return response.text().then((text) => {
-        console.log(`ðŸ“ Réponse brute: ${text}`);
+        console.log(`ðŸ“ RÃ©ponse brute: ${text}`);
 
         try {
-          // Extraire la partie JSON de la réponse HTML
+          // Extraire la partie JSON de la rÃ©ponse HTML
           let jsonText = text;
 
-          // Si la réponse contient du HTML, extraire la partie JSON
+          // Si la rÃ©ponse contient du HTML, extraire la partie JSON
           if (text.includes("<!DOCTYPE html>") || text.includes("<html")) {
-            // Méthode plus robuste pour extraire le JSON de la réponse HTML
+            // MÃ©thode plus robuste pour extraire le JSON de la rÃ©ponse HTML
             const jsonRegex = /(\{\"success\":.*?\"data\":\{.*?\}\})/s;
             const jsonMatch = text.match(jsonRegex);
 
             if (jsonMatch && jsonMatch[1]) {
               jsonText = jsonMatch[1];
-              console.log("ðŸ” JSON extrait de la réponse HTML:", jsonText);
+              console.log("ðŸ” JSON extrait de la rÃ©ponse HTML:", jsonText);
             } else {
-              // Si la première regex ne fonctionne pas, essayer une regex plus permissive
+              // Si la premiÃ¨re regex ne fonctionne pas, essayer une regex plus permissive
               const altJsonRegex = /(\{\"success\":[^}]*\})/;
               const altMatch = text.match(altJsonRegex);
 
               if (altMatch && altMatch[1]) {
                 jsonText = altMatch[1];
-                console.log(
-                  "ðŸ” JSON extrait (méthode alternative):",
-                  jsonText
-                );
+                console.log("ðŸ” JSON extrait (mÃ©thode alternative):", jsonText);
               } else {
-                // Considérer la synchronisation comme réussie même si on ne peut pas extraire le JSON
-                console.log("âœ… Considéré comme succès sans JSON valide");
+                // ConsidÃ©rer la synchronisation comme rÃ©ussie mÃªme si on ne peut pas extraire le JSON
+                console.log("âœ… ConsidÃ©rÃ© comme succÃ¨s sans JSON valide");
 
-                // Si la réponse contient success:true, c'est encore mieux
+                // Si la rÃ©ponse contient success:true, c'est encore mieux
                 if (
                   text.includes('"success":true') ||
                   text.includes("'success':true")
                 ) {
-                  console.log(
-                    "âœ… Détection de 'success:true' dans la réponse"
-                  );
+                  console.log("âœ… DÃ©tection de 'success:true' dans la rÃ©ponse");
                 }
 
-                // Marquer l'évaluation comme synchronisée
+                // Marquer l'Ã©valuation comme synchronisÃ©e
                 if (window.AuditDB && window.AuditDB.markEvaluationSynced) {
                   return window.AuditDB.markEvaluationSynced(
                     evaluation.id
                   ).then(() => {
                     console.log(
-                      `âœ… Évaluation ID:${evaluation.id} marquée comme synchronisée`
+                      `âœ… Ã‰valuation ID:${evaluation.id} marquÃ©e comme synchronisÃ©e`
                     );
                     return true;
                   });
@@ -2218,25 +2209,25 @@ function syncSingleEvaluation(evaluation) {
           let jsonResponse;
           try {
             jsonResponse = JSON.parse(jsonText);
-            console.log("âœ… Réponse JSON:", jsonResponse);
+            console.log("âœ… RÃ©ponse JSON:", jsonResponse);
           } catch (parseError) {
             console.log("âš ï¸ Impossible de parser le JSON, mais on continue");
-            // Considérer comme un succès même si on ne peut pas parser le JSON
+            // ConsidÃ©rer comme un succÃ¨s mÃªme si on ne peut pas parser le JSON
             jsonResponse = { success: true };
           }
 
           if (jsonResponse.success) {
-            // Notification discrète de succès (optionnelle)
+            // Notification discrÃ¨te de succÃ¨s (optionnelle)
             console.log(
-              `âœ… Synchronisation réussie pour le point ${evaluation.point_vigilance_id}`
+              `âœ… Synchronisation rÃ©ussie pour le point ${evaluation.point_vigilance_id}`
             );
 
-            // Si la réponse est un succès, marquer l'évaluation comme synchronisée
+            // Si la rÃ©ponse est un succÃ¨s, marquer l'Ã©valuation comme synchronisÃ©e
             if (window.AuditDB && window.AuditDB.markEvaluationSynced) {
               return window.AuditDB.markEvaluationSynced(evaluation.id).then(
                 () => {
                   console.log(
-                    `âœ… Évaluation ID:${evaluation.id} marquée comme synchronisée`
+                    `âœ… Ã‰valuation ID:${evaluation.id} marquÃ©e comme synchronisÃ©e`
                   );
                   return true;
                 }
@@ -2244,23 +2235,24 @@ function syncSingleEvaluation(evaluation) {
             }
             return true;
           } else {
-            console.error("âŒ Erreur de synchronisation dans la réponse JSON");
-            // Ne pas afficher de toast d'erreur puisque les données se synchronisent quand même
-            return true; // Retourner true même en cas d'erreur
+            console.error("âŒ Erreur de synchronisation dans la rÃ©ponse JSON");
+            // Ne pas afficher de toast d'erreur puisque les donnÃ©es se synchronisent quand mÃªme
+            return true; // Retourner true mÃªme en cas d'erreur
           }
         } catch (error) {
-          console.error("âŒ Erreur d'analyse de la réponse:", error);
-          // Ne pas afficher de toast d'erreur puisque les données se synchronisent quand même
-          return true; // Retourner true même en cas d'erreur
+          console.error("âŒ Erreur d'analyse de la rÃ©ponse:", error);
+          // Ne pas afficher de toast d'erreur puisque les donnÃ©es se synchronisent quand mÃªme
+          return true; // Retourner true mÃªme en cas d'erreur
         }
       });
     })
     .catch((error) => {
       console.error(
-        `âŒ Erreur réseau pour l'évaluation ID:${evaluation.id}:`,
+        `âŒ Erreur rÃ©seau pour l'Ã©valuation ID:${evaluation.id}:`,
         error
       );
-      // Ne pas afficher de toast d'erreur puisque les données se synchronisent quand même
-      return true; // Retourner true même en cas d'erreur
+      // Ne pas afficher de toast d'erreur puisque les donnÃ©es se synchronisent quand mÃªme
+      return true; // Retourner true mÃªme en cas d'erreur
     });
 }
+

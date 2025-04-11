@@ -89,9 +89,19 @@ function editPoint(id, sous_categorie_id, nom, description, image) {
     // Récupérer la catégorie parente de la sous-catégorie
     fetch(
       "index.php?controller=admin&method=getSousCategorieDetails&id=" +
-        sous_categorie_id
+        sous_categorie_id,
+      {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      }
     )
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Erreur réseau ou session expirée");
+        }
+        return response.json();
+      })
       .then((data) => {
         if (data.categorie_id) {
           const categoryElement = document.getElementById(
@@ -211,11 +221,16 @@ function initAdminPanel() {
       if (categoryId) {
         // Charger les sous-catégories via AJAX
         fetch(
-          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`
+          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`,
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
         )
           .then((response) => {
             if (!response.ok) {
-              throw new Error("Erreur réseau");
+              throw new Error("Erreur réseau ou session expirée");
             }
             return response.json();
           })
@@ -300,9 +315,22 @@ function initAdminPanel() {
           })
           .catch((error) => {
             console.error("Erreur:", error);
-            if (subcategoriesContainer) {
-              subcategoriesContainer.innerHTML =
-                '<li class="list-group-item text-danger">Erreur lors du chargement des sous-catégories</li>';
+            // Vérifier si c'est une erreur d'authentification
+            if (error.message.includes("session expirée")) {
+              // Ajouter une alerte dans le conteneur
+              if (subcategoriesContainer) {
+                subcategoriesContainer.innerHTML =
+                  '<div class="alert alert-danger">Votre session a expiré. Veuillez vous reconnecter.</div>';
+              }
+              // Rediriger vers la page de connexion après un court délai
+              setTimeout(() => {
+                window.location.href = "index.php?controller=auth&action=login";
+              }, 2000);
+            } else {
+              if (subcategoriesContainer) {
+                subcategoriesContainer.innerHTML =
+                  '<li class="list-group-item text-danger">Erreur lors du chargement des sous-catégories</li>';
+              }
             }
             if (subcategoriesList) {
               subcategoriesList.style.display = "block";
@@ -346,9 +374,19 @@ function initAdminPanel() {
 
       if (categoryId) {
         fetch(
-          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`
+          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`,
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
         )
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erreur réseau ou session expirée");
+            }
+            return response.json();
+          })
           .then((data) => {
             if (subcategorySelect) {
               data.forEach((sousCateg) => {
@@ -375,9 +413,19 @@ function initAdminPanel() {
       if (subcategoryId) {
         // Charger les points de vigilance via AJAX
         fetch(
-          `index.php?controller=admin&method=getPointsVigilance&sous_categorie_id=${subcategoryId}`
+          `index.php?controller=admin&method=getPointsVigilance&sous_categorie_id=${subcategoryId}`,
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
         )
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erreur réseau ou session expirée");
+            }
+            return response.json();
+          })
           .then((data) => {
             if (pointsContainer) {
               pointsContainer.innerHTML = ""; // Vider la liste
@@ -433,9 +481,22 @@ function initAdminPanel() {
           })
           .catch((error) => {
             console.error("Erreur:", error);
-            if (pointsContainer) {
-              pointsContainer.innerHTML =
-                '<li class="list-group-item">Erreur lors du chargement des points de vigilance</li>';
+            // Vérifier si c'est une erreur d'authentification
+            if (error.message.includes("session expirée")) {
+              // Ajouter une alerte dans le conteneur
+              if (pointsContainer) {
+                pointsContainer.innerHTML =
+                  '<div class="alert alert-danger">Votre session a expiré. Veuillez vous reconnecter.</div>';
+              }
+              // Rediriger vers la page de connexion après un court délai
+              setTimeout(() => {
+                window.location.href = "index.php?controller=auth&action=login";
+              }, 2000);
+            } else {
+              if (pointsContainer) {
+                pointsContainer.innerHTML =
+                  '<li class="list-group-item text-danger">Erreur lors du chargement des points de vigilance</li>';
+              }
             }
           });
       } else {
@@ -463,9 +524,19 @@ function initAdminPanel() {
 
       if (categoryId) {
         fetch(
-          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`
+          `index.php?controller=admin&method=getSousCategories&categorie_id=${categoryId}`,
+          {
+            headers: {
+              "X-Requested-With": "XMLHttpRequest",
+            },
+          }
         )
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Erreur réseau ou session expirée");
+            }
+            return response.json();
+          })
           .then((data) => {
             if (subcategorySelect) {
               subcategorySelect.innerHTML =

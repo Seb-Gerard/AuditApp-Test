@@ -220,22 +220,85 @@ class AuditController {
         header('Content-Type: application/json');
         
         if (!isset($_GET['categorie_id'])) {
+            error_log('getSousCategories appelé sans categorie_id');
             echo json_encode(['error' => 'categorie_id manquant']);
             exit;
         }
 
         try {
+            // Log pour le débogage
+            error_log('Requête getSousCategories reçue');
+            
             // Support for single or multiple category IDs
             $categorieIds = is_array($_GET['categorie_id']) ? $_GET['categorie_id'] : [$_GET['categorie_id']];
-            $sousCategories = [];
+            error_log('categorie_id bruts: ' . json_encode($categorieIds));
             
-            foreach ($categorieIds as $categorieId) {
-                $sousCategs = $this->categorieModel->getSousCategories($categorieId);
-                $sousCategories = array_merge($sousCategories, $sousCategs);
+            // Valider les IDs (s'assurer qu'ils sont numériques)
+            $validCategorieIds = [];
+            foreach ($categorieIds as $id) {
+                $id = filter_var($id, FILTER_VALIDATE_INT);
+                if ($id !== false) {
+                    $validCategorieIds[] = $id;
+                }
             }
             
+            // Si aucun ID valide, renvoyer une erreur
+            if (empty($validCategorieIds)) {
+                error_log('Aucun ID de catégorie valide fourni');
+                echo json_encode(['error' => 'Aucun ID de catégorie valide fourni']);
+                exit;
+            }
+            
+            error_log('IDs de catégories valides: ' . json_encode($validCategorieIds));
+            
+            // Vérifier que le modèle existe
+            if (!isset($this->categorieModel)) {
+                error_log('ERREUR: Modèle de catégorie non initialisé');
+                throw new Exception('Erreur interne du serveur: modèle non initialisé');
+            }
+            
+            // Vidanger le tampon de sortie pour éviter les problèmes de format
+            if (ob_get_length()) {
+                error_log('Tampon de sortie non vide, nettoyage');
+                ob_clean();
+                header('Content-Type: application/json');
+            }
+            
+            $sousCategories = [];
+            
+            foreach ($validCategorieIds as $categorieId) {
+                try {
+                    $categorie = $this->categorieModel->getById($categorieId);
+                    if (!$categorie) {
+                        error_log('Catégorie non trouvée: ' . $categorieId);
+                        continue;
+                    }
+                    
+                    $sousCategs = $this->categorieModel->getSousCategories($categorieId);
+                    error_log('Sous-catégories obtenues pour ID ' . $categorieId . ': ' . (is_array($sousCategs) ? count($sousCategs) : 'non-tableau'));
+                    
+                    if (is_array($sousCategs)) {
+                        $sousCategories = array_merge($sousCategories, $sousCategs);
+                    } else {
+                        error_log('ERREUR: getSousCategories a retourné un format non attendu: ' . gettype($sousCategs));
+                    }
+                } catch (Exception $innerE) {
+                    error_log('Erreur lors de la récupération des sous-catégories pour ID ' . $categorieId . ': ' . $innerE->getMessage());
+                    // Continuer avec les autres IDs même si une erreur se produit
+                }
+            }
+            
+            // Assurer que le résultat est un tableau (même vide)
+            if (!is_array($sousCategories)) {
+                error_log('Résultat inattendu: ' . var_export($sousCategories, true));
+                $sousCategories = [];
+            }
+            
+            error_log('Nombre total de sous-catégories: ' . count($sousCategories));
             echo json_encode($sousCategories);
+            
         } catch (Exception $e) {
+            error_log('Exception dans getSousCategories: ' . $e->getMessage());
             echo json_encode(['error' => $e->getMessage()]);
         }
         exit;
@@ -245,22 +308,80 @@ class AuditController {
         header('Content-Type: application/json');
         
         if (!isset($_GET['sous_categorie_id'])) {
+            error_log('getPointsVigilance appelé sans sous_categorie_id');
             echo json_encode(['error' => 'sous_categorie_id manquant']);
             exit;
         }
 
         try {
-            // Support for single or multiple sous category IDs
-            $sousCategorieIds = is_array($_GET['sous_categorie_id']) ? $_GET['sous_categorie_id'] : [$_GET['sous_categorie_id']];
-            $pointsVigilance = [];
-            
-            foreach ($sousCategorieIds as $sousCategorieId) {
-                $points = $this->sousCategorieModel->getPointsVigilance($sousCategorieId);
-                $pointsVigilance = array_merge($pointsVigilance, $points);
+            // Nettoyer le tampon de sortie pour éviter les problèmes de format
+            if (ob_get_length()) {
+                error_log('Tampon de sortie non vide, nettoyage');
+                ob_clean();
+                header('Content-Type: application/json');
             }
             
+            // Support for single or multiple sous category IDs
+            $sousCategorieIds = is_array($_GET['sous_categorie_id']) ? $_GET['sous_categorie_id'] : [$_GET['sous_categorie_id']];
+            error_log('Récupération des points de vigilance pour les sous-catégories: ' . json_encode($sousCategorieIds));
+            
+            // Valider les IDs (s'assurer qu'ils sont numériques)
+            $validSousCategorieIds = [];
+            foreach ($sousCategorieIds as $id) {
+                $id = filter_var($id, FILTER_VALIDATE_INT);
+                if ($id !== false && $id > 0) {
+                    $validSousCategorieIds[] = $id;
+                }
+            }
+            
+            if (empty($validSousCategorieIds)) {
+                error_log('Aucun ID de sous-catégorie valide fourni');
+                echo json_encode(['error' => 'Aucun ID de sous-catégorie valide fourni']);
+                exit;
+            }
+            
+            error_log('IDs de sous-catégories valides: ' . json_encode($validSousCategorieIds));
+            
+            if (!isset($this->sousCategorieModel)) {
+                error_log('ERREUR: Modèle de sous-catégorie non initialisé');
+                throw new Exception('Erreur interne du serveur: modèle non initialisé');
+            }
+            
+            $pointsVigilance = [];
+            
+            foreach ($validSousCategorieIds as $sousCategorieId) {
+                try {
+                    $sousCateg = $this->sousCategorieModel->getById($sousCategorieId);
+                    if (!$sousCateg) {
+                        error_log('Sous-catégorie non trouvée: ' . $sousCategorieId);
+                        continue;
+                    }
+                    
+                    $points = $this->sousCategorieModel->getPointsVigilance($sousCategorieId);
+                    error_log('Points de vigilance pour sous-catégorie ' . $sousCategorieId . ': ' . count($points));
+                    
+                    if (is_array($points)) {
+                        $pointsVigilance = array_merge($pointsVigilance, $points);
+                    } else {
+                        error_log('getPointsVigilance a retourné un format non attendu pour ID ' . $sousCategorieId);
+                    }
+                } catch (Exception $innerE) {
+                    error_log('Erreur lors de la récupération des points pour la sous-catégorie ' . $sousCategorieId . ': ' . $innerE->getMessage());
+                    // Continuer avec les autres IDs même si une erreur se produit
+                }
+            }
+            
+            // Assurer que le résultat est un tableau
+            if (!is_array($pointsVigilance)) {
+                error_log('Résultat inattendu pour getPointsVigilance: ' . var_export($pointsVigilance, true));
+                $pointsVigilance = [];
+            }
+            
+            error_log('Nombre total de points de vigilance retournés: ' . count($pointsVigilance));
             echo json_encode($pointsVigilance);
+            
         } catch (Exception $e) {
+            error_log('Exception dans getPointsVigilance: ' . $e->getMessage());
             echo json_encode(['error' => $e->getMessage()]);
         }
         exit;
@@ -499,61 +620,69 @@ class AuditController {
         
         // S'assurer que l'en-tête est défini avant toute sortie
         header('Content-Type: application/json');
+        // Permettre l'accès depuis n'importe quelle origine (pour les requêtes AJAX)
+        header('Access-Control-Allow-Origin: *');
+        header('Access-Control-Allow-Methods: POST');
+        header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+        
+        // En cas de requête OPTIONS (pre-flight), renvoyer juste les en-têtes
+        if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            exit();
+        }
         
         // Initialiser la réponse
         $response = ['success' => false, 'message' => ''];
         
         // Journaliser le début de la requête
         $logMsg = "[" . date('Y-m-d H:i:s') . "] DÉBUT REQUÊTE EVALUER POINT\n";
+        $logMsg .= "Méthode: " . $_SERVER['REQUEST_METHOD'] . "\n";
+        $logMsg .= "Headers: " . json_encode(getallheaders()) . "\n";
         $logMsg .= "POST: " . print_r($_POST, true) . "\n";
         file_put_contents($logDir . '/controller_logs.log', $logMsg, FILE_APPEND);
         
         try {
-            // S'assurer qu'aucun affichage ne s'est produit avant
-            if (ob_get_level() == 0) ob_start();
+            // Vérifier si une requête AJAX est utilisée
+            $isAjaxRequest = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Type requête: " . ($isAjaxRequest ? "AJAX" : "Standard") . "\n", FILE_APPEND);
             
-            // Vérifier que la requête est bien en POST
-            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-                $response['message'] = 'Méthode non autorisée';
-                echo json_encode($response);
-                exit;
+            // Pour les requêtes AJAX avec Content-Type: application/json
+            $contentType = isset($_SERVER["CONTENT_TYPE"]) ? $_SERVER["CONTENT_TYPE"] : '';
+            if (strpos($contentType, 'application/json') !== false) {
+                $jsonData = file_get_contents('php://input');
+                $_POST = json_decode($jsonData, true);
+                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Données JSON reçues: " . $jsonData . "\n", FILE_APPEND);
             }
             
-            // Récupérer et valider les paramètres requis
-            if (empty($_POST['audit_id']) || empty($_POST['point_vigilance_id'])) {
-                $response['message'] = 'Paramètres manquants (audit_id, point_vigilance_id)';
-                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: Paramètres manquants\n", FILE_APPEND);
+            // Vérifier les paramètres nécessaires
+            if (!isset($_POST['audit_id']) || !isset($_POST['point_vigilance_id'])) {
+                $response['message'] = "Paramètres manquants: audit_id et/ou point_vigilance_id requis.";
+                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: " . $response['message'] . "\n", FILE_APPEND);
                 echo json_encode($response);
-                exit;
+                return;
             }
             
+            // Récupérer les identifiants de l'audit et du point de vigilance
             $auditId = filter_var($_POST['audit_id'], FILTER_VALIDATE_INT);
             $pointVigilanceId = filter_var($_POST['point_vigilance_id'], FILTER_VALIDATE_INT);
             
-            if (!$auditId || !$pointVigilanceId) {
-                $response['message'] = 'Paramètres invalides';
-                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: Paramètres invalides: audit_id=$auditId, point_id=$pointVigilanceId\n", FILE_APPEND);
-                echo json_encode($response);
-                exit;
+            // Conversion explicite en entier pour éviter les erreurs de type
+            if ($auditId === false) {
+                $auditId = intval($_POST['audit_id']);
+            }
+            if ($pointVigilanceId === false) {
+                $pointVigilanceId = intval($_POST['point_vigilance_id']);
             }
             
-            // Vérifier que l'audit existe et n'est pas terminé
-            $audit = $this->auditModel->getById($auditId);
-            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Audit trouvé: " . print_r($audit, true) . "\n", FILE_APPEND);
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Valeurs après conversion: audit_id=$auditId, point_vigilance_id=$pointVigilanceId\n", FILE_APPEND);
             
-            if (!$audit) {
-                $response['message'] = 'Audit non trouvé';
+            if ($auditId <= 0 || $pointVigilanceId <= 0) {
+                $response['message'] = "Valeurs invalides pour audit_id ou point_vigilance_id.";
+                file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] ERREUR: " . $response['message'] . "\n", FILE_APPEND);
                 echo json_encode($response);
-                exit;
+                return;
             }
             
-            if ($audit['statut'] === 'termine') {
-                $response['message'] = 'Impossible de modifier un audit terminé';
-                echo json_encode($response);
-                exit;
-            }
-            
-            // Préparer les données à enregistrer - vérifier explicitement la présence de chaque paramètre
+            // Préparer les données pour le modèle
             $data = [
                 'audit_id' => $auditId,
                 'point_vigilance_id' => $pointVigilanceId,
@@ -567,6 +696,11 @@ class AuditController {
                 'plan_action_description' => isset($_POST['plan_action_description']) ? trim(htmlspecialchars($_POST['plan_action_description'])) : null
             ];
             
+            // Assurer une conversion explicite des champs numériques
+            if ($data['mesure_reglementaire'] === false) $data['mesure_reglementaire'] = 0;
+            if ($data['non_audite'] === false) $data['non_audite'] = 0;
+            if ($data['plan_action_numero'] === false) $data['plan_action_numero'] = null;
+            
             // Journaliser les données traitées
             file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Données traitées pour updateEvaluation: " . print_r($data, true) . "\n", FILE_APPEND);
             
@@ -576,28 +710,22 @@ class AuditController {
             
             if ($result) {
                 $response['success'] = true;
-                $response['message'] = 'Évaluation enregistrée avec succès';
+                $response['message'] = "Évaluation mise à jour avec succès";
+                $response['data'] = $data;
             } else {
-                $response['message'] = 'Erreur lors de l\'enregistrement de l\'évaluation';
+                $response['message'] = "Erreur lors de la mise à jour de l'évaluation.";
             }
-            
         } catch (Exception $e) {
-            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Exception: " . $e->getMessage() . "\nTrace: " . $e->getTraceAsString() . "\n", FILE_APPEND);
-            $response['message'] = 'Une erreur est survenue: ' . $e->getMessage();
+            $response['message'] = "Erreur: " . $e->getMessage();
+            file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] EXCEPTION: " . $e->getMessage() . "\n" . $e->getTraceAsString() . "\n", FILE_APPEND);
         }
         
-        // Vider tous les buffers de sortie avant d'envoyer le JSON
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
+        // Journaliser la réponse
+        file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] RÉPONSE: " . json_encode($response) . "\n", FILE_APPEND);
         
-        // Journaliser la réponse finale
-        file_put_contents($logDir . '/controller_logs.log', "[" . date('Y-m-d H:i:s') . "] Réponse finale: " . json_encode($response) . "\n", FILE_APPEND);
-        
-        // Toujours renvoyer une réponse JSON
-        header('Content-Type: application/json');
+        // Renvoyer la réponse JSON
         echo json_encode($response);
-        exit;
+        return;
     }
     
     /**

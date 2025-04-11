@@ -1,105 +1,929 @@
-2025-04-10 12:30:40 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 12:30:40 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 12:30:40 - Le point existe: OUI
-2025-04-10 12:30:40 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 12:30:40 - Transaction de mise à jour validée
-2025-04-10 12:30:55 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 12:30:55 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 12:30:55 - Le point existe: OUI
-2025-04-10 12:30:55 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 12:30:55 - Transaction de mise à jour validée
-2025-04-10 12:33:47 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 12:33:47 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 12:33:47 - Le point existe: OUI
-2025-04-10 12:33:47 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 12:33:47 - Transaction de mise à jour validée
-2025-04-10 12:34:17 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 12:34:17 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 12:34:17 - Le point existe: OUI
-2025-04-10 12:34:17 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 12:34:17 - Transaction de mise à jour validée
-2025-04-10 12:36:29 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 12:36:29 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 12:36:29 - Le point existe: OUI
-2025-04-10 12:36:29 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 12:36:29 - Transaction de mise à jour validée
-2025-04-10 13:25:35 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:25:35 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:25:35 - Le point existe: OUI
-2025-04-10 13:25:35 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:25:35 - Transaction de mise à jour validée
-2025-04-10 13:25:43 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:25:43 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:25:43 - Le point existe: OUI
-2025-04-10 13:25:43 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:25:43 - Transaction de mise à jour validée
-2025-04-10 13:26:18 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:26:18 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:26:18 - Le point existe: OUI
-2025-04-10 13:26:18 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:26:18 - Transaction de mise à jour validée
-2025-04-10 13:27:50 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:27:50 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:27:50 - Le point existe: OUI
-2025-04-10 13:27:50 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:27:50 - Transaction de mise à jour validée
-2025-04-10 13:28:02 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:28:02 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:28:02 - Le point existe: OUI
-2025-04-10 13:28:02 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:28:02 - Transaction de mise à jour validée
-2025-04-10 13:33:14 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:33:14 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:33:14 - Le point existe: OUI
-2025-04-10 13:33:14 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:33:14 - Transaction de mise à jour validée
-2025-04-10 13:33:31 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:33:31 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:33:31 - Le point existe: OUI
-2025-04-10 13:33:31 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:33:31 - Transaction de mise à jour validée
-2025-04-10 13:33:37 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:33:37 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:33:37 - Le point existe: OUI
-2025-04-10 13:33:37 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 13:33:37 - Transaction de mise à jour validée
-2025-04-10 13:34:07 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:34:07 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:34:07 - Le point existe: OUI
-2025-04-10 13:34:07 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:34:07 - Transaction de mise à jour validée
-2025-04-10 13:34:17 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:7
-2025-04-10 13:34:17 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:34:17 - Le point existe: OUI
-2025-04-10 13:34:17 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 13:34:17 - Transaction de mise à jour validée
-2025-04-10 13:36:23 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 13:36:23 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
-2025-04-10 13:36:23 - Le point existe: OUI
-2025-04-10 13:36:23 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 13:36:23 - Transaction de mise à jour validée
-2025-04-10 13:36:36 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 13:36:36 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:36:36 - Le point existe: OUI
-2025-04-10 13:36:36 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 13:36:36 - Transaction de mise à jour validée
-2025-04-10 13:36:49 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 13:36:49 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:36:49 - Le point existe: OUI
-2025-04-10 13:36:49 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 13:36:49 - Transaction de mise à jour validée
-2025-04-10 13:37:21 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 13:37:21 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:37:21 - Le point existe: OUI
-2025-04-10 13:37:21 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:37:21 - Transaction de mise à jour validée
-2025-04-10 13:40:00 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 13:40:00 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 13:40:00 - Le point existe: OUI
-2025-04-10 13:40:00 - Mise à jour réussie, lignes affectées: 0
-2025-04-10 13:40:00 - Transaction de mise à jour validée
-2025-04-10 14:11:31 - DÉBUT TRAITEMENT ÉVALUATION - audit:9, point:8
-2025-04-10 14:11:31 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
-2025-04-10 14:11:31 - Le point existe: OUI
-2025-04-10 14:11:31 - Mise à jour réussie, lignes affectées: 1
-2025-04-10 14:11:31 - Transaction de mise à jour validée
+2025-04-11 14:53:09 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:1
+2025-04-11 14:53:09 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 14:53:09 - Le point existe: OUI
+2025-04-11 14:53:09 - Mise à jour réussie, lignes affectées: 1
+2025-04-11 14:53:09 - Transaction de mise à jour validée
+2025-04-11 15:17:47 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 15:17:47 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 0
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:17:47 - Valeurs traitées: mesure_reglementaire=0, non_audite=0
+2025-04-11 15:17:47 - Valeurs traitées: mode_preuve='', resultat='', justification=''
+2025-04-11 15:17:47 - Le point existe: OUI
+2025-04-11 15:17:47 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 0
+    [mode_preuve] => 
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:17:47 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 15:21:40 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 15:21:40 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => A
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:21:40 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 15:21:40 - Valeurs traitées: mode_preuve='A', resultat='', justification=''
+2025-04-11 15:21:40 - Le point existe: OUI
+2025-04-11 15:21:40 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => A
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:21:40 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 15:22:53 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 15:22:53 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:22:53 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 15:22:53 - Valeurs traitées: mode_preuve='CV', resultat='', justification=''
+2025-04-11 15:22:53 - Le point existe: OUI
+2025-04-11 15:22:53 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:22:53 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 15:59:47 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 15:59:47 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:59:47 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 15:59:47 - Valeurs traitées: mode_preuve='CV', resultat='', justification=''
+2025-04-11 15:59:47 - Le point existe: OUI
+2025-04-11 15:59:47 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:59:47 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 15:59:47 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 15:59:47 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:59:47 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 15:59:47 - Valeurs traitées: mode_preuve='CV', resultat='', justification='AZERTY'
+2025-04-11 15:59:47 - Le point existe: OUI
+2025-04-11 15:59:47 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 15:59:47 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:03:05 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 16:03:05 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:03:05 - Valeurs traitées: mode_preuve='CV', resultat='', justification=''
+2025-04-11 16:03:05 - Le point existe: OUI
+2025-04-11 16:03:05 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:03:05 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 16:03:05 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:03:05 - Valeurs traitées: mode_preuve='CV', resultat='', justification='AZERTY'
+2025-04-11 16:03:05 - Le point existe: OUI
+2025-04-11 16:03:05 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => CV
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:03:05 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:5
+2025-04-11 16:03:05 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:03:05 - Valeurs traitées: mode_preuve='QWERTY', resultat='', justification='AZERTY'
+2025-04-11 16:03:05 - Le point existe: OUI
+2025-04-11 16:03:05 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => 
+    [justification] => AZERTY
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:03:05 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:09:13 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:6
+2025-04-11 16:09:13 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:09:13 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:09:13 - Valeurs traitées: mode_preuve='Kikoo', resultat='', justification=''
+2025-04-11 16:09:13 - Le point existe: OUI
+2025-04-11 16:09:13 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:09:13 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:28:20 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:6
+2025-04-11 16:28:20 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:28:20 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:28:20 - Valeurs traitées: mode_preuve='Kikoo', resultat='', justification=''
+2025-04-11 16:28:20 - Le point existe: OUI
+2025-04-11 16:28:20 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:28:20 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:28:20 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:5
+2025-04-11 16:28:20 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:28:20 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:28:20 - Valeurs traitées: mode_preuve='AZERTY', resultat='', justification=''
+2025-04-11 16:28:20 - Le point existe: OUI
+2025-04-11 16:28:20 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:28:20 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:28:20 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:28:20 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:28:20 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:28:20 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:28:20 - Le point existe: OUI
+2025-04-11 16:28:20 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:28:20 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:28:44 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:28:44 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:28:44 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:28:44 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:28:44 - Le point existe: OUI
+2025-04-11 16:28:44 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:28:44 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:28:52 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:28:52 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+2025-04-11 16:28:52 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:28:52 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:28:52 - Le point existe: OUI
+2025-04-11 16:28:52 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+2025-04-11 16:28:52 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:30:55 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:30:55 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire &#039;&#039;&#039;
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
+)
+
+2025-04-11 16:30:55 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:30:55 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire &#039;&#039;&#039;'
+2025-04-11 16:30:55 - Le point existe: OUI
+2025-04-11 16:30:55 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire &#039;&#039;&#039;
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
+)
+
+2025-04-11 16:30:55 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:33:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:6
+2025-04-11 16:33:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:33:27 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:33:27 - Valeurs traitées: mode_preuve='Kikoo', resultat='', justification=''
+2025-04-11 16:33:27 - Le point existe: OUI
+2025-04-11 16:33:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:33:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:33:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:5
+2025-04-11 16:33:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:33:27 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:33:27 - Valeurs traitées: mode_preuve='AZERTY', resultat='', justification=''
+2025-04-11 16:33:27 - Le point existe: OUI
+2025-04-11 16:33:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:33:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:33:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:33:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:33:27 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:33:27 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:33:27 - Le point existe: OUI
+2025-04-11 16:33:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:33:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:34:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:3, point:6
+2025-04-11 16:34:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:34:27 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:34:27 - Valeurs traitées: mode_preuve='Kikoo', resultat='', justification=''
+2025-04-11 16:34:27 - Le point existe: OUI
+2025-04-11 16:34:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 3
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => Kikoo
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:34:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:34:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:5
+2025-04-11 16:34:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:34:27 - Valeurs traitées: mesure_reglementaire=0, non_audite=1
+2025-04-11 16:34:27 - Valeurs traitées: mode_preuve='AZERTY', resultat='', justification=''
+2025-04-11 16:34:27 - Le point existe: OUI
+2025-04-11 16:34:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 5
+    [mesure_reglementaire] => 0
+    [non_audite] => 1
+    [mode_preuve] => AZERTY
+    [resultat] => 
+    [justification] => 
+    [plan_action_numero] => 
+    [plan_action_priorite] => 
+    [plan_action_description] => 
+)
+
+2025-04-11 16:34:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:34:27 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:34:27 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:34:27 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:34:27 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:34:27 - Le point existe: OUI
+2025-04-11 16:34:27 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:34:27 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:43:58 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:43:58 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:43:58 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:43:58 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:43:58 - Le point existe: OUI
+2025-04-11 16:43:58 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:43:58 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:44:07 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:44:07 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+2025-04-11 16:44:07 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:44:07 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:44:07 - Le point existe: OUI
+2025-04-11 16:44:07 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;#039;action
+)
+
+2025-04-11 16:44:07 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:44:17 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:44:17 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
+)
+
+2025-04-11 16:44:17 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:44:17 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:44:17 - Le point existe: OUI
+2025-04-11 16:44:17 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&amp;amp;#039;action
+)
+
+2025-04-11 16:44:17 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:54:59 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:54:59 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:54:59 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:54:59 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:54:59 - Le point existe: OUI
+2025-04-11 16:54:59 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:54:59 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:55:11 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:55:11 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:55:11 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:55:11 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:55:11 - Le point existe: OUI
+2025-04-11 16:55:11 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:55:11 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:56:08 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:56:08 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:56:08 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:56:08 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:56:08 - Le point existe: OUI
+2025-04-11 16:56:08 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:56:08 - RÉSULTAT REQUÊTE: SUCCÈS
+2025-04-11 16:56:24 - DÉBUT TRAITEMENT ÉVALUATION - audit:10, point:6
+2025-04-11 16:56:24 - DONNÉES REÇUES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:56:24 - Valeurs traitées: mesure_reglementaire=1, non_audite=1
+2025-04-11 16:56:24 - Valeurs traitées: mode_preuve='QWERTY', resultat='satisfait', justification='Commentaire'
+2025-04-11 16:56:24 - Le point existe: OUI
+2025-04-11 16:56:24 - DONNÉES SQL FINALES: Array
+(
+    [audit_id] => 10
+    [point_vigilance_id] => 6
+    [mesure_reglementaire] => 1
+    [non_audite] => 1
+    [mode_preuve] => QWERTY
+    [resultat] => satisfait
+    [justification] => Commentaire
+    [plan_action_numero] => 
+    [plan_action_priorite] => moyen
+    [plan_action_description] => plan d&#039;action
+)
+
+2025-04-11 16:56:24 - RÉSULTAT REQUÊTE: SUCCÈS

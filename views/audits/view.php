@@ -9,17 +9,19 @@ include_once __DIR__ . '/../../includes/header.php';
             <h2>Détails de l'Audit</h2>
         </div>
         <div class="col-md-6 text-end">
+            <!-- Bouton de diagnostic supprimé -->
+            
             <?php if (!isset($audit['statut']) || $audit['statut'] === 'en_cours'): ?>
-                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine&redirect=resume" 
-                               class="btn btn-danger text-white" title="Terminer l'audit">
-                                <i class="fas fa-check"></i> Terminer
-                            </a>
-                        <?php else: ?>
-                            <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
-                               class="btn btn-info text-white" title="Marquer comme en cours">
-                                <i class="fas fa-sync"></i> Reprendre
-                            </a>
-                        <?php endif; ?>
+                <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=termine&redirect=resume" 
+                   class="btn btn-danger text-white" title="Terminer l'audit">
+                    <i class="fas fa-check"></i> Terminer
+                </a>
+            <?php else: ?>
+                <a href="index.php?action=audits&method=updateStatus&id=<?php echo $audit['id']; ?>&statut=en_cours" 
+                   class="btn btn-info text-white" title="Marquer comme en cours">
+                    <i class="fas fa-sync"></i> Reprendre
+                </a>
+            <?php endif; ?>
             <a href="index.php?action=audits&method=resume&id=<?php echo $audit['id']; ?>" 
                class="btn btn-primary text-white" title="Voir le résumé de l'audit">
                 <i class="fas fa-chart-pie"></i> Voir le résumé
@@ -28,6 +30,11 @@ include_once __DIR__ . '/../../includes/header.php';
                 <i class="fas fa-arrow-left"></i> Retour à la liste
             </a>
         </div>
+    </div>
+    
+    <!-- Alerte de synchronisation -->
+    <div id="syncAlert" class="alert alert-info" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> Synchronisation en cours...
     </div>
     
     <?php if(isset($_SESSION['success'])): ?>
@@ -688,4 +695,12 @@ include_once __DIR__ . '/../../includes/header.php';
 <!-- Charger le script externe plutôt que d'intégrer le JavaScript dans la page -->
 <script src="public/assets/js/audit_view.js"></script>
 
-<?php include_once __DIR__ . '/../../includes/footer.php'; ?> 
+<?php include_once __DIR__ . '/../../includes/footer.php'; ?>
+
+<script>
+// Garder seulement le code d'initialisation nécessaire
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation des fonctions essentielles
+    // (code restant nécessaire à l'application)
+});
+</script> 

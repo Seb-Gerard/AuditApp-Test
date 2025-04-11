@@ -1,6 +1,29 @@
 AddType application/javascript .js
 AddType application/json .json
 
+# Forcer l'UTF-8 pour tous les types de fichiers
+AddDefaultCharset UTF-8
+
+# Forcer les Content-Type spécifiques pour différents types de fichiers
+<FilesMatch "\.(htm|html|php)$">
+    AddDefaultCharset UTF-8
+    DefaultLanguage fr-FR
+</FilesMatch>
+
+# Configurer les types MIME pour JavaScript et CSS avec encodage UTF-8
+<FilesMatch "\.(js)$">
+    AddType "application/javascript; charset=UTF-8" .js
+</FilesMatch>
+
+<FilesMatch "\.(css)$">
+    AddType "text/css; charset=UTF-8" .css
+</FilesMatch>
+
+# Paramètres PHP pour caractères spéciaux
+<IfModule mod_php.c>
+    php_value default_charset "UTF-8"
+</IfModule>
+
 <Files "sw.js">
     Header set Service-Worker-allowed "/"
 </Files> 

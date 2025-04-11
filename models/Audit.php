@@ -243,12 +243,23 @@ class Audit {
             
             // Journaliser tous les paramètres reçus pour le diagnostic
             file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - DÉBUT TRAITEMENT ÉVALUATION - audit:" . $auditId . ", point:" . $pointVigilanceId . "\n", FILE_APPEND);
+            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - DONNÉES REÇUES: " . print_r($data, true) . "\n", FILE_APPEND);
             
             // Traitement des checkboxes - conversion explicite en entiers
+            // Important: utiliser la conversion explicite pour éviter les erreurs
             $mesureReglementaire = (isset($data['mesure_reglementaire']) && (int)$data['mesure_reglementaire'] === 1) ? 1 : 0;
             $nonAudite = (isset($data['non_audite']) && (int)$data['non_audite'] === 1) ? 1 : 0;
             
+            // Pour les champs de texte, s'assurer qu'ils sont des chaînes non-null
+            $modePreuve = isset($data['mode_preuve']) ? (string)$data['mode_preuve'] : '';
+            $resultat = isset($data['resultat']) ? (string)$data['resultat'] : '';
+            $justification = isset($data['justification']) ? (string)$data['justification'] : '';
+            $planActionNumero = isset($data['plan_action_numero']) && !empty($data['plan_action_numero']) ? (int)$data['plan_action_numero'] : null;
+            $planActionPriorite = isset($data['plan_action_priorite']) ? (string)$data['plan_action_priorite'] : '';
+            $planActionDescription = isset($data['plan_action_description']) ? (string)$data['plan_action_description'] : '';
+            
             file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Valeurs traitées: mesure_reglementaire=$mesureReglementaire, non_audite=$nonAudite\n", FILE_APPEND);
+            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Valeurs traitées: mode_preuve='$modePreuve', resultat='$resultat', justification='$justification'\n", FILE_APPEND);
             
             // 1. Vérifier l'existence du point
             $check = "SELECT COUNT(*) FROM audit_points WHERE audit_id = ? AND point_vigilance_id = ?";
@@ -258,143 +269,62 @@ class Audit {
             
             file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Le point existe: " . ($exists ? "OUI" : "NON") . "\n", FILE_APPEND);
             
-            if (!$exists) {
-                // 2. Si n'existe pas, récupérer les infos de catégorie
-                $catQuery = "SELECT categorie_id, sous_categorie_id FROM points_vigilance WHERE id = ?";
-                $stmt = $this->db->prepare($catQuery);
-                $stmt->execute([$pointVigilanceId]);
-                $pointInfo = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                if (!$pointInfo) {
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR: Point de vigilance $pointVigilanceId non trouvé\n", FILE_APPEND);
-                    return false;
-                }
-                
-                $categorieId = $pointInfo['categorie_id'];
-                $sousCategorieId = $pointInfo['sous_categorie_id'];
-                
-                // 3. Calculer l'ordre (max + 1)
-                $orderQuery = "SELECT COALESCE(MAX(ordre), 0) + 1 FROM audit_points WHERE audit_id = ?";
-                $stmt = $this->db->prepare($orderQuery);
-                $stmt->execute([$auditId]);
-                $ordre = $stmt->fetchColumn();
-                
-                file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Nouvel ordre calculé: $ordre, Catégorie: $categorieId, Sous-catégorie: $sousCategorieId\n", FILE_APPEND);
-                
-                // 4. Insérer le nouveau point
-                $this->db->beginTransaction();
-                
-                try {
-                    $insert = "INSERT INTO audit_points (
-                        audit_id, point_vigilance_id, categorie_id, sous_categorie_id, ordre,
-                        mesure_reglementaire, non_audite, mode_preuve, resultat, justification,
-                        plan_action_numero, plan_action_description, plan_action_priorite
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                    
-                    $stmt = $this->db->prepare($insert);
-                    $params = [
-                        $auditId,
-                        $pointVigilanceId,
-                        $categorieId,
-                        $sousCategorieId,
-                        $ordre,
-                        $mesureReglementaire,
-                        $nonAudite,
-                        $data['mode_preuve'] ?? null,
-                        $data['resultat'] ?? null,
-                        $data['justification'] ?? null,
-                        $data['plan_action_numero'] ?? null,
-                        $data['plan_action_description'] ?? null,
-                        $data['plan_action_priorite'] ?? null
-                    ];
-                    
-                    $insertResult = $stmt->execute($params);
-                    
-                    if (!$insertResult) {
-                        $errorInfo = $stmt->errorInfo();
-                        file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR INSERTION: " . json_encode($errorInfo) . "\n", FILE_APPEND);
-                        throw new Exception("Échec de l'insertion : " . $errorInfo[2]);
-                    }
-                    
-                    $newId = $this->db->lastInsertId();
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Insertion réussie, ID: $newId\n", FILE_APPEND);
-                    
-                    $this->db->commit();
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Transaction validée\n", FILE_APPEND);
-                    
-                    // Vérifier que l'insertion a bien fonctionné
-                    $verifyQuery = "SELECT * FROM audit_points WHERE audit_id = ? AND point_vigilance_id = ?";
-                    $verifyStmt = $this->db->prepare($verifyQuery);
-                    $verifyStmt->execute([$auditId, $pointVigilanceId]);
-                    $found = $verifyStmt->rowCount() > 0;
-                    
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Vérification post-insertion: " . ($found ? "TROUVÉ" : "NON TROUVÉ") . "\n", FILE_APPEND);
-                    
-                    return true;
-                } catch (Exception $e) {
-                    $this->db->rollBack();
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR: " . $e->getMessage() . "\n", FILE_APPEND);
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - REQUÊTE: " . $insert . "\n", FILE_APPEND);
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - PARAMÈTRES: " . json_encode($params) . "\n", FILE_APPEND);
-                    return false;
-                }
+            // Préparer les données pour la requête SQL
+            $sqlData = [
+                'audit_id' => $auditId,
+                'point_vigilance_id' => $pointVigilanceId,
+                'mesure_reglementaire' => $mesureReglementaire,
+                'non_audite' => $nonAudite,
+                'mode_preuve' => $modePreuve,
+                'resultat' => $resultat,
+                'justification' => $justification,
+                'plan_action_numero' => $planActionNumero,
+                'plan_action_priorite' => $planActionPriorite,
+                'plan_action_description' => $planActionDescription
+            ];
+            
+            // Log des données finales qui seront utilisées
+            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - DONNÉES SQL FINALES: " . print_r($sqlData, true) . "\n", FILE_APPEND);
+            
+            // 2. Insérer ou mettre à jour selon le cas
+            if ($exists) {
+                // Mettre à jour le point existant
+                $sql = "UPDATE audit_points SET 
+                        mesure_reglementaire = :mesure_reglementaire,
+                        non_audite = :non_audite,
+                        mode_preuve = :mode_preuve,
+                        resultat = :resultat,
+                        justification = :justification,
+                        plan_action_numero = :plan_action_numero,
+                        plan_action_priorite = :plan_action_priorite,
+                        plan_action_description = :plan_action_description
+                        WHERE audit_id = :audit_id AND point_vigilance_id = :point_vigilance_id";
             } else {
-                // 5. Mise à jour d'un point existant
-                $this->db->beginTransaction();
-                
-                try {
-                    $update = "UPDATE audit_points SET 
-                        mesure_reglementaire = ?, 
-                        non_audite = ?, 
-                        mode_preuve = ?, 
-                        resultat = ?, 
-                        justification = ?,
-                        plan_action_numero = ?, 
-                        plan_action_description = ?, 
-                        plan_action_priorite = ?
-                    WHERE audit_id = ? AND point_vigilance_id = ?";
-                    
-                    $stmt = $this->db->prepare($update);
-                    
-                    $params = [
-                        $mesureReglementaire,
-                        $nonAudite,
-                        $data['mode_preuve'] ?? null,
-                        $data['resultat'] ?? null,
-                        $data['justification'] ?? null,
-                        $data['plan_action_numero'] ?? null,
-                        $data['plan_action_description'] ?? null,
-                        $data['plan_action_priorite'] ?? null,
-                        $auditId,
-                        $pointVigilanceId
-                    ];
-                    
-                    $updateResult = $stmt->execute($params);
-                    
-                    if (!$updateResult) {
-                        $errorInfo = $stmt->errorInfo();
-                        file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR MISE À JOUR: " . json_encode($errorInfo) . "\n", FILE_APPEND);
-                        throw new Exception("Échec de la mise à jour : " . $errorInfo[2]);
-                    }
-                    
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Mise à jour réussie, lignes affectées: " . $stmt->rowCount() . "\n", FILE_APPEND);
-                    
-                    $this->db->commit();
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - Transaction de mise à jour validée\n", FILE_APPEND);
-                    
-                    return true;
-                } catch (Exception $e) {
-                    $this->db->rollBack();
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR: " . $e->getMessage() . "\n", FILE_APPEND);
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - REQUÊTE: " . $update . "\n", FILE_APPEND);
-                    file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - PARAMÈTRES: " . json_encode($params) . "\n", FILE_APPEND);
-                    return false;
-                }
+                // Insérer un nouveau point
+                $sql = "INSERT INTO audit_points (
+                            audit_id, point_vigilance_id, 
+                            mesure_reglementaire, non_audite,
+                            mode_preuve, resultat, justification,
+                            plan_action_numero, plan_action_priorite, plan_action_description
+                        ) VALUES (
+                            :audit_id, :point_vigilance_id,
+                            :mesure_reglementaire, :non_audite,
+                            :mode_preuve, :resultat, :justification,
+                            :plan_action_numero, :plan_action_priorite, :plan_action_description
+                        )";
+            }
+                        
+                $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($sqlData);
+            
+            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - RÉSULTAT REQUÊTE: " . ($result ? "SUCCÈS" : "ÉCHEC") . "\n", FILE_APPEND);
+            if (!$result) {
+                file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR SQL: " . print_r($stmt->errorInfo(), true) . "\n", FILE_APPEND);
             }
             
+            return $result;
         } catch (Exception $e) {
-            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - ERREUR GLOBALE: " . $e->getMessage() . "\n", FILE_APPEND);
-            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - TRACE: " . $e->getTraceAsString() . "\n", FILE_APPEND);
+            file_put_contents('logs/audit_logs.log', date('Y-m-d H:i:s') . " - EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
             return false;
         }
     }
@@ -411,12 +341,12 @@ class Audit {
             $document = $this->getDocumentById($documentId);
             if (!$document) {
                 error_log("Document non trouvé: ID = $documentId");
-                return false;
-            }
-
+                    return false;
+                }
+                
             // Supprimer le document de la base de données
             $sql = "DELETE FROM audit_point_documents WHERE id = :id";
-            $stmt = $this->db->prepare($sql);
+                    $stmt = $this->db->prepare($sql);
             $result = $stmt->execute([':id' => $documentId]);
 
             if ($result) {
@@ -477,8 +407,8 @@ class Audit {
             
             if ($result) {
                 error_log("Document ajouté avec succès: audit_id=$auditId, point_vigilance_id=$pointVigilanceId");
-                return true;
-            } else {
+                    return true;
+                } else {
                 error_log("Échec de l'ajout du document: audit_id=$auditId, point_vigilance_id=$pointVigilanceId");
                 return false;
             }

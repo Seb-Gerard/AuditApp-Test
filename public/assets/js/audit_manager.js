@@ -262,15 +262,22 @@ function confirmDelete(id) {
      */
     loadSousCategories: function () {
       const self = this;
-      const categorieIds = Array.from(
-        document.querySelectorAll(".categorie-checkbox:checked")
-      ).map((cb) => cb.value);
+      const categorieIds = Array.from(this.selectedCategories);
       const sousCategContainer = document.getElementById(
         "sous_categories_container"
       );
       const textSpan = document.getElementById("sous_categories_text");
 
-      if (!sousCategContainer || !textSpan) return;
+      if (!sousCategContainer || !textSpan) {
+        console.error(
+          "Conteneurs pour sous-catégories non trouvés dans le DOM"
+        );
+        return;
+      }
+
+      // Ajouter un indicateur de chargement
+      sousCategContainer.innerHTML =
+        '<p class="text-info"><i class="fas fa-spinner fa-spin"></i> Chargement...</p>';
 
       // Si aucune catégorie n'est sélectionnée
       if (categorieIds.length === 0) {
@@ -287,68 +294,165 @@ function confirmDelete(id) {
         .map((id) => `categorie_id[]=${id}`)
         .join("&");
 
-      fetch(`index.php?action=audits&method=getSousCategories&${queryParams}`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.length === 0) {
-            sousCategContainer.innerHTML =
-              '<div class="text-muted p-2">Aucune sous-catégorie disponible pour les catégories sélectionnées</div>';
-            textSpan.textContent = "Aucune sous-catégorie disponible";
-            self.selectedSousCategories.clear();
-            self.loadPointsVigilance();
-            return;
+      // URL complète pour le débogage
+      const url = `index.php?action=audits&method=getSousCategories&${queryParams}`;
+      console.log(`Requête getSousCategories: ${url}`);
+
+      fetch(url)
+        .then((response) => {
+          // Vérifier que la réponse est OK
+          if (!response.ok) {
+            const error = `Erreur réseau: ${response.status} ${response.statusText}`;
+            console.error(error);
+            throw new Error(error);
           }
 
-          let html = "";
-          data.forEach((sousCateg) => {
-            html += `
-              <div class="form-check">
-                <input class="form-check-input sous-categorie-checkbox" type="checkbox" 
-                       name="sous_categories[]" value="${sousCateg.id}" 
-                       id="sous-categorie-${sousCateg.id}" 
-                       data-categorie-id="${sousCateg.categorie_id}">
-                <label class="form-check-label" for="sous-categorie-${sousCateg.id}">
-                  ${sousCateg.nom}
-                </label>
-              </div>
-            `;
-          });
+          // Vérifier le type de contenu
+          const contentType = response.headers.get("content-type");
+          console.log("Type de contenu reçu:", contentType);
 
-          sousCategContainer.innerHTML = html;
-          textSpan.textContent = "Sélectionnez les sous-catégories";
+          if (!contentType || !contentType.includes("application/json")) {
+            console.warn(
+              "Avertissement: Réponse non-JSON reçue, type:",
+              contentType
+            );
+          }
 
-          // Réappliquer les sélections précédentes
-          document
-            .querySelectorAll(".sous-categorie-checkbox")
-            .forEach((checkbox) => {
-              if (self.selectedSousCategories.has(checkbox.value)) {
-                checkbox.checked = true;
+          // Récupérer le texte brut
+          return response.text();
+        })
+        .then((text) => {
+          // Journaliser la réponse brute pour le débogage (tronquée si trop longue)
+          if (text.length > 500) {
+            console.log(
+              "Réponse brute (tronquée):",
+              text.substring(0, 500) + "..."
+            );
+          } else {
+            console.log("Réponse brute:", text);
+          }
+
+          let data;
+
+          try {
+            // Essayer de parser en JSON
+            data = JSON.parse(text);
+            console.log("Données JSON parsées:", data);
+
+            // Vérifier si nous avons reçu une erreur de l'API
+            if (data && typeof data === "object" && data.error) {
+              throw new Error(`Erreur API: ${data.error}`);
+            }
+
+            // Vérifier que le résultat est un tableau
+            if (!Array.isArray(data)) {
+              throw new Error("Format de réponse invalide: tableau attendu");
+            }
+
+            // Vérifier la structure des objets dans le tableau
+            for (const item of data) {
+              if (
+                !item ||
+                typeof item !== "object" ||
+                !("id" in item) ||
+                !("nom" in item)
+              ) {
+                console.warn("Élément de sous-catégorie invalide:", item);
+              }
+            }
+
+            // Traiter les données
+            if (data.length === 0) {
+              sousCategContainer.innerHTML =
+                '<div class="text-muted p-2">Aucune sous-catégorie disponible pour les catégories sélectionnées</div>';
+              textSpan.textContent = "Aucune sous-catégorie disponible";
+              self.selectedSousCategories.clear();
+              self.loadPointsVigilance();
+              return;
+            }
+
+            console.log(`${data.length} sous-catégories récupérées`);
+
+            let html = "";
+            data.forEach((sousCateg) => {
+              // Vérifier que l'objet a les propriétés attendues
+              if (!sousCateg.id || !sousCateg.nom) {
+                console.warn(
+                  "Sous-catégorie avec données manquantes:",
+                  sousCateg
+                );
+                return;
+              }
+
+              html += `
+                <div class="form-check">
+                  <input class="form-check-input sous-categorie-checkbox" type="checkbox" 
+                         name="sous_categories[]" value="${sousCateg.id}" 
+                         id="sous-categorie-${sousCateg.id}" 
+                         data-categorie-id="${sousCateg.categorie_id}">
+                  <label class="form-check-label" for="sous-categorie-${sousCateg.id}">
+                    ${sousCateg.nom}
+                  </label>
+                </div>
+              `;
+            });
+
+            sousCategContainer.innerHTML = html;
+            textSpan.textContent = "Sélectionnez les sous-catégories";
+
+            // Réappliquer les sélections précédentes
+            document
+              .querySelectorAll(".sous-categorie-checkbox")
+              .forEach((checkbox) => {
+                if (self.selectedSousCategories.has(checkbox.value)) {
+                  checkbox.checked = true;
+                }
+              });
+
+            // Vérifier les sous-catégories qui ont disparu
+            const availableSousCategoriesIds = new Set(
+              data.map((item) => item.id.toString())
+            );
+            let hasChanged = false;
+
+            self.selectedSousCategories.forEach((id) => {
+              if (!availableSousCategoriesIds.has(id)) {
+                self.selectedSousCategories.delete(id);
+                hasChanged = true;
               }
             });
 
-          // Vérifier les sous-catégories qui ont disparu
-          const availableSousCategoriesIds = new Set(
-            data.map((item) => item.id.toString())
-          );
-          let hasChanged = false;
+            // Si la sélection a changé, recharger les points
+            if (hasChanged) self.loadPointsVigilance();
 
-          self.selectedSousCategories.forEach((id) => {
-            if (!availableSousCategoriesIds.has(id)) {
-              self.selectedSousCategories.delete(id);
-              hasChanged = true;
-            }
-          });
-
-          // Si la sélection a changé, recharger les points
-          if (hasChanged) self.loadPointsVigilance();
-
-          // Attacher les événements et mettre à jour le texte
-          self.attachSousCategorieEvents();
-          self.updateSousCategoriesText();
+            // Attacher les événements et mettre à jour le texte
+            self.attachSousCategorieEvents();
+            self.updateSousCategoriesText();
+          } catch (parseError) {
+            // En cas d'erreur de parsing ou de validation
+            console.error(
+              "Erreur lors du traitement de la réponse:",
+              parseError
+            );
+            sousCategContainer.innerHTML = `
+              <div class="text-danger p-2">
+                <p>Erreur lors du traitement de la réponse: ${parseError.message}</p>
+                <button class="btn btn-sm btn-outline-secondary" onclick="AuditManager.loadSousCategories()">Réessayer</button>
+              </div>`;
+            textSpan.textContent = "Erreur de chargement";
+            throw parseError;
+          }
         })
         .catch((error) => {
-          sousCategContainer.innerHTML =
-            '<div class="text-danger p-2">Erreur lors du chargement des sous-catégories</div>';
+          console.error(
+            "Erreur lors du chargement des sous-catégories:",
+            error
+          );
+          sousCategContainer.innerHTML = `
+            <div class="text-danger p-2">
+              <p>Erreur lors du chargement des sous-catégories: ${error.message}</p>
+              <button class="btn btn-sm btn-outline-secondary" onclick="AuditManager.loadSousCategories()">Réessayer</button>
+            </div>`;
           textSpan.textContent = "Erreur de chargement";
         });
     },
@@ -360,11 +464,16 @@ function confirmDelete(id) {
       const sousCategorieIds = Array.from(this.selectedSousCategories);
       const container = document.getElementById("points_vigilance_container");
 
-      if (!container) return;
+      if (!container) {
+        console.error(
+          "Conteneur pour points de vigilance non trouvé dans le DOM"
+        );
+        return;
+      }
 
       // Message d'attente
       container.innerHTML =
-        '<p class="text-info">Chargement des points de vigilance...</p>';
+        '<p class="text-info"><i class="fas fa-spinner fa-spin"></i> Chargement des points de vigilance...</p>';
 
       // Si aucune sous-catégorie n'est sélectionnée
       if (sousCategorieIds.length === 0) {
@@ -380,20 +489,98 @@ function confirmDelete(id) {
         .map((id) => `sous_categorie_id[]=${id}`)
         .join("&");
 
-      fetch(`index.php?action=audits&method=getPointsVigilance&${queryParams}`)
+      const url = `index.php?action=audits&method=getPointsVigilance&${queryParams}`;
+      console.log(`Requête getPointsVigilance: ${url}`);
+
+      fetch(url)
         .then((response) => {
-          if (!response.ok)
-            throw new Error(`Erreur réseau: ${response.status}`);
-          return response.json();
+          if (!response.ok) {
+            throw new Error(
+              `Erreur réseau: ${response.status} ${response.statusText}`
+            );
+          }
+
+          // Vérifier le type de contenu
+          const contentType = response.headers.get("content-type");
+          console.log("Type de contenu reçu:", contentType);
+
+          if (!contentType || !contentType.includes("application/json")) {
+            console.warn(
+              "Avertissement: Réponse non-JSON reçue, type:",
+              contentType
+            );
+          }
+
+          // Récupérer le texte brut d'abord pour le débogage
+          return response.text();
         })
-        .then((data) => {
-          this.allPoints = data;
-          this.updateAvailablePoints();
+        .then((text) => {
+          // Journaliser la réponse brute pour le débogage (tronquée si trop longue)
+          if (text.length > 500) {
+            console.log(
+              "Réponse brute (tronquée):",
+              text.substring(0, 500) + "..."
+            );
+          } else {
+            console.log("Réponse brute:", text);
+          }
+
+          try {
+            // Essayer de parser en JSON
+            const data = JSON.parse(text);
+            console.log("Données JSON parsées:", data);
+
+            // Vérifier si nous avons reçu une erreur de l'API
+            if (data && typeof data === "object" && data.error) {
+              throw new Error(`Erreur API: ${data.error}`);
+            }
+
+            // Vérifier que le résultat est un tableau
+            if (!Array.isArray(data)) {
+              throw new Error("Format de réponse invalide: tableau attendu");
+            }
+
+            // Vérifier la structure des données
+            data.forEach((point, index) => {
+              if (
+                !point ||
+                typeof point !== "object" ||
+                !("id" in point) ||
+                !("nom" in point)
+              ) {
+                console.warn(`Point de vigilance ${index} invalide:`, point);
+              }
+            });
+
+            // Stocker les données et mettre à jour l'interface
+            this.allPoints = data;
+            console.log(`${data.length} points de vigilance récupérés`);
+            this.updateAvailablePoints();
+          } catch (parseError) {
+            console.error(
+              "Erreur lors du traitement de la réponse:",
+              parseError
+            );
+            container.innerHTML = `
+              <div class="text-danger p-2">
+                <p>Erreur lors du traitement de la réponse: ${parseError.message}</p>
+                <button class="btn btn-sm btn-outline-secondary" onclick="AuditManager.loadPointsVigilance()">Réessayer</button>
+              </div>`;
+            this.allPoints = [];
+            this.updateAvailablePoints();
+            throw parseError;
+          }
         })
         .catch((error) => {
-          if (container) {
-            container.innerHTML = `<p class="text-danger">Erreur lors du chargement des points de vigilance: ${error.message}</p>`;
-          }
+          console.error(
+            "Erreur lors du chargement des points de vigilance:",
+            error
+          );
+          container.innerHTML = `
+            <div class="text-danger p-2">
+              <p>Erreur lors du chargement des points de vigilance: ${error.message}</p>
+              <button class="btn btn-sm btn-outline-secondary" onclick="AuditManager.loadPointsVigilance()">Réessayer</button>
+            </div>`;
           this.allPoints = [];
           this.updateAvailablePoints();
         });
